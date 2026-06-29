@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { css } from "@/lib/css";
 import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { useApp, prices } from "@/lib/store";
+import { useMarket } from "@/lib/market";
 import { assetMeta } from "@/lib/content";
 
 const ORDER = ["APEN", "ETH", "BTC", "USDC"];
@@ -25,9 +26,10 @@ export default function Portfolio() {
     );
   }
 
-  const P = prices(app.price);
-  const pos = app.change >= 0;
-  const changeStr = (pos ? "+" : "") + app.change.toFixed(2) + "%";
+  const { price, change } = useMarket();
+  const P = prices(price);
+  const pos = change >= 0;
+  const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";
   const changeColor = pos ? ACCENT : "#D14343";
   let total = 0;
   ORDER.forEach((k) => (total += (app.balances[k] || 0) * P[k]));

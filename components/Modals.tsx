@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { css } from "@/lib/css";
 import { ACCENT } from "@/lib/format";
 import { useApp } from "@/lib/store";
+import { useMarket } from "@/lib/market";
 import { Hov } from "./ui";
 import { walletDefs } from "@/lib/content";
 
@@ -40,8 +41,9 @@ export function WalletModal() {
 
 export function ProviderModal() {
   const app = useApp();
+  const { price } = useMarket();
   if (!app.providerOpen) return null;
-  const P: Record<string, number> = { EUR: 1.08, USD: 1, APEN: app.price };
+  const P: Record<string, number> = { EUR: 1.08, USD: 1, APEN: price };
   const amt = parseFloat(app.payAmount) || 0;
   const provName = app.provider === "moonpay" ? "MoonPay" : "Transak";
   const provColor = app.provider === "moonpay" ? "#7A4DFF" : "#1A6BF2";
@@ -49,7 +51,7 @@ export function ProviderModal() {
   const rate = app.provider === "moonpay" ? 0.019 : 0.015;
   const cardSym = app.cardCur === "EUR" ? "€" : "$";
   const usd = amt * P[app.cardCur];
-  const apen = (usd * (1 - rate)) / app.price;
+  const apen = (usd * (1 - rate)) / price;
   const amountStr = amt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " " + cardSym;
   const dg = app.cardNumber.replace(/\D/g, "");
   const cardBrand = /^4/.test(dg) ? "VISA" : /^(5|2)/.test(dg) ? "MASTERCARD" : /^3[47]/.test(dg) ? "AMEX" : "";

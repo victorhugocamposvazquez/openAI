@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { css } from "@/lib/css";
 import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { buildSeries } from "@/lib/series";
+import { useMarket } from "@/lib/market";
 import { useApp } from "@/lib/store";
 import { Chart } from "../Chart";
 import { Hov } from "../ui";
@@ -14,7 +15,7 @@ const series = buildSeries();
 const SUPPLY = 850000000;
 
 function Countdown() {
-  const { now } = useApp();
+  const { now } = useMarket();
   let diff = Math.max(0, new Date("2027-09-15T09:00:00Z").getTime() - now);
   const dd = Math.floor(diff / 86400000); diff -= dd * 86400000;
   const hh = Math.floor(diff / 3600000); diff -= hh * 3600000;
@@ -46,7 +47,7 @@ function Countdown() {
 }
 
 function Activity() {
-  const { activity, now } = useApp();
+  const { activity, now } = useMarket();
   const relTime = (ts: number) => {
     const sec = Math.max(1, Math.round((now - ts) / 1000));
     return sec < 60 ? "hace " + sec + " s" : "hace " + Math.floor(sec / 60) + " min";
@@ -157,13 +158,14 @@ function Faq() {
 
 export default function Home() {
   const app = useApp();
+  const { price, change } = useMarket();
   const router = useRouter();
-  const pos = app.change >= 0;
-  const changeStr = (pos ? "+" : "") + app.change.toFixed(2) + "%";
+  const pos = change >= 0;
+  const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";
   const changeColor = pos ? ACCENT : "#D14343";
-  const cap = app.price * SUPPLY;
+  const cap = price * SUPPLY;
   const heroStats = [
-    { value: fmtUSD(app.price), label: "Precio APEN" },
+    { value: fmtUSD(price), label: "Precio APEN" },
     { value: fmtUSD(cap), label: "Cap. de mercado" },
     { value: "$214M", label: "Recaudado en preventa" },
     { value: "48,920", label: "Holders" },
@@ -202,7 +204,7 @@ export default function Home() {
               <div>
                 <div style={css("font:500 13px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>APEN / USD</div>
                 <div style={css("display:flex;align-items:baseline;gap:10px")}>
-                  <span style={css("font:600 38px var(--font-mono);letter-spacing:-0.02em")}>{fmtUSD(app.price)}</span>
+                  <span style={css("font:600 38px var(--font-mono);letter-spacing:-0.02em")}>{fmtUSD(price)}</span>
                   <span style={{ ...css("font:600 15px var(--font-mono)"), color: changeColor }}>{changeStr}</span>
                 </div>
               </div>
@@ -211,7 +213,7 @@ export default function Home() {
                 <span style={{ ...css("font:600 11px var(--font-mono)"), color: ACCENT }}>EN VIVO</span>
               </span>
             </div>
-            <Chart series={series["1M"]} price={app.price} height={130} gradId="gSpark" />
+            <Chart series={series["1M"]} price={price} height={130} gradId="gSpark" />
             <div style={css("display:flex;gap:10px;margin-top:18px")}>
               <button onClick={() => router.push("/comprar")} style={css("flex:1;appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken)")}>Comprar</button>
               <button onClick={() => router.push("/mercado")} style={css("flex:1;appearance:none;cursor:pointer;background:#F4F4F5;color:#0D0D0D;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken)")}>Ver gráfico</button>
@@ -333,7 +335,7 @@ export default function Home() {
                   <div style={css("display:flex;justify-content:center;margin:6px 0")}><span style={css("width:30px;height:30px;border-radius:50%;background:#F0F0F1;display:flex;align-items:center;justify-content:center;color:#8A8A94")}>↓</span></div>
                   <div style={{ ...css("border-radius:14px;padding:14px"), background: "color-mix(in srgb, var(--accent) 9%, #fff)" }}>
                     <div style={css("font:500 12px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>Recibes APEN</div>
-                    <div style={{ ...css("font:600 22px var(--font-mono)"), color: ACCENT }}>{fmtN((500 * 0.99) / app.price, 2)}</div>
+                    <div style={{ ...css("font:600 22px var(--font-mono)"), color: ACCENT }}>{fmtN((500 * 0.99) / price, 2)}</div>
                   </div>
                 </div>
                 <div style={css("padding:0 18px 18px")}><button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;border:none;background:#0D0D0D;color:#fff;border-radius:12px;padding:13px;text-align:center;font:600 15px var(--font-hanken)")}>Comprar APEN</button></div>

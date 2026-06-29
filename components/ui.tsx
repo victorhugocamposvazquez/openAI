@@ -34,24 +34,14 @@ export function Hov({ as = "div", style, hover, focus, children, ...rest }: HovP
   );
 }
 
-/** apenAI mark — black rounded square with a white triangle. */
-export function Logo({ size = 28 }: { size?: number }) {
-  const inner = Math.round(size * 0.46);
+/** OpenAI mark used in the header. */
+export function Logo({ height = 28 }: { height?: number }) {
   return (
-    <span
-      style={{
-        width: size,
-        height: size,
-        borderRadius: Math.round(size * 0.28),
-        background: "#0D0D0D",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <svg width={inner} height={inner} viewBox="0 0 12 12">
-        <path d="M6 1.6 L10.4 10.4 L1.6 10.4 Z" fill="#fff" />
-      </svg>
-    </span>
+    <img
+      src="/openai-logo.png"
+      alt="OpenAI"
+      height={height}
+      style={{ height, width: "auto", display: "block" }}
+    />
   );
 }

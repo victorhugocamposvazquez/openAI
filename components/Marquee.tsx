@@ -2,14 +2,14 @@
 
 import { css } from "@/lib/css";
 import { fmtUSD } from "@/lib/format";
-import { useApp } from "@/lib/store";
+import { useMarket } from "@/lib/market";
 import { baseTk } from "@/lib/content";
 
 export default function Marquee() {
-  const app = useApp();
-  const pos = app.change >= 0;
-  const changeStr = (pos ? "+" : "") + app.change.toFixed(2) + "%";
-  const tk = [...baseTk, { s: "APEN", p: fmtUSD(app.price), c: changeStr, up: pos }];
+  const { price, change } = useMarket();
+  const pos = change >= 0;
+  const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";
+  const tk = [...baseTk, { s: "APEN", p: fmtUSD(price), c: changeStr, up: pos }];
   const items = [...tk, ...tk];
 
   return (

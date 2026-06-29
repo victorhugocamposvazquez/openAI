@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PRICES_USD } from "./format";
+import { getMarket, startMarketTicker } from "./market";
 
 /* ──────────────────────────────────────────────────────────
    apenAI demo store. All trading logic is simulated client-side
@@ -25,10 +26,6 @@ export type Tx = {
   isSell?: boolean;
   recvLabel?: string;
 };
-type ActivityRow = { id: string; addr: string; action: string; amt: string; ts: number };
-
-const START_PRICE = 4.2;
-const BASE_REF = 4.068;
 const STORAGE_KEY = "apenai_demo_v1";
 
 export function prices(apen: number): Record<string, number> {
@@ -46,17 +43,12 @@ function fmtUSD(n: number) {
 }
 
 export interface AppState {
-  // live market
-  price: number;
-  change: number;
-  now: number;
   // wallet / account
   connected: boolean;
   address: string;
   balances: Balances;
   apenAvg: number;
   txs: Tx[];
-  activity: ActivityRow[];
   // buy form
   buyMethod: "card" | "crypto";
   payAsset: string;
@@ -126,21 +118,11 @@ export const useApp = () => {
 };
 
 const INITIAL: AppState = {
-  price: START_PRICE,
-  change: 3.24,
-  now: new Date("2026-06-29T00:00:00Z").getTime(),
   connected: false,
   address: "0x7A3f…9E2b",
   balances: { USDC: 0, ETH: 0, BTC: 0, APEN: 0 },
   apenAvg: 0,
   txs: [],
-  activity: [
-    { id: "a1", addr: "0x7c…4f", action: "compró", amt: "1,250", ts: 8000 },
-    { id: "a2", addr: "0x3a…e1", action: "intercambió", amt: "740", ts: 23000 },
-    { id: "a3", addr: "0x9f…2a", action: "compró", amt: "3,100", ts: 41000 },
-    { id: "a4", addr: "0xb2…7d", action: "compró", amt: "512", ts: 76000 },
-    { id: "a5", addr: "0x18…c9", action: "intercambió", amt: "2,025", ts: 122000 },
-  ],
   buyMethod: "card",
   payAsset: "USDC",
   payAmount: "500",
@@ -190,7 +172,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         }
       }
     } catch {}
-    setS((p) => ({ ...p, now: Date.now() }));
+    startMarketTicker();
   }, []);
 
   const persist = useCallback((next: AppState) => {
@@ -206,28 +188,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         })
       );
     } catch {}
-  }, []);
-
-  // ── live price + countdown + activity feed ──
-  useEffect(() => {
-    const t1 = setInterval(() => setS((p) => ({ ...p, now: Date.now() })), 1000);
-    const t2 = setInterval(() => {
-      setS((p) => {
-        const d = (Math.random() - 0.46) * 0.011;
-        let np = p.price * (1 + d);
-        np = Math.max(3.7, Math.min(4.85, np));
-        np = +np.toFixed(3);
-        return { ...p, price: np, change: +((np / BASE_REF - 1) * 100).toFixed(2) };
-      });
-    }, 2000);
-    const t3 = setInterval(() => {
-      setS((p) => ({ ...p, activity: [genActivity(), ...p.activity].slice(0, 6) }));
-    }, 4600);
-    return () => {
-      clearInterval(t1);
-      clearInterval(t2);
-      clearInterval(t3);
-    };
   }, []);
 
   const toastMsg = useCallback((m: string) => {
@@ -319,7 +279,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const finishBuy = useCallback(
     (apenAdded: number, usdGross: number, feeUsd: number, payLabel: string, kind: string, debit: { asset: string; amount: number } | null) => {
-      const P = prices(sref.current.price);
+      const P = prices(getMarket().price);
       const tx: Tx = {
         type: kind,
         main: "+" + fmtN(apenAdded, 2) + " APEN",
@@ -349,7 +309,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const finishSwapOut = useCallback(
     (apenSpent: number, tokenAsset: string, tokenAmt: number, feeUsd: number) => {
-      const P = prices(sref.current.price);
+      const P = prices(getMarket().price);
       const tx: Tx = {
         type: "Venta",
         main: "+" + fmtN(tokenAmt, tokenAsset === "BTC" ? 5 : 4) + " " + tokenAsset,
@@ -396,7 +356,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     runProcessing(() => {
       const cur = sref.current;
       const amt = parseFloat(cur.payAmount) || 0;
-      const P = prices(cur.price);
+      const P = prices(getMarket().price);
       const rate = cur.provider === "moonpay" ? 0.019 : 0.015;
       const usd = amt * P[cur.cardCur];
       const apen = (usd * (1 - rate)) / P.APEN;
@@ -411,7 +371,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const amt = parseFloat(p.payAmount) || 0;
     if (amt <= 0) return toastMsg("Introduce un importe válido");
     if (!p.connected) return set({ walletOpen: true });
-    const P = prices(p.price);
+    const P = prices(getMarket().price);
     const a = p.payAsset;
     const isCrypto = a === "USDC" || a === "ETH" || a === "BTC";
     if (isCrypto && (p.balances[a] || 0) < amt) return toastMsg("Saldo insuficiente de " + a);
@@ -428,7 +388,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const amt = parseFloat(p.fromAmount) || 0;
     if (amt <= 0) return toastMsg("Introduce un importe válido");
     if (!p.connected) return set({ walletOpen: true });
-    const P = prices(p.price);
+    const P = prices(getMarket().price);
     const side = p.swapSide,
       token = p.fromAsset;
     const payToken = side === "toApen" ? token : "APEN";
@@ -516,13 +476,4 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
-}
-
-function genActivity(): ActivityRow {
-  const hex = "0123456789abcdef";
-  const r = (n: number) => Array.from({ length: n }, () => hex[Math.floor(Math.random() * 16)]).join("");
-  const addr = "0x" + r(2) + "…" + r(2);
-  const action = Math.random() < 0.68 ? "compró" : "intercambió";
-  const amt = (Math.floor(Math.random() * 3900) + 180).toLocaleString("en-US");
-  return { id: "a" + Date.now() + Math.floor(Math.random() * 99), addr, action, amt, ts: Date.now() };
 }

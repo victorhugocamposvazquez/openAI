@@ -3,6 +3,7 @@
 import { css } from "@/lib/css";
 import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { useApp, prices } from "@/lib/store";
+import { useMarket } from "@/lib/market";
 import { Hov } from "../ui";
 
 const segStyle = (active: boolean) =>
@@ -10,7 +11,8 @@ const segStyle = (active: boolean) =>
 
 export default function Swap() {
   const app = useApp();
-  const P = prices(app.price);
+  const { price } = useMarket();
+  const P = prices(price);
   const fromAmt = parseFloat(app.fromAmount) || 0;
   const side = app.swapSide;
   const token = app.fromAsset;

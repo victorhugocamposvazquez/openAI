@@ -3,6 +3,7 @@
 import { css } from "@/lib/css";
 import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { useApp, prices } from "@/lib/store";
+import { useMarket } from "@/lib/market";
 import { Hov } from "../ui";
 import { provDefs } from "@/lib/content";
 
@@ -15,7 +16,8 @@ const ccStyle = (active: boolean) =>
 
 export default function Buy() {
   const app = useApp();
-  const P = prices(app.price);
+  const { price } = useMarket();
+  const P = prices(price);
   const isCard = app.buyMethod === "card";
   const payAmt = parseFloat(app.payAmount) || 0;
   const cardSym = app.cardCur === "EUR" ? "€" : "$";
@@ -128,7 +130,7 @@ export default function Buy() {
             </div>
           </div>
           <div style={css("margin-top:18px;display:flex;flex-direction:column;gap:10px")}>
-            {[["Precio", "1 APEN = " + fmtUSD(app.price)], ["Comisión", fmtUSD(buyUsd * buyFeeRate)], ["Total a pagar", buyTotal]].map(([l, v], i) => (
+            {[["Precio", "1 APEN = " + fmtUSD(price)], ["Comisión", fmtUSD(buyUsd * buyFeeRate)], ["Total a pagar", buyTotal]].map(([l, v], i) => (
               <div key={i} style={css("display:flex;justify-content:space-between;font:400 13px var(--font-hanken);color:#6B6B76")}><span>{l}</span><span style={css("font-family:var(--font-mono);color:#0D0D0D")}>{v}</span></div>
             ))}
           </div>

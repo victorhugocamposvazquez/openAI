@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { css } from "@/lib/css";
 import { fmtUSD, ACCENT } from "@/lib/format";
 import { buildSeries } from "@/lib/series";
-import { useApp } from "@/lib/store";
+import { useMarket } from "@/lib/market";
 import { Chart } from "../Chart";
 
 const series = buildSeries();
@@ -13,13 +13,13 @@ const SUPPLY = 850000000;
 const TFS = ["1D", "1W", "1M", "1Y", "ALL"];
 
 export default function Market() {
-  const app = useApp();
+  const { price, change } = useMarket();
   const router = useRouter();
   const [tf, setTf] = useState("1M");
-  const pos = app.change >= 0;
-  const changeStr = (pos ? "+" : "") + app.change.toFixed(2) + "%";
+  const pos = change >= 0;
+  const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";
   const changeColor = pos ? ACCENT : "#D14343";
-  const cap = app.price * SUPPLY;
+  const cap = price * SUPPLY;
   const arr = series[tf];
   const cmax = Math.max(...arr);
   const stats = [
@@ -40,7 +40,7 @@ export default function Market() {
             <span style={css("font:600 22px var(--font-hanken);letter-spacing:-0.02em")}>APEN <span style={css("color:#9A9AA0;font-weight:400")}>/ USD</span></span>
           </div>
           <div style={css("display:flex;align-items:baseline;gap:12px")}>
-            <span style={css("font:600 44px var(--font-mono);letter-spacing:-0.03em")}>{fmtUSD(app.price)}</span>
+            <span style={css("font:600 44px var(--font-mono);letter-spacing:-0.03em")}>{fmtUSD(price)}</span>
             <span style={{ ...css("font:600 17px var(--font-mono)"), color: changeColor }}>{changeStr}</span>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function Market() {
         </div>
       </div>
       <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:20px;padding:22px;margin-bottom:24px")}>
-        <Chart key={tf} series={arr} price={app.price} height={360} gradId="gMain" />
+        <Chart key={tf} series={arr} price={price} height={360} gradId="gMain" />
       </div>
       <div data-2col style={css("display:grid;grid-template-columns:1.6fr 1fr;gap:24px;align-items:start")}>
         <div style={css("display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#ECECEC;border:1px solid #ECECEC;border-radius:18px;overflow:hidden")}>

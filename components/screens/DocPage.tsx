@@ -1,17 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { css } from "@/lib/css";
 import { ACCENT } from "@/lib/format";
-import { Hov } from "../ui";
 import type { Doc } from "@/lib/content";
 
 export default function DocPage({ doc }: { doc: Doc }) {
   const router = useRouter();
   return (
     <main style={css("max-width:840px;margin:0 auto;padding:40px 24px 24px")}>
-      <Hov as={Link} href="/" style="text-decoration:none;display:flex;align-items:center;gap:6px;font:500 13px var(--font-hanken);color:#8A8A94;margin-bottom:28px" hover="color:#0D0D0D">← Volver al inicio</Hov>
+      <Link href="/" prefetch className="footer-link" style={css("text-decoration:none;display:flex;align-items:center;gap:6px;font:500 13px var(--font-hanken);color:#8A8A94;margin-bottom:28px")}>
+        ← Volver al inicio
+      </Link>
       <div style={{ ...css("font:600 12px var(--font-mono);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px"), color: ACCENT }}>{doc.eyebrow}</div>
       <h1 style={css("font:600 44px/1.05 var(--font-hanken);letter-spacing:-0.04em;margin:0 0 16px")}>{doc.title}</h1>
       <p style={css("font:400 18px/1.55 var(--font-hanken);color:#5C5C66;margin:0 0 14px;max-width:680px;text-wrap:pretty")}>{doc.subtitle}</p>
