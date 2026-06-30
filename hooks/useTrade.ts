@@ -13,10 +13,10 @@ import { useApp } from "@/lib/store";
  *     p_kind: 'buy',            // 'buy' | 'swap'
  *     p_pay_asset: 'USDC',      // 'USDC' | 'ETH' | 'BTC' | 'EUR' | 'USD'
  *     p_pay_amount: 500,
- *     p_price_usd: price,       // APEN/USD from useApenPrice()
+ *     p_price_usd: price,       // OPEN/USD from useOpenPrice()
  *   });
  *   // execute_trade validates the balance, debits the pay asset,
- *   // credits APEN and writes the transaction in a single DB transaction.
+ *   // credits OPEN and writes the transaction in a single DB transaction.
  *
  * Card payments: do NOT process cards yourself. Open the Transak/MoonPay
  * widget; on completion their webhook (a Supabase Edge Function / route

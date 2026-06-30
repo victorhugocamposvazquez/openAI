@@ -25,8 +25,8 @@ export default function Market() {
   const stats = [
     { label: "Cap. de mercado", value: fmtUSD(cap) },
     { label: "Volumen 24h", value: "$182.4M" },
-    { label: "Suministro circulante", value: "850M APEN" },
-    { label: "Suministro total", value: "5,000M APEN" },
+    { label: "Suministro circulante", value: "850M OPEN" },
+    { label: "Suministro total", value: "5,000M OPEN" },
     { label: "Máximo histórico", value: fmtUSD(cmax) },
     { label: "Recaudado en preventa", value: "$214M" },
   ];
@@ -37,7 +37,7 @@ export default function Market() {
         <div>
           <div style={css("display:flex;align-items:center;gap:10px;margin-bottom:8px")}>
             <span style={css("width:30px;height:30px;border-radius:8px;background:#0D0D0D;display:flex;align-items:center;justify-content:center")}><svg width="13" height="13" viewBox="0 0 12 12"><path d="M6 1.6 L10.4 10.4 L1.6 10.4 Z" fill="#fff" /></svg></span>
-            <span style={css("font:600 22px var(--font-hanken);letter-spacing:-0.02em")}>APEN <span style={css("color:#9A9AA0;font-weight:400")}>/ USD</span></span>
+            <span style={css("font:600 22px var(--font-hanken);letter-spacing:-0.02em")}>OPEN <span style={css("color:#9A9AA0;font-weight:400")}>/ USD</span></span>
           </div>
           <div style={css("display:flex;align-items:baseline;gap:12px")}>
             <span style={css("font:600 44px var(--font-mono);letter-spacing:-0.03em")}>{fmtUSD(price)}</span>
@@ -69,8 +69,8 @@ export default function Market() {
         </div>
         <div style={css("background:#0D0D0D;color:#fff;border-radius:20px;padding:26px")}>
           <div style={css("font:600 19px var(--font-hanken);letter-spacing:-0.02em;margin-bottom:6px")}>¿Listo para invertir?</div>
-          <p style={css("font:400 14px/1.5 var(--font-hanken);color:#B8B8BD;margin:0 0 20px")}>Compra APEN al precio de mercado o intercámbialo desde tu wallet.</p>
-          <button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken);margin-bottom:10px")}>Comprar APEN</button>
+          <p style={css("font:400 14px/1.5 var(--font-hanken);color:#B8B8BD;margin:0 0 20px")}>Compra OPEN al precio de mercado o intercámbialo desde tu wallet.</p>
+          <button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken);margin-bottom:10px")}>Comprar OPEN</button>
           <button onClick={() => router.push("/swap")} style={css("width:100%;appearance:none;cursor:pointer;background:transparent;color:#fff;border:1px solid #3A3A3A;border-radius:12px;padding:13px;font:600 15px var(--font-hanken)")}>Intercambiar</button>
         </div>
       </div>

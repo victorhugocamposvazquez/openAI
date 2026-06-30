@@ -24,7 +24,7 @@ export default function Buy() {
   const provName = app.provider === "moonpay" ? "MoonPay" : "Transak";
   const buyUsd = isCard ? payAmt * P[app.cardCur] : payAmt * P[app.payAsset];
   const buyFeeRate = isCard ? (app.provider === "moonpay" ? 0.019 : 0.015) : 0.01;
-  const buyApen = (buyUsd * (1 - buyFeeRate)) / P.APEN;
+  const buyOpen = (buyUsd * (1 - buyFeeRate)) / P.OPEN;
   const qa = isCard
     ? [100, 500, 1000, 5000, 10000, 20000]
     : app.payAsset === "ETH"
@@ -35,14 +35,14 @@ export default function Buy() {
   const payBalance = !isCard && app.connected ? fmtN(app.balances[app.payAsset] || 0, app.payAsset === "BTC" ? 4 : 2) + " " + app.payAsset : null;
   const buyInsufficient = app.connected && !isCard && payAmt > (app.balances[app.payAsset] || 0);
   const buyDisabled = app.processing || buyInsufficient;
-  const buyBtnLabel = app.processing ? "Procesando…" : buyInsufficient ? "Saldo insuficiente" : isCard ? "Continuar con " + provName : app.connected ? "Comprar APEN" : "Conectar wallet para comprar";
+  const buyBtnLabel = app.processing ? "Procesando…" : buyInsufficient ? "Saldo insuficiente" : isCard ? "Continuar con " + provName : app.connected ? "Comprar OPEN" : "Conectar wallet para comprar";
   const buyTotal = isCard ? fmtN(payAmt, 2) + " " + cardSym : fmtN(payAmt, app.payAsset === "BTC" ? 5 : 2) + " " + app.payAsset;
   const secureText = "Pago securizado vía " + provName + " · Visa, Mastercard y Amex";
 
   return (
     <main style={css("padding:48px 24px;display:flex;justify-content:center")}>
       <div style={css("width:460px;max-width:100%")}>
-        <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>Comprar APEN</h2>
+        <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>Comprar OPEN</h2>
         <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 24px")}>Con tarjeta o cripto. Liquidación instantánea.</p>
         <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:20px;padding:22px;box-shadow:0 20px 50px -30px rgba(13,13,13,0.18)")}>
           <div style={css("display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#F4F4F5;padding:4px;border-radius:12px;margin-bottom:18px")}>
@@ -125,12 +125,12 @@ export default function Buy() {
           <div style={{ ...css("border-radius:14px;padding:16px"), background: "color-mix(in srgb, var(--accent) 8%, #fff)" }}>
             <div style={css("font:500 12px var(--font-hanken);color:#8A8A94;margin-bottom:8px")}>Recibes (aprox.)</div>
             <div style={css("display:flex;align-items:center;gap:10px")}>
-              <span style={{ ...css("flex:1;font:600 30px var(--font-mono)"), color: ACCENT }}>{fmtN(buyApen, 2)}</span>
-              <span style={css("flex:none;background:#fff;border:1px solid #E6E6E8;border-radius:999px;padding:7px 14px;font:600 14px var(--font-mono)")}>APEN</span>
+              <span style={{ ...css("flex:1;font:600 30px var(--font-mono)"), color: ACCENT }}>{fmtN(buyOpen, 2)}</span>
+              <span style={css("flex:none;background:#fff;border:1px solid #E6E6E8;border-radius:999px;padding:7px 14px;font:600 14px var(--font-mono)")}>OPEN</span>
             </div>
           </div>
           <div style={css("margin-top:18px;display:flex;flex-direction:column;gap:10px")}>
-            {[["Precio", "1 APEN = " + fmtUSD(price)], ["Comisión", fmtUSD(buyUsd * buyFeeRate)], ["Total a pagar", buyTotal]].map(([l, v], i) => (
+            {[["Precio", "1 OPEN = " + fmtUSD(price)], ["Comisión", fmtUSD(buyUsd * buyFeeRate)], ["Total a pagar", buyTotal]].map(([l, v], i) => (
               <div key={i} style={css("display:flex;justify-content:space-between;font:400 13px var(--font-hanken);color:#6B6B76")}><span>{l}</span><span style={css("font-family:var(--font-mono);color:#0D0D0D")}>{v}</span></div>
             ))}
           </div>

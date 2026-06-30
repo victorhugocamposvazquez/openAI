@@ -3,7 +3,7 @@
 import { useMarket } from "@/lib/market";
 
 /**
- * Live APEN price + 24h change.
+ * Live OPEN price + 24h change.
  *
  * DEMO: reads the simulated random-walk price from the market store.
  *
@@ -13,7 +13,7 @@ import { useMarket } from "@/lib/market";
  *   // realtime: supabase.channel('ticks').on('postgres_changes',
  *   //   { event: 'INSERT', schema: 'public', table: 'price_ticks' }, ...).subscribe()
  */
-export function useApenPrice() {
+export function useOpenPrice() {
   const { price, change } = useMarket();
   return { price, change };
 }

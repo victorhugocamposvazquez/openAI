@@ -43,7 +43,7 @@ export function ProviderModal() {
   const app = useApp();
   const { price } = useMarket();
   if (!app.providerOpen) return null;
-  const P: Record<string, number> = { EUR: 1.08, USD: 1, APEN: price };
+  const P: Record<string, number> = { EUR: 1.08, USD: 1, OPEN: price };
   const amt = parseFloat(app.payAmount) || 0;
   const provName = app.provider === "moonpay" ? "MoonPay" : "Transak";
   const provColor = app.provider === "moonpay" ? "#7A4DFF" : "#1A6BF2";
@@ -51,7 +51,7 @@ export function ProviderModal() {
   const rate = app.provider === "moonpay" ? 0.019 : 0.015;
   const cardSym = app.cardCur === "EUR" ? "€" : "$";
   const usd = amt * P[app.cardCur];
-  const apen = (usd * (1 - rate)) / price;
+  const open = (usd * (1 - rate)) / price;
   const amountStr = amt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " " + cardSym;
   const dg = app.cardNumber.replace(/\D/g, "");
   const cardBrand = /^4/.test(dg) ? "VISA" : /^(5|2)/.test(dg) ? "MASTERCARD" : /^3[47]/.test(dg) ? "AMEX" : "";
@@ -71,7 +71,7 @@ export function ProviderModal() {
           <div style={css("display:flex;justify-content:space-between;align-items:center;background:#F7F7F8;border-radius:12px;padding:14px 16px;margin-bottom:18px")}>
             <div><div style={css("font:500 11px var(--font-hanken);color:#8A8A94")}>Pagas</div><div style={css("font:600 18px var(--font-mono)")}>{amountStr}</div></div>
             <span style={css("color:#C8C8CE")}>→</span>
-            <div style={css("text-align:right")}><div style={css("font:500 11px var(--font-hanken);color:#8A8A94")}>Recibes</div><div style={{ ...css("font:600 18px var(--font-mono)"), color: ACCENT }}>{apen.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} APEN</div></div>
+            <div style={css("text-align:right")}><div style={css("font:500 11px var(--font-hanken);color:#8A8A94")}>Recibes</div><div style={{ ...css("font:600 18px var(--font-mono)"), color: ACCENT }}>{open.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} OPEN</div></div>
           </div>
           <div style={css("display:flex;flex-direction:column;gap:10px")}>
             <div style={css("position:relative")}>
@@ -115,7 +115,7 @@ export function SuccessModal() {
         <div style={css("display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:20px")}>
           <span style={{ ...css("width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px"), background: "color-mix(in srgb, var(--accent) 13%, #fff)", color: ACCENT }}>✓</span>
           <div style={css("font:600 22px var(--font-hanken);letter-spacing:-0.02em;margin-bottom:4px")}>¡Operación completada!</div>
-          <div style={css("font:400 14px var(--font-hanken);color:#6B6B76")}>Has recibido <span style={css("font-family:var(--font-mono);color:#0D0D0D;font-weight:600")}>{t.apenStr} APEN</span> en tu wallet.</div>
+          <div style={css("font:400 14px var(--font-hanken);color:#6B6B76")}>Has recibido <span style={css("font-family:var(--font-mono);color:#0D0D0D;font-weight:600")}>{t.openStr} OPEN</span> en tu wallet.</div>
         </div>
         <div style={css("background:#F7F7F8;border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;margin-bottom:18px")}>
           {row("Operación", t.id, true)}

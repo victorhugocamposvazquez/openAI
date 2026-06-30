@@ -16,27 +16,27 @@ export default function Swap() {
   const fromAmt = parseFloat(app.fromAmount) || 0;
   const side = app.swapSide;
   const token = app.fromAsset;
-  const payToken = side === "toApen" ? token : "APEN";
-  const recvToken = side === "toApen" ? "APEN" : token;
-  const payDec = payToken === "BTC" ? 5 : payToken === "APEN" ? 2 : 4;
-  const recvDec = recvToken === "BTC" ? 5 : recvToken === "APEN" ? 2 : 4;
+  const payToken = side === "toOpen" ? token : "OPEN";
+  const recvToken = side === "toOpen" ? "OPEN" : token;
+  const payDec = payToken === "BTC" ? 5 : payToken === "OPEN" ? 2 : 4;
+  const recvDec = recvToken === "BTC" ? 5 : recvToken === "OPEN" ? 2 : 4;
   const swapUsd = fromAmt * P[payToken];
   const swapRecv = (swapUsd * 0.997) / P[recvToken];
   const payBal = app.balances[payToken] || 0;
   const insufficient = app.connected && fromAmt > payBal;
   const disabled = app.processing || insufficient;
-  const btnLabel = app.processing ? "Procesando…" : insufficient ? "Saldo insuficiente" : app.connected ? (side === "toApen" ? "Intercambiar" : "Vender APEN") : "Conectar wallet para intercambiar";
+  const btnLabel = app.processing ? "Procesando…" : insufficient ? "Saldo insuficiente" : app.connected ? (side === "toOpen" ? "Intercambiar" : "Vender OPEN") : "Conectar wallet para intercambiar";
   const payBalance = app.connected ? fmtN(payBal, payDec) + " " + payToken : null;
 
   return (
     <main style={css("padding:48px 24px;display:flex;justify-content:center")}>
       <div style={css("width:460px;max-width:100%")}>
         <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>Intercambiar</h2>
-        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 24px")}>Cambia los tokens de tu wallet por APEN — o vende tus APEN — al instante.</p>
+        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 24px")}>Cambia los tokens de tu wallet por OPEN — o vende tus OPEN — al instante.</p>
         <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:20px;padding:22px;box-shadow:0 20px 50px -30px rgba(13,13,13,0.18)")}>
           <div style={css("background:#F7F7F8;border-radius:14px;padding:16px")}>
             <div style={css("display:flex;justify-content:space-between;align-items:center;margin-bottom:8px")}>
-              <span style={css("font:500 12px var(--font-hanken);color:#8A8A94")}>{side === "toApen" ? "Pagas" : "Vendes"}</span>
+              <span style={css("font:500 12px var(--font-hanken);color:#8A8A94")}>{side === "toOpen" ? "Pagas" : "Vendes"}</span>
               {payBalance && (
                 <span style={css("font:500 12px var(--font-mono);color:#8A8A94")}>Saldo: {payBalance} <button onClick={app.maxFrom} style={{ ...css("appearance:none;border:none;background:none;cursor:pointer;font:600 12px var(--font-mono)"), color: ACCENT }}>MÁX</button></span>
               )}
@@ -81,7 +81,7 @@ export default function Swap() {
             </div>
           </div>
           <div style={css("margin-top:14px;display:flex;flex-direction:column;gap:10px")}>
-            {[["Tipo de cambio", "1 " + payToken + " = " + fmtN(P[payToken] / P[recvToken], recvToken === "APEN" ? 2 : 6) + " " + recvToken], ["Comisión (0.3%)", fmtUSD(swapUsd * 0.003)], ["Mínimo recibido", fmtN(swapRecv * (1 - app.slippage / 100), recvDec) + " " + recvToken]].map(([l, v], i) => (
+            {[["Tipo de cambio", "1 " + payToken + " = " + fmtN(P[payToken] / P[recvToken], recvToken === "OPEN" ? 2 : 6) + " " + recvToken], ["Comisión (0.3%)", fmtUSD(swapUsd * 0.003)], ["Mínimo recibido", fmtN(swapRecv * (1 - app.slippage / 100), recvDec) + " " + recvToken]].map(([l, v], i) => (
               <div key={i} style={css("display:flex;justify-content:space-between;font:400 13px var(--font-hanken);color:#6B6B76")}><span>{l}</span><span style={css("font-family:var(--font-mono);color:#0D0D0D")}>{v}</span></div>
             ))}
           </div>

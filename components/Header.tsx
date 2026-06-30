@@ -53,7 +53,7 @@ function PriceChip() {
   return (
     <div data-pricechip style={css("display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid #ECECEC;border-radius:999px")}>
       <span style={css("width:6px;height:6px;border-radius:50%;background:" + ACCENT)} />
-      <span style={css("font:500 12px var(--font-mono);color:#8A8A94")}>APEN</span>
+      <span style={css("font:500 12px var(--font-mono);color:#8A8A94")}>OPEN</span>
       <span style={css("font:600 13px var(--font-mono);color:#0D0D0D")}>{fmtUSD(price)}</span>
       <span style={{ ...css("font:600 12px var(--font-mono)"), color: changeColor }}>{changeStr}</span>
     </div>
@@ -96,7 +96,7 @@ export default function Header() {
         <Link href="/" prefetch style={css("text-decoration:none;display:flex;align-items:center;gap:10px")}>
           <Logo />
           <span style={css("font:700 19px var(--font-hanken);letter-spacing:-0.04em;color:#0D0D0D")}>
-            apen<span style={{ color: ACCENT }}>AI</span>
+            open<span style={{ color: ACCENT }}>AI</span>
           </span>
         </Link>
 

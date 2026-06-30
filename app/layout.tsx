@@ -12,9 +12,9 @@ const hanken = Hanken_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600"
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "apenAI — Invierte en el token APEN",
+  title: "openAI — Invierte en el token OPEN",
   description:
-    "Adquiere APEN, el token de apenAI, antes de su salida a bolsa. Concepto de diseño ficticio, sin valor real y sin afiliación con OpenAI.",
+    "Adquiere OPEN, el token de openAI, antes de su salida a bolsa. Concepto de diseño ficticio, sin valor real y sin afiliación con OpenAI.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

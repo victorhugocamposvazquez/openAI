@@ -1,8 +1,8 @@
-# apenAI — Next.js + Supabase + Vercel
+# openAI — Next.js + Supabase + Vercel
 
-Plataforma de inversión en el token **APEN**: landing, mercado con gráfico en vivo, comprar (tarjeta vía Transak/MoonPay o cripto), swap desde wallet, cartera con P&L y páginas de documentación (whitepaper, tokenomics, legal…).
+Plataforma de inversión en el token **OPEN**: landing, mercado con gráfico en vivo, comprar (tarjeta vía Transak/MoonPay o cripto), swap desde wallet, cartera con P&L y páginas de documentación (whitepaper, tokenomics, legal…).
 
-> ⚠️ **Concepto de diseño ficticio.** "apenAI" y "APEN" son inventados, sin valor real y sin afiliación con OpenAI. **No** es una oferta de inversión. No conectes rampas de pago reales ni muevas fondos reales sin entender las implicaciones legales.
+> ⚠️ **Concepto de diseño ficticio.** "openAI" y "OPEN" son inventados, sin valor real y sin afiliación con OpenAI. **No** es una oferta de inversión. No conectes rampas de pago reales ni muevas fondos reales sin entender las implicaciones legales.
 
 ---
 
@@ -44,7 +44,7 @@ lib/
   css.ts format.ts series.ts content.ts docs.ts
   supabase/client.ts server.ts
 hooks/
-  useApenPrice, useBalances, useTrade   (wrappers del store; documentan el equivalente Supabase)
+  useOpenPrice, useBalances, useTrade   (wrappers del store; documentan el equivalente Supabase)
 supabase/
   schema.sql            Tablas, RLS y RPC execute_trade
 ```
@@ -63,7 +63,7 @@ supabase/
 | `connect()` simulado | wagmi connect → firmar mensaje (SIWE) → Supabase Auth → upsert `profiles.wallet_address` |
 | `balances` en estado | tabla `balances` (RLS por `user_id`) + Realtime |
 | `buy()` / `swap()` | `supabase.rpc('execute_trade', { p_kind, p_pay_asset, p_pay_amount, p_price_usd })` |
-| pago con tarjeta (modal demo) | widget real de **Transak** / **MoonPay**; su **webhook** (Edge Function / route handler con service-role) acredita APEN llamando a `execute_trade`. Nunca proceses la tarjeta en tu dominio. |
+| pago con tarjeta (modal demo) | widget real de **Transak** / **MoonPay**; su **webhook** (Edge Function / route handler con service-role) acredita OPEN llamando a `execute_trade`. Nunca proceses la tarjeta en tu dominio. |
 | `txs` | tabla `transactions` (`order by created_at desc`) |
 
 ## Wallet real

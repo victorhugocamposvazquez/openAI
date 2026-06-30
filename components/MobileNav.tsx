@@ -60,7 +60,7 @@ export function MobileCta() {
           "pointer-events:auto;width:100%;text-decoration:none;cursor:pointer;background:#0D0D0D;color:#fff;border-radius:13px;padding:15px;font:600 16px var(--font-hanken);box-shadow:0 10px 26px -10px rgba(13,13,13,0.5);display:flex;align-items:center;justify-content:center;gap:8px"
         )}
       >
-        Comprar APEN <MobileCtaPrice />
+        Comprar OPEN <MobileCtaPrice />
       </Link>
     </div>
   );

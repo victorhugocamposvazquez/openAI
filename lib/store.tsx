@@ -5,7 +5,7 @@ import { PRICES_USD } from "./format";
 import { getMarket, startMarketTicker } from "./market";
 
 /* ──────────────────────────────────────────────────────────
-   apenAI demo store. All trading logic is simulated client-side
+   openAI demo store. All trading logic is simulated client-side
    and persisted to localStorage so the app runs with zero backend.
    See lib/supabase/* and the README for the production wiring
    (Supabase Auth + RLS + execute_trade RPC).
@@ -19,17 +19,17 @@ export type Tx = {
   time: string;
   id: string;
   date: string;
-  apenStr: string;
+  openStr: string;
   payLabel: string;
   rate: string;
   fee: string;
   isSell?: boolean;
   recvLabel?: string;
 };
-const STORAGE_KEY = "apenai_demo_v1";
+const STORAGE_KEY = "openai_demo_v1";
 
-export function prices(apen: number): Record<string, number> {
-  return { APEN: apen, ...PRICES_USD };
+export function prices(open: number): Record<string, number> {
+  return { OPEN: open, ...PRICES_USD };
 }
 
 function fmtN(n: number, d: number) {
@@ -47,7 +47,7 @@ export interface AppState {
   connected: boolean;
   address: string;
   balances: Balances;
-  apenAvg: number;
+  openAvg: number;
   txs: Tx[];
   // buy form
   buyMethod: "card" | "crypto";
@@ -63,7 +63,7 @@ export interface AppState {
   fromAsset: string;
   fromAmount: string;
   slippage: number;
-  swapSide: "toApen" | "fromApen";
+  swapSide: "toOpen" | "fromOpen";
   // ui
   tf: string;
   processing: boolean;
@@ -120,8 +120,8 @@ export const useApp = () => {
 const INITIAL: AppState = {
   connected: false,
   address: "0x7A3f…9E2b",
-  balances: { USDC: 0, ETH: 0, BTC: 0, APEN: 0 },
-  apenAvg: 0,
+  balances: { USDC: 0, ETH: 0, BTC: 0, OPEN: 0 },
+  openAvg: 0,
   txs: [],
   buyMethod: "card",
   payAsset: "USDC",
@@ -135,7 +135,7 @@ const INITIAL: AppState = {
   fromAsset: "ETH",
   fromAmount: "1",
   slippage: 0.5,
-  swapSide: "toApen",
+  swapSide: "toOpen",
   tf: "1M",
   processing: false,
   walletOpen: false,
@@ -166,7 +166,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             connected: !!d.connected,
             address: d.address || p.address,
             balances: d.balances || p.balances,
-            apenAvg: d.apenAvg || 0,
+            openAvg: d.openAvg || 0,
             txs: Array.isArray(d.txs) ? d.txs : [],
           }));
         }
@@ -183,7 +183,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           connected: next.connected,
           address: next.address,
           balances: next.balances,
-          apenAvg: next.apenAvg,
+          openAvg: next.openAvg,
           txs: next.txs,
         })
       );
@@ -206,7 +206,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           ...p,
           connected: true,
           walletOpen: false,
-          balances: { USDC: 12500, ETH: 4.2, BTC: 0.35, APEN: p.balances.APEN || 0 },
+          balances: { USDC: 12500, ETH: 4.2, BTC: 0.35, OPEN: p.balances.OPEN || 0 },
         };
         persist(next);
         return next;
@@ -219,7 +219,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {}
-    set({ connected: false, apenAvg: 0, balances: { USDC: 0, ETH: 0, BTC: 0, APEN: 0 }, txs: [] });
+    set({ connected: false, openAvg: 0, balances: { USDC: 0, ETH: 0, BTC: 0, OPEN: 0 }, txs: [] });
     toastMsg("Wallet desconectada");
   }, [set, toastMsg]);
 
@@ -248,13 +248,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const setFrom = useCallback((k: string) => set({ fromAsset: k }), [set]);
   const setFromAmount = useCallback((v: string) => set({ fromAmount: v }), [set]);
   const flipSwap = useCallback(
-    () => setS((p) => ({ ...p, swapSide: p.swapSide === "toApen" ? "fromApen" : "toApen", fromAmount: "" })),
+    () => setS((p) => ({ ...p, swapSide: p.swapSide === "toOpen" ? "fromOpen" : "toOpen", fromAmount: "" })),
     []
   );
   const setSlip = useCallback((v: number) => set({ slippage: v }), [set]);
   const maxFrom = useCallback(() => {
     const p = sref.current;
-    const pt = p.swapSide === "toApen" ? p.fromAsset : "APEN";
+    const pt = p.swapSide === "toOpen" ? p.fromAsset : "OPEN";
     set({ fromAmount: String(p.balances[pt] || 0) });
   }, [set]);
 
@@ -278,28 +278,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const finishBuy = useCallback(
-    (apenAdded: number, usdGross: number, feeUsd: number, payLabel: string, kind: string, debit: { asset: string; amount: number } | null) => {
+    (openAdded: number, usdGross: number, feeUsd: number, payLabel: string, kind: string, debit: { asset: string; amount: number } | null) => {
       const P = prices(getMarket().price);
       const tx: Tx = {
         type: kind,
-        main: "+" + fmtN(apenAdded, 2) + " APEN",
+        main: "+" + fmtN(openAdded, 2) + " OPEN",
         sub: payLabel,
         time: "ahora",
         id: "APN-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
         date: dateStr(),
-        apenStr: fmtN(apenAdded, 2),
+        openStr: fmtN(openAdded, 2),
         payLabel,
-        rate: "1 APEN = " + fmtUSD(P.APEN),
+        rate: "1 OPEN = " + fmtUSD(P.OPEN),
         fee: fmtUSD(feeUsd),
       };
       setS((p) => {
         const b = { ...p.balances };
         if (debit) b[debit.asset] = +(b[debit.asset] - debit.amount).toFixed(6);
-        const oldQty = b.APEN,
-          oldAvg = p.apenAvg;
-        b.APEN = +(b.APEN + apenAdded).toFixed(2);
-        const newAvg = oldQty + apenAdded > 0 ? (oldQty * oldAvg + usdGross) / (oldQty + apenAdded) : 0;
-        const next = { ...p, balances: b, apenAvg: newAvg, txs: [tx, ...p.txs], successTx: tx, successOpen: true, providerOpen: false };
+        const oldQty = b.OPEN,
+          oldAvg = p.openAvg;
+        b.OPEN = +(b.OPEN + openAdded).toFixed(2);
+        const newAvg = oldQty + openAdded > 0 ? (oldQty * oldAvg + usdGross) / (oldQty + openAdded) : 0;
+        const next = { ...p, balances: b, openAvg: newAvg, txs: [tx, ...p.txs], successTx: tx, successOpen: true, providerOpen: false };
         persist(next);
         return next;
       });
@@ -308,25 +308,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
 
   const finishSwapOut = useCallback(
-    (apenSpent: number, tokenAsset: string, tokenAmt: number, feeUsd: number) => {
+    (openSpent: number, tokenAsset: string, tokenAmt: number, feeUsd: number) => {
       const P = prices(getMarket().price);
       const tx: Tx = {
         type: "Venta",
         main: "+" + fmtN(tokenAmt, tokenAsset === "BTC" ? 5 : 4) + " " + tokenAsset,
-        sub: fmtN(apenSpent, 2) + " APEN → " + tokenAsset,
+        sub: fmtN(openSpent, 2) + " OPEN → " + tokenAsset,
         time: "ahora",
         id: "APN-" + Math.random().toString(36).slice(2, 8).toUpperCase(),
         date: dateStr(),
-        apenStr: fmtN(apenSpent, 2),
-        payLabel: fmtN(apenSpent, 2) + " APEN",
-        rate: "1 APEN = " + fmtUSD(P.APEN),
+        openStr: fmtN(openSpent, 2),
+        payLabel: fmtN(openSpent, 2) + " OPEN",
+        rate: "1 OPEN = " + fmtUSD(P.OPEN),
         fee: fmtUSD(feeUsd),
         isSell: true,
         recvLabel: fmtN(tokenAmt, tokenAsset === "BTC" ? 5 : 4) + " " + tokenAsset,
       };
       setS((p) => {
         const b = { ...p.balances };
-        b.APEN = +(b.APEN - apenSpent).toFixed(2);
+        b.OPEN = +(b.OPEN - openSpent).toFixed(2);
         b[tokenAsset] = +((b[tokenAsset] || 0) + tokenAmt).toFixed(6);
         const next = { ...p, balances: b, txs: [tx, ...p.txs], successTx: tx, successOpen: true };
         persist(next);
@@ -342,7 +342,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (amt <= 0) return toastMsg("Introduce un importe válido");
     if (!p.connected) {
       set({ walletOpen: true });
-      return toastMsg("Conecta una wallet para recibir tus APEN");
+      return toastMsg("Conecta una wallet para recibir tus OPEN");
     }
     set({ providerOpen: true });
   }, [set, toastMsg]);
@@ -359,9 +359,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const P = prices(getMarket().price);
       const rate = cur.provider === "moonpay" ? 0.019 : 0.015;
       const usd = amt * P[cur.cardCur];
-      const apen = (usd * (1 - rate)) / P.APEN;
+      const open = (usd * (1 - rate)) / P.OPEN;
       const prov = cur.provider === "moonpay" ? "MoonPay" : "Transak";
-      finishBuy(apen, usd, usd * rate, fmtN(amt, 2) + " " + cur.cardCur + " · " + prov, "Compra con tarjeta", null);
+      finishBuy(open, usd, usd * rate, fmtN(amt, 2) + " " + cur.cardCur + " · " + prov, "Compra con tarjeta", null);
     });
   }, [runProcessing, finishBuy, toastMsg]);
 
@@ -378,8 +378,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     runProcessing(() => {
       const cur = sref.current;
       const usd = amt * P[a];
-      const apen = (usd * 0.99) / P.APEN;
-      finishBuy(apen, usd, usd * 0.01, "con " + fmtN(amt, a === "BTC" ? 4 : 2) + " " + a, "Compra", isCrypto ? { asset: a, amount: amt } : null);
+      const open = (usd * 0.99) / P.OPEN;
+      finishBuy(open, usd, usd * 0.01, "con " + fmtN(amt, a === "BTC" ? 4 : 2) + " " + a, "Compra", isCrypto ? { asset: a, amount: amt } : null);
     });
   }, [payCard, runProcessing, finishBuy, set, toastMsg]);
 
@@ -391,13 +391,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const P = prices(getMarket().price);
     const side = p.swapSide,
       token = p.fromAsset;
-    const payToken = side === "toApen" ? token : "APEN";
+    const payToken = side === "toOpen" ? token : "OPEN";
     if ((p.balances[payToken] || 0) < amt) return toastMsg("Saldo insuficiente de " + payToken);
     runProcessing(() => {
       const usd = amt * P[payToken];
-      if (side === "toApen") {
-        const apen = (usd * 0.997) / P.APEN;
-        finishBuy(apen, usd, usd * 0.003, fmtN(amt, 4) + " " + token + " → APEN", "Intercambio", { asset: token, amount: amt });
+      if (side === "toOpen") {
+        const open = (usd * 0.997) / P.OPEN;
+        finishBuy(open, usd, usd * 0.003, fmtN(amt, 4) + " " + token + " → OPEN", "Intercambio", { asset: token, amount: amt });
       } else {
         const recv = (usd * 0.997) / P[token];
         finishSwapOut(amt, token, recv, usd * 0.003);
@@ -410,26 +410,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const t = sref.current.successTx;
     if (!t) return;
     const lines = [
-      "apenAI — Recibo de operación",
+      "openAI — Recibo de operación",
       "(concepto de diseño ficticio · sin valor real)",
       "----------------------------------------",
       "ID            " + t.id,
       "Tipo          " + t.type,
       "Fecha         " + t.date,
       "Pagado        " + t.payLabel,
-      "Recibido      " + t.apenStr + " APEN",
+      "Recibido      " + t.openStr + " OPEN",
       "Precio        " + t.rate,
       "Comisión      " + t.fee,
       "Wallet        " + sref.current.address,
       "----------------------------------------",
-      "Gracias por invertir en APEN.",
+      "Gracias por invertir en OPEN.",
     ].join("\n");
     try {
       const blob = new Blob([lines], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "apenAI-recibo-" + t.id + ".txt";
+      a.download = "openAI-recibo-" + t.id + ".txt";
       document.body.appendChild(a);
       a.click();
       a.remove();

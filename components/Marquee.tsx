@@ -9,7 +9,7 @@ export default function Marquee() {
   const { price, change } = useMarket();
   const pos = change >= 0;
   const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";
-  const tk = [...baseTk, { s: "APEN", p: fmtUSD(price), c: changeStr, up: pos }];
+  const tk = [...baseTk, { s: "OPEN", p: fmtUSD(price), c: changeStr, up: pos }];
   const items = [...tk, ...tk];
 
   return (

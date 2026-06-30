@@ -6,7 +6,7 @@
  * 2) set the env vars (see .env.example)
  *
  * Use the service-role key ONLY in trusted server contexts (e.g. the on-ramp
- * webhook handler that credits APEN after a Transak/MoonPay payment).
+ * webhook handler that credits OPEN after a Transak/MoonPay payment).
  */
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";

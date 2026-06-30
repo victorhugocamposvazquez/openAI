@@ -7,7 +7,7 @@ import { useApp, prices } from "@/lib/store";
 import { useMarket } from "@/lib/market";
 import { assetMeta } from "@/lib/content";
 
-const ORDER = ["APEN", "ETH", "BTC", "USDC"];
+const ORDER = ["OPEN", "ETH", "BTC", "USDC"];
 
 export default function Portfolio() {
   const app = useApp();
@@ -19,7 +19,7 @@ export default function Portfolio() {
         <div style={css("display:flex;flex-direction:column;align-items:center;text-align:center;padding:80px 24px")}>
           <span style={css("width:64px;height:64px;border-radius:18px;background:#F4F4F5;display:flex;align-items:center;justify-content:center;margin-bottom:22px")}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8A8A94" strokeWidth="1.8"><rect x="3" y="6" width="18" height="13" rx="3" /><path d="M16 12h3" /></svg></span>
           <h2 style={css("font:600 26px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 8px")}>Conecta tu wallet</h2>
-          <p style={css("font:400 16px var(--font-hanken);color:#6B6B76;margin:0 0 24px;max-width:380px")}>Conéctala para ver tus holdings de APEN, el valor de tu cartera y tu historial.</p>
+          <p style={css("font:400 16px var(--font-hanken);color:#6B6B76;margin:0 0 24px;max-width:380px")}>Conéctala para ver tus holdings de OPEN, el valor de tu cartera y tu historial.</p>
           <button onClick={app.openWallet} style={css("appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:14px 28px;font:600 16px var(--font-hanken)")}>Conectar wallet</button>
         </div>
       </main>
@@ -33,18 +33,18 @@ export default function Portfolio() {
   const changeColor = pos ? ACCENT : "#D14343";
   let total = 0;
   ORDER.forEach((k) => (total += (app.balances[k] || 0) * P[k]));
-  const apenQty = app.balances.APEN || 0;
-  const apenVal = apenQty * P.APEN;
-  const apenCost = apenQty * app.apenAvg;
-  const pnl = apenVal - apenCost;
-  const pnlPct = apenCost > 0 ? (pnl / apenCost) * 100 : 0;
+  const openQty = app.balances.OPEN || 0;
+  const openVal = openQty * P.OPEN;
+  const openCost = openQty * app.openAvg;
+  const pnl = openVal - openCost;
+  const pnlPct = openCost > 0 ? (pnl / openCost) * 100 : 0;
   const pnlPos = pnl >= 0;
   const pnlColor = pnlPos ? ACCENT : "#D14343";
-  const hasApen = apenQty > 0 && app.apenAvg > 0;
+  const hasOpen = openQty > 0 && app.openAvg > 0;
   const holdings = ORDER.filter((k) => (app.balances[k] || 0) > 0).map((k) => {
     const val = app.balances[k] * P[k];
     const pct = total > 0 ? (val / total) * 100 : 0;
-    const showPnl = k === "APEN" && app.apenAvg > 0;
+    const showPnl = k === "OPEN" && app.openAvg > 0;
     return {
       ticker: k, name: assetMeta[k].name, color: assetMeta[k].color, sym: assetMeta[k].sym,
       amount: fmtN(app.balances[k], k === "BTC" ? 4 : 2) + " " + k,
@@ -64,14 +64,14 @@ export default function Portfolio() {
           </div>
           <div style={css("font:500 13px var(--font-hanken);color:#8A8A94")}>Valor total</div>
           <div style={css("display:flex;align-items:baseline;gap:12px")}><span style={css("font:600 42px var(--font-mono);letter-spacing:-0.03em")}>{fmtUSD(total)}</span><span style={{ ...css("font:600 16px var(--font-mono)"), color: changeColor }}>{changeStr}</span></div>
-          {hasApen && (
+          {hasOpen && (
             <div style={css("display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap")}>
               <span style={css("display:inline-flex;align-items:center;gap:7px;background:#F7F7F8;border-radius:999px;padding:6px 12px")}>
-                <span style={css("font:500 12px var(--font-hanken);color:#8A8A94")}>Rendimiento APEN</span>
+                <span style={css("font:500 12px var(--font-hanken);color:#8A8A94")}>Rendimiento OPEN</span>
                 <span style={{ ...css("font:600 13px var(--font-mono)"), color: pnlColor }}>{(pnlPos ? "+" : "") + fmtUSD(pnl)}</span>
                 <span style={{ ...css("font:600 12px var(--font-mono)"), color: pnlColor }}>{(pnlPos ? "+" : "") + pnlPct.toFixed(2) + "%"}</span>
               </span>
-              <span style={css("font:400 12px var(--font-hanken);color:#A8A8AE")}>Invertido {fmtUSD(apenCost)}</span>
+              <span style={css("font:400 12px var(--font-hanken);color:#A8A8AE")}>Invertido {fmtUSD(openCost)}</span>
             </div>
           )}
         </div>
@@ -110,7 +110,7 @@ export default function Portfolio() {
               </div>
             ))
           ) : (
-            <div style={css("padding:48px 22px;text-align:center;font:400 14px var(--font-hanken);color:#A8A8AE")}>Aún no hay movimientos.<br />Compra o intercambia APEN para empezar.</div>
+            <div style={css("padding:48px 22px;text-align:center;font:400 14px var(--font-hanken);color:#A8A8AE")}>Aún no hay movimientos.<br />Compra o intercambia OPEN para empezar.</div>
           )}
         </div>
       </div>

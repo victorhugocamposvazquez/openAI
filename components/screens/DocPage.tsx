@@ -44,11 +44,11 @@ export default function DocPage({ doc }: { doc: Doc }) {
 
       <div style={css("margin-top:48px;background:#F7F7F8;border-radius:18px;padding:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap")}>
         <div>
-          <div style={css("font:600 18px var(--font-hanken);letter-spacing:-0.02em;margin-bottom:4px")}>¿Listo para invertir en APEN?</div>
+          <div style={css("font:600 18px var(--font-hanken);letter-spacing:-0.02em;margin-bottom:4px")}>¿Listo para invertir en OPEN?</div>
           <div style={css("font:400 14px var(--font-hanken);color:#6B6B76")}>Compra con tarjeta o cripto, o intercámbialo desde tu wallet.</div>
         </div>
         <div style={css("display:flex;gap:10px")}>
-          <button onClick={() => router.push("/comprar")} style={css("appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:13px 22px;font:600 15px var(--font-hanken)")}>Comprar APEN</button>
+          <button onClick={() => router.push("/comprar")} style={css("appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:13px 22px;font:600 15px var(--font-hanken)")}>Comprar OPEN</button>
           <button onClick={() => router.push("/mercado")} style={css("appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #DADADD;border-radius:12px;padding:13px 22px;font:600 15px var(--font-hanken)")}>Ver gráfico</button>
         </div>
       </div>

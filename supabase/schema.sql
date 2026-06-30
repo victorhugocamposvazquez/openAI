@@ -1,7 +1,7 @@
 -- ============================================================
--- apenAI — Supabase schema (Postgres)
+-- openAI — Supabase schema (Postgres)
 -- Run in Supabase SQL editor, or via `supabase db push` with migrations.
--- Demo/concept project: APEN is a FICTIONAL token. No real funds move.
+-- Demo/concept project: OPEN is a FICTIONAL token. No real funds move.
 -- ============================================================
 
 -- Extensions ---------------------------------------------------
@@ -18,13 +18,13 @@ create table if not exists public.profiles (
 );
 
 -- ============================================================
--- balances : a user's holdings per asset (APEN, ETH, BTC, USDC)
+-- balances : a user's holdings per asset (OPEN, ETH, BTC, USDC)
 -- amount stored as numeric to avoid float drift on money.
 -- ============================================================
 create table if not exists public.balances (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references public.profiles(id) on delete cascade,
-  asset       text not null check (asset in ('APEN','ETH','BTC','USDC')),
+  asset       text not null check (asset in ('OPEN','ETH','BTC','USDC')),
   amount      numeric(38,8) not null default 0,
   updated_at  timestamptz not null default now(),
   unique (user_id, asset)
@@ -41,15 +41,15 @@ create table if not exists public.transactions (
   kind         tx_kind not null,
   pay_asset    text not null,           -- e.g. 'USDC', 'EUR', 'ETH'
   pay_amount   numeric(38,8) not null,
-  apen_amount  numeric(38,8) not null,  -- APEN received
-  price_usd    numeric(20,8) not null,  -- APEN/USD at execution
+  open_amount  numeric(38,8) not null,  -- OPEN received
+  price_usd    numeric(20,8) not null,  -- OPEN/USD at execution
   fee_usd      numeric(20,8) not null default 0,
   created_at   timestamptz not null default now()
 );
 create index if not exists transactions_user_idx on public.transactions(user_id, created_at desc);
 
 -- ============================================================
--- price_ticks : APEN/USD price history that feeds the chart.
+-- price_ticks : OPEN/USD price history that feeds the chart.
 -- Populate via a scheduled function / cron, or a market data feed.
 -- ============================================================
 create table if not exists public.price_ticks (
@@ -104,7 +104,7 @@ declare
   v_asset_usd numeric;
   v_gross_usd numeric;
   v_fee_usd   numeric;
-  v_apen      numeric;
+  v_open      numeric;
   v_bal       numeric;
   v_tx        public.transactions;
 begin
@@ -120,7 +120,7 @@ begin
 
   v_gross_usd := p_pay_amount * v_asset_usd;
   v_fee_usd   := v_gross_usd * v_fee_bps / 10000;
-  v_apen      := (v_gross_usd - v_fee_usd) / p_price_usd;
+  v_open      := (v_gross_usd - v_fee_usd) / p_price_usd;
 
   -- Debit the pay asset for crypto swaps/buys (skip for fiat on-ramp)
   if p_pay_asset in ('ETH','BTC','USDC') then
@@ -131,13 +131,13 @@ begin
       where user_id = v_user and asset = p_pay_asset;
   end if;
 
-  -- Credit APEN
+  -- Credit OPEN
   insert into public.balances (user_id, asset, amount)
-    values (v_user, 'APEN', v_apen)
+    values (v_user, 'OPEN', v_open)
     on conflict (user_id, asset) do update set amount = public.balances.amount + excluded.amount, updated_at = now();
 
-  insert into public.transactions (user_id, kind, pay_asset, pay_amount, apen_amount, price_usd, fee_usd)
-    values (v_user, p_kind, p_pay_asset, p_pay_amount, v_apen, p_price_usd, v_fee_usd)
+  insert into public.transactions (user_id, kind, pay_asset, pay_amount, open_amount, price_usd, fee_usd)
+    values (v_user, p_kind, p_pay_asset, p_pay_amount, v_open, p_price_usd, v_fee_usd)
     returning * into v_tx;
 
   return v_tx;

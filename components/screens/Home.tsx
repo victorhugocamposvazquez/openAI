@@ -59,7 +59,7 @@ function Activity() {
           <div style={css("display:flex;align-items:center;gap:8px")}>
             <span style={css("width:7px;height:7px;border-radius:50%;background:" + ACCENT)} />
             <span style={css("font:600 13px var(--font-hanken);color:#0D0D0D")}>Actividad de la red</span>
-            <span style={css("font:400 12px var(--font-hanken);color:#9A9AA0")}>· compras y ventas de APEN en tiempo real</span>
+            <span style={css("font:400 12px var(--font-hanken);color:#9A9AA0")}>· compras y ventas de OPEN en tiempo real</span>
           </div>
           <span style={css("font:500 11px var(--font-mono);color:#A8A8AE")}>en vivo</span>
         </div>
@@ -67,7 +67,7 @@ function Activity() {
           <div key={a.id} style={css("display:flex;align-items:center;gap:12px;padding:9px 14px;border-top:1px solid #F4F4F5")}>
             <span style={css("flex:none;width:28px;height:28px;border-radius:8px;background:#F4F4F5;display:flex;align-items:center;justify-content:center;font:600 11px var(--font-mono);color:#8A8A94")}>{a.action === "compró" ? "↗" : "⇄"}</span>
             <span style={css("flex:1;font:400 13px var(--font-hanken);color:#5C5C66")}>
-              <span style={css("font-family:var(--font-mono);color:#0D0D0D")}>{a.addr}</span> {a.action} {a.amt} APEN
+              <span style={css("font-family:var(--font-mono);color:#0D0D0D")}>{a.addr}</span> {a.action} {a.amt} OPEN
             </span>
             <span style={css("font:400 11px var(--font-mono);color:#A8A8AE")}>{relTime(a.ts)}</span>
           </div>
@@ -98,14 +98,14 @@ function Donut() {
             </svg>
             <div style={css("position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center")}>
               <span style={css("font:600 24px var(--font-mono);color:#fff;letter-spacing:-0.02em")}>5,000M</span>
-              <span style={css("font:500 11px var(--font-mono);color:#8A8A94;text-transform:uppercase;letter-spacing:0.06em")}>APEN total</span>
+              <span style={css("font:500 11px var(--font-mono);color:#8A8A94;text-transform:uppercase;letter-spacing:0.06em")}>OPEN total</span>
             </div>
           </div>
         </div>
         <div>
           <div style={{ ...css("font:600 13px var(--font-mono);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px"), color: ACCENT }}>Tokenomics</div>
           <h2 style={css("font:600 34px var(--font-hanken);letter-spacing:-0.035em;margin:0 0 14px;color:#fff")}>Un suministro pensado para revalorizarse.</h2>
-          <p style={css("font:400 16px/1.55 var(--font-hanken);color:#B8B8BD;margin:0 0 22px;max-width:460px")}>Suministro fijo de 5.000M APEN. El equipo queda bloqueado 3 años y una parte del suministro se destina a la recompra continua financiada por el uso del ecosistema.</p>
+          <p style={css("font:400 16px/1.55 var(--font-hanken);color:#B8B8BD;margin:0 0 22px;max-width:460px")}>Suministro fijo de 5.000M OPEN. El equipo queda bloqueado 3 años y una parte del suministro se destina a la recompra continua financiada por el uso del ecosistema.</p>
           <div style={css("display:flex;flex-direction:column;gap:10px;margin-bottom:22px")}>
             {segs.map((d, i) => (
               <div key={i} style={css("display:flex;align-items:center;gap:12px")}>
@@ -117,7 +117,7 @@ function Donut() {
           </div>
           <div style={css("display:inline-flex;align-items:center;gap:10px;background:#1A1A1A;border:1px solid #2A2A2A;border-radius:12px;padding:12px 16px")}>
             <span style={{ ...css("font:600 22px var(--font-mono)"), color: ACCENT }}>30%</span>
-            <span style={css("font:400 13px/1.4 var(--font-hanken);color:#B8B8BD;max-width:240px")}>de las comisiones del ecosistema se destinan a recomprar y quemar APEN</span>
+            <span style={css("font:400 13px/1.4 var(--font-hanken);color:#B8B8BD;max-width:240px")}>de las comisiones del ecosistema se destinan a recomprar y quemar OPEN</span>
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function Home() {
   const changeColor = pos ? ACCENT : "#D14343";
   const cap = price * SUPPLY;
   const heroStats = [
-    { value: fmtUSD(price), label: "Precio APEN" },
+    { value: fmtUSD(price), label: "Precio OPEN" },
     { value: fmtUSD(cap), label: "Cap. de mercado" },
     { value: "$214M", label: "Recaudado en preventa" },
     { value: "48,920", label: "Holders" },
@@ -187,10 +187,10 @@ export default function Home() {
                 <span style={css("font:600 12px var(--font-mono);letter-spacing:0.03em;color:#6B6B76;text-transform:uppercase")}>OPI prevista · sept 2027</span>
               </span>
             </div>
-            <h1 data-h1 style={css("font:600 64px/1.0 var(--font-hanken);letter-spacing:-0.045em;margin:0 0 22px;max-width:600px")}>Adquiere APEN, el token de apenAI.</h1>
-            <p style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 32px;text-wrap:pretty")}>Hazte con el token antes de su salida a bolsa, prevista para septiembre de 2027. Compra APEN con tarjeta o cripto, o intercámbialo desde tu wallet. Sin custodia y con liquidez on-chain.</p>
+            <h1 data-h1 style={css("font:600 64px/1.0 var(--font-hanken);letter-spacing:-0.045em;margin:0 0 22px;max-width:600px")}>Adquiere OPEN, el token de openAI.</h1>
+            <p style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 32px;text-wrap:pretty")}>Hazte con el token antes de su salida a bolsa, prevista para septiembre de 2027. Compra OPEN con tarjeta o cripto, o intercámbialo desde tu wallet. Sin custodia y con liquidez on-chain.</p>
             <div style={css("display:flex;gap:12px;flex-wrap:wrap")}>
-              <Hov as="button" onClick={() => router.push("/comprar")} style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="background:#000">Comprar APEN</Hov>
+              <Hov as="button" onClick={() => router.push("/comprar")} style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="background:#000">Comprar OPEN</Hov>
               <Hov as="button" onClick={() => router.push("/swap")} style="appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #DADADD;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="border-color:#0D0D0D">Intercambiar desde wallet</Hov>
             </div>
             <div style={css("display:flex;align-items:center;gap:18px;margin-top:28px;flex-wrap:wrap")}>
@@ -202,7 +202,7 @@ export default function Home() {
           <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:24px;padding:26px;box-shadow:0 24px 60px -28px rgba(13,13,13,0.18)")}>
             <div style={css("display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px")}>
               <div>
-                <div style={css("font:500 13px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>APEN / USD</div>
+                <div style={css("font:500 13px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>OPEN / USD</div>
                 <div style={css("display:flex;align-items:baseline;gap:10px")}>
                   <span style={css("font:600 38px var(--font-mono);letter-spacing:-0.02em")}>{fmtUSD(price)}</span>
                   <span style={{ ...css("font:600 15px var(--font-mono)"), color: changeColor }}>{changeStr}</span>
@@ -235,9 +235,9 @@ export default function Home() {
 
       {/* token explanation + value accrual + hub */}
       <section style={css("max-width:1200px;margin:0 auto;padding:48px 24px")}>
-        <h2 style={css("font:600 38px var(--font-hanken);letter-spacing:-0.035em;margin:0 0 16px;max-width:680px")}>Un token. Todo el ecosistema apenAI.</h2>
+        <h2 style={css("font:600 38px var(--font-hanken);letter-spacing:-0.035em;margin:0 0 16px;max-width:680px")}>Un token. Todo el ecosistema openAI.</h2>
         <div data-2col style={css("display:grid;grid-template-columns:1.05fr 0.95fr;gap:40px;align-items:start;margin-bottom:40px")}>
-          <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;margin:0;text-wrap:pretty")}>APEN es un <strong style={css("color:#0D0D0D;font-weight:600")}>token cripto vinculado a las acciones de apenAI en bolsa</strong>: su valor sigue al de la compañía. Adquirirlo es entrar hoy, on-chain y sin intermediarios, en una empresa en plena expansión — con cada vez más usuarios, productos e ingresos — antes de su salida a bolsa.</p>
+          <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;margin:0;text-wrap:pretty")}>OPEN es un <strong style={css("color:#0D0D0D;font-weight:600")}>token cripto vinculado a las acciones de openAI en bolsa</strong>: su valor sigue al de la compañía. Adquirirlo es entrar hoy, on-chain y sin intermediarios, en una empresa en plena expansión — con cada vez más usuarios, productos e ingresos — antes de su salida a bolsa.</p>
           <div style={css("display:flex;flex-direction:column;gap:12px")}>
             {tokenWhy.map((w, i) => (
               <div key={i} style={css("display:flex;gap:14px;align-items:flex-start;background:#F7F7F8;border-radius:14px;padding:16px 18px")}>
@@ -249,7 +249,7 @@ export default function Home() {
         </div>
         <div style={{ ...css("font:600 11px var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px"), color: ACCENT }}>Value accrual</div>
         <h3 style={css("font:600 27px var(--font-hanken);letter-spacing:-0.025em;margin:0 0 16px;max-width:700px")}>Un activo con respaldo: ingresos recurrentes y oferta decreciente.</h3>
-        <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;max-width:700px;margin:0 0 24px;text-wrap:pretty")}>El valor de APEN se apoya en dos fundamentos. Está <strong style={css("color:#0D0D0D;font-weight:600")}>vinculado a las acciones de apenAI en bolsa</strong>, por lo que acompaña la valoración de la compañía; y una parte de los ingresos por comisiones de cada producto se destina a <strong style={css("color:#0D0D0D;font-weight:600")}>recomprar y retirar APEN de circulación</strong>. A mayor adopción, mayor demanda recurrente sobre una oferta que se contrae de forma programada.</p>
+        <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;max-width:700px;margin:0 0 24px;text-wrap:pretty")}>El valor de OPEN se apoya en dos fundamentos. Está <strong style={css("color:#0D0D0D;font-weight:600")}>vinculado a las acciones de openAI en bolsa</strong>, por lo que acompaña la valoración de la compañía; y una parte de los ingresos por comisiones de cada producto se destina a <strong style={css("color:#0D0D0D;font-weight:600")}>recomprar y retirar OPEN de circulación</strong>. A mayor adopción, mayor demanda recurrente sobre una oferta que se contrae de forma programada.</p>
         <div style={css("display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:18px")}>
           {["Adopción del ecosistema", "Ingresos por comisiones", "Recompra programática", "Reducción de oferta"].map((t, i) => (
             <span key={i} style={css("display:inline-flex;align-items:center;gap:8px")}>
@@ -259,7 +259,7 @@ export default function Home() {
           ))}
           <span style={{ ...css("display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-hanken);border-radius:999px;padding:8px 14px"), color: ACCENT, background: "color-mix(in srgb, var(--accent) 11%, #fff)" }}>Presión de demanda neta <span style={{ fontSize: 13 }}>↗</span></span>
         </div>
-        <p style={css("font:400 13px/1.5 var(--font-hanken);color:#9A9AA0;max-width:700px;margin:0 0 32px")}>Mecanismo on-chain: una fracción de las comisiones se enruta al protocolo para recomprar y quemar APEN, reduciendo de forma verificable la oferta circulante.</p>
+        <p style={css("font:400 13px/1.5 var(--font-hanken);color:#9A9AA0;max-width:700px;margin:0 0 32px")}>Mecanismo on-chain: una fracción de las comisiones se enruta al protocolo para recomprar y quemar OPEN, reduciendo de forma verificable la oferta circulante.</p>
         <div style={css("font:600 23px var(--font-hanken);letter-spacing:-0.02em;color:#0D0D0D;margin-bottom:8px")}>Servicios vinculados al token</div>
 
         <div data-hub style={{ ...css("position:relative;width:100%;margin:18px auto 0"), maxWidth: 600, aspectRatio: "600/520" }}>
@@ -275,7 +275,7 @@ export default function Home() {
           </svg>
           <div data-hubcenter style={css("position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:132px;height:132px;border-radius:50%;background:#0D0D0D;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 14px 36px -14px rgba(13,13,13,0.5)")}>
             <span style={{ ...css("position:absolute;inset:-1px;border-radius:50%;border:2px solid var(--accent,#0E8C6A)"), animation: "hubring 2.4s ease-out infinite" }} />
-            <span style={css("font:700 26px var(--font-hanken);letter-spacing:-0.03em;color:#fff")}>APEN</span>
+            <span style={css("font:700 26px var(--font-hanken);letter-spacing:-0.03em;color:#fff")}>OPEN</span>
             <span style={css("display:flex;align-items:center;gap:5px;margin-top:3px")}><span style={css("width:5px;height:5px;border-radius:50%;background:" + ACCENT)} /><span style={css("font:600 10px var(--font-mono);letter-spacing:0.06em;color:#9A9AA0;text-transform:uppercase")}>Sincroniza</span></span>
           </div>
           {hubNodes.map((n, i) => (
@@ -321,12 +321,12 @@ export default function Home() {
             <div style={css("width:280px;height:560px;background:#0D0D0D;border-radius:42px;padding:11px;box-shadow:0 30px 70px -30px rgba(0,0,0,0.4)")}>
               <div style={css("width:100%;height:100%;background:#fff;border-radius:32px;overflow:hidden;display:flex;flex-direction:column")}>
                 <div style={css("padding:18px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F0F0F1")}>
-                  <span style={css("font:700 16px var(--font-hanken);letter-spacing:-0.04em")}>apen<span style={{ color: ACCENT }}>AI</span></span>
+                  <span style={css("font:700 16px var(--font-hanken);letter-spacing:-0.04em")}>open<span style={{ color: ACCENT }}>AI</span></span>
                   <span style={css("width:24px;height:24px;border-radius:50%;background:#F4F4F5")} />
                 </div>
                 <div style={css("padding:18px;flex:1")}>
-                  <div style={css("font:500 12px var(--font-mono);color:#8A8A94")}>Saldo APEN</div>
-                  <div style={css("font:600 30px var(--font-mono);letter-spacing:-0.02em;margin:4px 0 2px")}>{app.connected ? fmtN(app.balances.APEN, 2) : "0.00"}</div>
+                  <div style={css("font:500 12px var(--font-mono);color:#8A8A94")}>Saldo OPEN</div>
+                  <div style={css("font:600 30px var(--font-mono);letter-spacing:-0.02em;margin:4px 0 2px")}>{app.connected ? fmtN(app.balances.OPEN, 2) : "0.00"}</div>
                   <div style={{ ...css("font:600 13px var(--font-mono)"), color: ACCENT }}>{changeStr} hoy</div>
                   <div style={css("background:#F7F7F8;border-radius:14px;padding:14px;margin-top:18px")}>
                     <div style={css("font:500 12px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>Pagas con USDC</div>
@@ -334,11 +334,11 @@ export default function Home() {
                   </div>
                   <div style={css("display:flex;justify-content:center;margin:6px 0")}><span style={css("width:30px;height:30px;border-radius:50%;background:#F0F0F1;display:flex;align-items:center;justify-content:center;color:#8A8A94")}>↓</span></div>
                   <div style={{ ...css("border-radius:14px;padding:14px"), background: "color-mix(in srgb, var(--accent) 9%, #fff)" }}>
-                    <div style={css("font:500 12px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>Recibes APEN</div>
+                    <div style={css("font:500 12px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>Recibes OPEN</div>
                     <div style={{ ...css("font:600 22px var(--font-mono)"), color: ACCENT }}>{fmtN((500 * 0.99) / price, 2)}</div>
                   </div>
                 </div>
-                <div style={css("padding:0 18px 18px")}><button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;border:none;background:#0D0D0D;color:#fff;border-radius:12px;padding:13px;text-align:center;font:600 15px var(--font-hanken)")}>Comprar APEN</button></div>
+                <div style={css("padding:0 18px 18px")}><button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;border:none;background:#0D0D0D;color:#fff;border-radius:12px;padding:13px;text-align:center;font:600 15px var(--font-hanken)")}>Comprar OPEN</button></div>
               </div>
             </div>
           </div>
