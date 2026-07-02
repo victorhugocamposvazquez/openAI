@@ -51,7 +51,7 @@ export default function DocPage({ doc }: { doc: Doc }) {
             <div style={css("font:400 14px var(--font-hanken);color:#6B6B76")}>Compra con tarjeta o cripto, o intercámbialo desde tu wallet.</div>
           </div>
           <div style={css("display:flex;gap:10px")}>
-            <button onClick={() => router.push("/comprar")} style={css("appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:13px 22px;font:600 15px var(--font-hanken)")}>Comprar OPEN</button>
+            <button onClick={() => router.push("/comprar")} style={css("appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:13px 22px;font:600 15px var(--font-hanken)")}>{brandLegal.suggestedCta}</button>
             <button onClick={() => router.push("/mercado")} style={css("appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #DADADD;border-radius:12px;padding:13px 22px;font:600 15px var(--font-hanken)")}>Ver gráfico</button>
           </div>
         </div>

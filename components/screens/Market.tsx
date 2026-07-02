@@ -6,6 +6,7 @@ import { css } from "@/lib/css";
 import { fmtUSD, ACCENT } from "@/lib/format";
 import { buildSeries } from "@/lib/series";
 import { useMarket } from "@/lib/market";
+import { brandLegal } from "@/lib/brand-legal";
 import { Chart } from "../Chart";
 
 const series = buildSeries();
@@ -70,7 +71,7 @@ export default function Market() {
         <div style={css("background:#0D0D0D;color:#fff;border-radius:20px;padding:26px")}>
           <div style={css("font:600 19px var(--font-hanken);letter-spacing:-0.02em;margin-bottom:6px")}>¿Listo para invertir?</div>
           <p style={css("font:400 14px/1.5 var(--font-hanken);color:#B8B8BD;margin:0 0 20px")}>Compra OPEN al precio de mercado o intercámbialo desde tu wallet.</p>
-          <button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken);margin-bottom:10px")}>Comprar OPEN</button>
+          <button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken);margin-bottom:10px")}>{brandLegal.suggestedCta}</button>
           <button onClick={() => router.push("/swap")} style={css("width:100%;appearance:none;cursor:pointer;background:transparent;color:#fff;border:1px solid #3A3A3A;border-radius:12px;padding:13px;font:600 15px var(--font-hanken)")}>Intercambiar</button>
         </div>
       </div>

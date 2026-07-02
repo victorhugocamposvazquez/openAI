@@ -9,7 +9,7 @@ import { Hov } from "../ui";
 import { LegalConsent } from "../LegalConsent";
 import { GeoNotice } from "../GeoNotice";
 import { provDefs } from "@/lib/content";
-import { getLegalZoneText } from "@/lib/brand-legal";
+import { brandLegal, getLegalZoneText } from "@/lib/brand-legal";
 
 const segStyle = (active: boolean) =>
   "appearance:none;cursor:pointer;border:1px solid " + (active ? "#0D0D0D" : "#E6E6E8") + ";background:" + (active ? "#0D0D0D" : "#fff") + ";color:" + (active ? "#fff" : "#5C5C66") + ";border-radius:10px;padding:9px 0;font:600 13px var(--font-mono)";
@@ -40,14 +40,14 @@ export default function Buy() {
   const payBalance = !isCard && app.connected ? fmtN(app.balances[app.payAsset] || 0, app.payAsset === "BTC" ? 4 : 2) + " " + app.payAsset : null;
   const buyInsufficient = app.connected && !isCard && payAmt > (app.balances[app.payAsset] || 0);
   const buyDisabled = app.processing || buyInsufficient || !legalAccepted;
-  const buyBtnLabel = app.processing ? "Procesando…" : buyInsufficient ? "Saldo insuficiente" : isCard ? "Continuar con " + provName : app.connected ? "Comprar OPEN" : "Conectar wallet para comprar";
+  const buyBtnLabel = app.processing ? "Procesando…" : buyInsufficient ? "Saldo insuficiente" : isCard ? "Continuar con " + provName : app.connected ? brandLegal.suggestedCta : "Conectar wallet para adquirir";
   const buyTotal = isCard ? fmtN(payAmt, 2) + " " + cardSym : fmtN(payAmt, app.payAsset === "BTC" ? 5 : 2) + " " + app.payAsset;
   const secureText = "Pago securizado vía " + provName + " · Visa, Mastercard y Amex";
 
   return (
     <main style={css("padding:48px 24px;display:flex;justify-content:center")}>
       <div style={css("width:460px;max-width:100%")}>
-        <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>Comprar OPEN</h2>
+        <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>{brandLegal.suggestedCta}</h2>
         <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 8px")}>Con tarjeta o cripto. Liquidación instantánea.</p>
         <p style={css("font:400 12px/1.45 var(--font-mono);color:#A8A8AE;margin:0 0 12px")}>{getLegalZoneText("buy")}</p>
         <GeoNotice />

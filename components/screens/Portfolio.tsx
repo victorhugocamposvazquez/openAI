@@ -6,6 +6,7 @@ import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { useApp, prices } from "@/lib/store";
 import { useMarket } from "@/lib/market";
 import { assetMeta } from "@/lib/content";
+import { brandLegal } from "@/lib/brand-legal";
 
 const ORDER = ["OPEN", "ETH", "BTC", "USDC"];
 
@@ -76,7 +77,7 @@ export default function Portfolio() {
           )}
         </div>
         <div style={css("display:flex;gap:10px")}>
-          <button onClick={() => router.push("/comprar")} style={css("appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:12px 22px;font:600 15px var(--font-hanken)")}>Comprar</button>
+          <button onClick={() => router.push("/comprar")} style={css("appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:12px 22px;font:600 15px var(--font-hanken)")}>Adquirir</button>
           <button onClick={() => router.push("/swap")} style={css("appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #DADADD;border-radius:12px;padding:12px 22px;font:600 15px var(--font-hanken)")}>Swap</button>
         </div>
       </div>

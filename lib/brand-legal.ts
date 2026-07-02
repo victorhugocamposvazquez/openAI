@@ -157,7 +157,7 @@ export const brandLegal = {
   suggestedTagline:
     "Invierte en acciones reales de OpenAI, Inc. a través del token OPEN.",
 
-  suggestedCta: "Obtener OPEN",
+  suggestedCta: "Adquirir OPEN",
 
   copy: {
     heroHeadline: "Invierte en OPEN. Acciones reales de OpenAI, Inc.",

@@ -5,7 +5,7 @@ import { AppProvider } from "@/lib/store";
 import Header from "@/components/Header";
 import Marquee from "@/components/Marquee";
 import Footer from "@/components/Footer";
-import { MobileNav, MobileCta } from "@/components/MobileNav";
+import { MobileDock } from "@/components/MobileNav";
 import { WalletModal, ProviderModal, SuccessModal, Toast } from "@/components/Modals";
 import { brandLegal } from "@/lib/brand-legal";
 
@@ -27,8 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Marquee />
             {children}
             <Footer />
-            <MobileCta />
-            <MobileNav />
+            <MobileDock />
           </div>
           <WalletModal />
           <ProviderModal />

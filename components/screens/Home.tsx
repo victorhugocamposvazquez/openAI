@@ -178,10 +178,10 @@ export default function Home() {
   return (
     <main>
       {/* hero */}
-      <section style={css("max-width:1200px;margin:0 auto;padding:72px 24px 40px")}>
+      <section data-hero-section style={css("max-width:1200px;margin:0 auto;padding:72px 24px 40px")}>
         <div data-hero style={css("display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center")}>
           <div>
-            <div style={css("display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:22px")}>
+            <div data-hero-badges style={css("display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:22px")}>
               <span style={{ ...css("display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px"), background: "color-mix(in srgb, var(--accent) 11%, #fff)" }}>
                 <span style={css("width:6px;height:6px;border-radius:50%;background:" + ACCENT)} />
                 <span style={{ ...css("font:600 12px var(--font-mono);letter-spacing:0.04em;text-transform:uppercase"), color: ACCENT }}>{brandLegal.copy.heroBadge.split(" · ")[0]}</span>
@@ -191,18 +191,18 @@ export default function Home() {
               </span>
             </div>
             <h1 data-h1 style={css("font:600 64px/1.0 var(--font-hanken);letter-spacing:-0.045em;margin:0 0 22px;max-width:600px")}>{brandLegal.copy.heroHeadline}</h1>
-            <p style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 32px;text-wrap:pretty")}>{brandLegal.copy.heroSubheadline}</p>
-            <div style={css("display:flex;gap:12px;flex-wrap:wrap")}>
-              <Hov as="button" onClick={() => router.push("/comprar")} style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="background:#000">Comprar OPEN</Hov>
+            <p data-hero-sub style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 32px;text-wrap:pretty")}>{brandLegal.copy.heroSubheadline}</p>
+            <div data-hero-actions style={css("display:flex;gap:12px;flex-wrap:wrap")}>
+              <Hov as="button" onClick={() => router.push("/comprar")} style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="background:#000">{brandLegal.suggestedCta}</Hov>
               <Hov as="button" onClick={() => router.push("/swap")} style="appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #DADADD;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="border-color:#0D0D0D">Intercambiar desde wallet</Hov>
             </div>
-            <div style={css("display:flex;align-items:center;gap:18px;margin-top:28px;flex-wrap:wrap")}>
+            <div data-hero-trust style={css("display:flex;align-items:center;gap:18px;margin-top:28px;flex-wrap:wrap")}>
               <span style={css("font:500 13px var(--font-mono);color:#8A8A94")}>● Sin custodia</span>
               <span style={css("font:500 13px var(--font-mono);color:#8A8A94")}>● Liquidez on-chain</span>
               <span style={css("font:500 13px var(--font-mono);color:#8A8A94")}>● Contrato auditado</span>
             </div>
           </div>
-          <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:24px;padding:26px;box-shadow:0 24px 60px -28px rgba(13,13,13,0.18)")}>
+          <div data-hero-card style={css("background:#fff;border:1px solid #ECECEC;border-radius:24px;padding:26px;box-shadow:0 24px 60px -28px rgba(13,13,13,0.18)")}>
             <div style={css("display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px")}>
               <div>
                 <div style={css("font:500 13px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>OPEN / USD</div>
@@ -217,8 +217,8 @@ export default function Home() {
               </span>
             </div>
             <Chart series={series["1M"]} price={price} height={130} gradId="gSpark" />
-            <div style={css("display:flex;gap:10px;margin-top:18px")}>
-              <button onClick={() => router.push("/comprar")} style={css("flex:1;appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken)")}>Comprar</button>
+            <div data-hero-card-actions style={css("display:flex;gap:10px;margin-top:18px")}>
+              <button onClick={() => router.push("/comprar")} style={css("flex:1;appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken)")}>Adquirir</button>
               <button onClick={() => router.push("/mercado")} style={css("flex:1;appearance:none;cursor:pointer;background:#F4F4F5;color:#0D0D0D;border:none;border-radius:12px;padding:13px;font:600 15px var(--font-hanken)")}>Ver gráfico</button>
             </div>
           </div>
@@ -343,7 +343,7 @@ export default function Home() {
                     <div style={{ ...css("font:600 22px var(--font-mono)"), color: ACCENT }}>{fmtN((500 * 0.99) / price, 2)}</div>
                   </div>
                 </div>
-                <div style={css("padding:0 18px 18px")}><button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;border:none;background:#0D0D0D;color:#fff;border-radius:12px;padding:13px;text-align:center;font:600 15px var(--font-hanken)")}>Comprar OPEN</button></div>
+                <div style={css("padding:0 18px 18px")}><button onClick={() => router.push("/comprar")} style={css("width:100%;appearance:none;cursor:pointer;border:none;background:#0D0D0D;color:#fff;border-radius:12px;padding:13px;text-align:center;font:600 15px var(--font-hanken)")}>{brandLegal.suggestedCta}</button></div>
               </div>
             </div>
           </div>

@@ -7,7 +7,7 @@ import { ACCENT } from "@/lib/format";
 import { brandLegal } from "@/lib/brand-legal";
 
 const COLS: { title: string; links: [string, string][] }[] = [
-  { title: "Token", links: [["/comprar", "Comprar OPEN"], ["/docs/whitepaper", "Whitepaper"], ["/docs/tokenomics", "Tokenomics"]] },
+  { title: "Token", links: [["/comprar", brandLegal.suggestedCta], ["/docs/whitepaper", "Whitepaper"], ["/docs/tokenomics", "Tokenomics"]] },
   { title: "Recursos", links: [["/docs/docs", "Documentación"], ["/docs/audit", "Auditoría"], ["/docs/support", "Soporte"]] },
   { title: "Legal", links: [["/docs/terms", "Términos"], ["/docs/privacy", "Privacidad"], ["/docs/risks", brandLegal.risksDocTitle], ["/docs/affiliation", brandLegal.affiliationDocTitle], ["/docs/compliance", "Cumplimiento"]] },
 ];

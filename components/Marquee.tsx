@@ -13,7 +13,7 @@ export default function Marquee() {
   const items = [...tk, ...tk];
 
   return (
-    <div style={css("border-bottom:1px solid #F2F2F3;background:#fff;overflow:hidden;white-space:nowrap")}>
+    <div style={css("border-bottom:1px solid #F2F2F3;background:#fff;overflow:hidden;white-space:nowrap")} data-marquee>
       <div style={css("display:inline-flex;align-items:center;animation:scrollx 60s linear infinite;will-change:transform")}>
         {items.map((t, i) => (
           <span key={i} style={css("display:inline-flex;align-items:center;gap:6px;padding:7px 0")}>

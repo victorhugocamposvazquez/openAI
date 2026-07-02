@@ -27,15 +27,25 @@ button { font-family: inherit; }
 @keyframes hubring { 0% { transform: scale(1); opacity: .5; } 70%, 100% { transform: scale(1.6); opacity: 0; } }
 
 /* responsive — mirrors the design prototype's @media (max-width:860px) */
-[data-mobnav] { display: none; }
-[data-mobcta] { display: none; }
+[data-mobile-dock] { display: none; }
 [data-eco] { display: none !important; }
 
 @media (max-width: 860px) {
+  [data-header] [data-header-inner] { height: 52px !important; padding: 0 16px !important; }
+  [data-header] [data-header-wordmark] { font-size: 17px !important; }
+  [data-marquee] { display: none !important; }
   [data-nav] { display: none !important; }
   [data-pricechip] { display: none !important; }
-  [data-hero] { grid-template-columns: 1fr !important; }
-  [data-stats] { grid-template-columns: 1fr 1fr !important; }
+  [data-hero-section] { padding: 16px 16px 20px !important; }
+  [data-hero-badges] { margin-bottom: 12px !important; gap: 6px !important; }
+  [data-hero] { grid-template-columns: 1fr !important; gap: 20px !important; }
+  [data-h1] { font-size: 34px !important; line-height: 1.05 !important; margin-bottom: 12px !important; }
+  [data-hero-sub] { font-size: 16px !important; line-height: 1.5 !important; margin-bottom: 16px !important; }
+  [data-hero-actions] { display: none !important; }
+  [data-hero-trust] { margin-top: 14px !important; gap: 10px !important; font-size: 12px !important; }
+  [data-hero-card] { padding: 18px !important; border-radius: 18px !important; }
+  [data-hero-card-actions] { display: none !important; }
+  [data-stats] { grid-template-columns: 1fr 1fr !important; margin-top: 24px !important; }
   [data-hub] { max-width: 430px; }
   [data-hubcard] { min-width: 0 !important; padding: 7px 9px !important; }
   [data-hubcard] [data-hn] { font-size: 12px !important; }
@@ -44,9 +54,8 @@ button { font-family: inherit; }
   [data-hubcenter] { width: 104px !important; height: 104px !important; }
   [data-2col] { grid-template-columns: 1fr !important; }
   [data-msg] { grid-template-columns: 1fr !important; }
-  [data-mobnav] { display: grid !important; }
-  [data-mobcta] { display: block !important; }
-  [data-pad] { padding-bottom: 88px !important; }
-  [data-h1] { font-size: 40px !important; }
+  [data-mobile-dock] { display: block !important; }
+  [data-pad]:has([data-mobcta]) { padding-bottom: calc(124px + env(safe-area-inset-bottom)) !important; }
+  [data-pad]:not(:has([data-mobcta])) { padding-bottom: calc(68px + env(safe-area-inset-bottom)) !important; }
   [data-docstats] { grid-template-columns: 1fr 1fr !important; }
 }
