@@ -333,7 +333,7 @@ export const docMap: Record<string, Doc> = {
           `Hero (micro): ${brandLegal.copy.heroMicro || "—"}`,
           `Countdown OPI: ${brandLegal.copy.opiContext}`,
           `Ecosistema / equity: ${brandLegal.copy.equityMicro}`,
-          `Value accrual: ${brandLegal.navDisclaimer}`,
+          `Value accrual: ${brandLegal.navDisclaimerMarketing}`,
           `Compra / swap: ${brandLegal.affiliationNoticeSoft}`,
           `Footer legal: ${brandLegal.footerDisclaimer}`,
           `Geo: ${brandLegal.geoNotice}`,
@@ -378,7 +378,7 @@ export const docMap: Record<string, Doc> = {
       {
         h: "Quiénes somos",
         p: [
-          `${brandLegal.productBrand} es un ecosistema descentralizado e independiente. Operamos una interfaz y un token (${brandLegal.tokenTicker}) que busca dar exposición temática o económica a la valoración de ${brandLegal.referencedCompany}, sin ser filial, partner ni producto oficial de esa empresa.`,
+          `${brandLegal.productBrand} canaliza capital hacia acciones reales de ${brandLegal.referencedCompany} vía tesorería y SPV, y opera el ecosistema open* con el token ${brandLegal.tokenTicker}. Somos un protocolo independiente — no filial, partner ni producto oficial de la empresa.`,
           getAffiliationNotice(),
         ],
       },

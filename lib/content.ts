@@ -1,11 +1,21 @@
 /** Static content for the openAI Protocol demo. */
 
-import { brandLegal, treasuryMechanism } from "./brand-legal";
+import { brandLegal } from "./brand-legal";
 
-const { referencedCompany, productBrand, tokenTicker, shortDisclaimer, ecosystemDisclaimer, navDisclaimer, legalChecklist } = brandLegal;
+const {
+  referencedCompany,
+  productBrand,
+  tokenTicker,
+  affiliationNoticeSoft,
+  ecosystemDisclaimer,
+  navDisclaimer,
+  navDisclaimerMarketing,
+  legalChecklist,
+  marketingPitch,
+} = brandLegal;
 
 export const ecosystem = [
-  { name: "openChat", desc: "Asistente conversacional del ecosistema openAI Protocol. Suscripciones y consumo generan ingresos que alimentan el mecanismo de recompra de OPEN." },
+  { name: "openChat", desc: "Asistente conversacional del ecosistema openAI Protocol. Suscripciones y consumo generan ingresos que alimentan la tesorería y la recompra de OPEN." },
   { name: "openAPI", desc: "Modelos servidos vía API del protocolo. Cada millón de tokens procesados se factura; parte de la comisión recompra OPEN." },
   { name: "openImage", desc: "Generación de imágenes por difusión. El consumo por crédito alimenta el flujo de recompra del token." },
   { name: "openMotion", desc: "Generación de vídeo a partir de texto. Cargas de cómputo intensivas, facturadas por segundo renderizado." },
@@ -14,15 +24,15 @@ export const ecosystem = [
 ];
 
 export const tokenWhy = [
-  { icon: "↗", title: "Respaldado por equity real", desc: `La tesorería compra acciones reales de ${referencedCompany} vía SPV. El NAV equity alimenta el valor de ${tokenTicker}.` },
-  { icon: "◴", title: "Ingresos del ecosistema open*", desc: "openChat, openAPI y el resto de productos generan comisiones; el 30% recompra y quema OPEN." },
-  { icon: "◆", title: "Entra antes de la OPI", desc: "Te posicionas hoy, on-chain, con liquidez secundaria, sin esperar a un bróker tradicional." },
+  { icon: "↗", title: "Acciones reales en tesorería", desc: `El capital de ${tokenTicker} se destina a comprar acciones de ${referencedCompany} en mercados privados.` },
+  { icon: "◴", title: "Antes de la OPI, on-chain", desc: "Posiciónate hoy con liquidez secundaria, sin esperar a la salida a bolsa ni al bróker tradicional." },
+  { icon: "◆", title: "Ingresos del ecosistema open*", desc: "openChat, openAPI y el resto de productos generan comisiones; el 30% recompra y quema OPEN." },
 ];
 
 export const steps = [
   { n: "1", title: "Conecta tu wallet", desc: "MetaMask, Coinbase Wallet o WalletConnect en un toque." },
-  { n: "2", title: "Compra o intercambia", desc: "Con tarjeta, transferencia o cualquier token de tu wallet." },
-  { n: "3", title: "Sigue tu cartera", desc: "Valor, asignación y movimientos en tiempo real." },
+  { n: "2", title: "Compra OPEN", desc: "Con tarjeta o cripto. Tu capital entra en la tesorería del protocolo." },
+  { n: "3", title: "Sigue tu inversión", desc: "Valor, asignación y movimientos en tiempo real." },
 ];
 
 // hub nodes (OPEN in the center syncing with the 6 services)
@@ -44,18 +54,17 @@ export const hubMeta: [string, string, string][] = [
 ];
 
 export const faqDefs: [string, string][] = [
-  [`¿OPEN es lo mismo que una acción de ${referencedCompany}?`, `No. ${legalChecklist.tokenNatureParagraph}`],
-  [`¿Existe paridad 1:1 entre OPEN y acciones?`, `No. ${navDisclaimer} El NAV compuesto (equity en SPV + reservas operativas) es una referencia publicada por el protocolo; el mercado secundario on-chain fija el precio spot.`],
-  [`¿Puedo canjear OPEN por acciones de ${referencedCompany}?`, "No hay redención garantizada por acciones de OpenAI, Inc. OPEN es participación económica en la tesorería del openAI Protocol, no un certificado de depósito ni ADR."],
-  [`¿Qué es exactamente el token ${tokenTicker}?`, `${tokenTicker} es el token del ${productBrand}. ${treasuryMechanism.summary} ${treasuryMechanism.legalBoundary}`],
-  [`¿Cómo se usan mis fondos?`, `El capital de la preventa entra en la tesorería del protocolo. Una parte se destina al SPV para comprar acciones reales de ${referencedCompany} en mercados privados. Otra parte financia la operación de productos open* (APIs, cómputo, distribución). Los ingresos operativos y la revalorización del equity se consolidan en un NAV compuesto que orienta el valor de ${tokenTicker}.`],
+  [`¿Qué es ${tokenTicker} y qué hace con mi capital?`, `${marketingPitch} ${legalChecklist.tokenNatureParagraph}`],
+  [`¿Cómo se invierte en ${referencedCompany}?`, `La tesorería del protocolo destina el capital de las suscripciones a comprar acciones reales de ${referencedCompany} en mercados privados, vía un vehículo legal (SPV). Paralelamente financia la operación de productos open* cuyos ingresos refuerzan el valor del protocolo.`],
   [`¿Cómo compro ${tokenTicker}?`, "Con tarjeta (vía Transak o MoonPay), con cripto desde tu saldo, o intercambiando los tokens de tu wallet (ETH, USDC, BTC) por OPEN. Solo necesitas conectar una wallet para recibir y custodiar tus tokens."],
-  ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta ahora: te posicionas hoy, on-chain, sin esperar a la OPI de ${referencedCompany} ni a un bróker tradicional. ${brandLegal.copy.opiContext}.`],
-  [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `${tokenTicker} tiene liquidez on-chain desde el primer día: puedes intercambiarlo de vuelta por ETH, USDC u otros tokens en cualquier momento desde tu wallet, sin periodos de bloqueo para los compradores de preventa.`],
-  ["¿Quién custodia mis tokens?", `Tú. El protocolo no tiene custodia de tus fondos: los ${tokenTicker} se envían directamente a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan íntegramente en el widget del proveedor (Transak / MoonPay).`],
-  ["¿Qué comisiones tiene?", "Compra con cripto o swap: 0,3%–1%. Compra con tarjeta: 1,5% con Transak o 1,9% con MoonPay (incluye el procesamiento del pago). Todas las comisiones se muestran antes de confirmar la operación."],
-  ["¿Es esto un riesgo?", `Sí. Invertir en cripto conlleva riesgo y el valor de ${tokenTicker} puede subir o bajar. Invierte solo lo que puedas permitirte y, si lo necesitas, consulta a un asesor. ${shortDisclaimer}`],
-  [`¿Qué pasa después de la salida a bolsa?`, `Los ${tokenTicker} seguirán vinculados a la valoración de ${referencedCompany} y sincronizados con los productos del ${productBrand}. La OPI no cambia el mecanismo: el token sigue acompañando al valor de la compañía y beneficiándose del uso del ecosistema.`],
+  ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta: inviertes hoy on-chain en acciones reales de ${referencedCompany} antes de la OPI. ${brandLegal.copy.opiContext}.`],
+  [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `${tokenTicker} tiene liquidez on-chain desde el primer día: puedes intercambiarlo por ETH, USDC u otros tokens en cualquier momento desde tu wallet.`],
+  [`¿En qué se diferencia ${tokenTicker} de comprar la acción en bolsa?`, `${tokenTicker} es el token del ${productBrand}: participas en la tesorería que acumula equity de ${referencedCompany}, con liquidez on-chain y acceso antes de la OPI. ${legalChecklist.tokenNatureLegal}`],
+  [`¿Existe paridad 1:1 entre ${tokenTicker} y acciones?`, `${navDisclaimer} ${navDisclaimerMarketing}`],
+  ["¿Quién custodia mis tokens?", `Tú. El protocolo no custodia tus ${tokenTicker}: se envían a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan en el widget del proveedor (Transak / MoonPay).`],
+  ["¿Qué comisiones tiene?", "Compra con cripto o swap: 0,3%–1%. Compra con tarjeta: 1,5% con Transak o 1,9% con MoonPay. Todas las comisiones se muestran antes de confirmar."],
+  ["¿Es esto un riesgo?", `Sí. El valor de ${tokenTicker} puede subir o bajar. Invierte solo lo que puedas permitirte. ${affiliationNoticeSoft}`],
+  [`¿Qué pasa después de la OPI?`, `La tesorería seguirá vinculada a ${referencedCompany} y el ecosistema open* seguirá generando ingresos. ${tokenTicker} acompaña el valor acumulado en acciones e ingresos del protocolo.`],
 ];
 
 export const tkSegs: [string, number, string][] = [

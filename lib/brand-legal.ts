@@ -93,15 +93,25 @@ export const brandLegal = {
 
   investmentMechanism: treasuryMechanism.summary + " " + treasuryMechanism.legalBoundary,
 
+  /** Pitch de producto — tono inversión, sin disuadir. */
+  marketingPitch:
+    "OPEN es la vía on-chain del openAI Protocol: el capital de los holders se invierte en acciones reales de OpenAI, Inc. y en el ecosistema open*.",
+
   /** Aviso de afiliación — tono suave para footer y flujos de producto. */
   affiliationNoticeSoft:
-    "openAI Protocol es un ecosistema independiente. OPEN es el token del protocolo — no es una acción ni un producto oficial de OpenAI, Inc.",
+    "Con OPEN inviertes en acciones reales de OpenAI, Inc. a través del openAI Protocol — on-chain, con liquidez y antes de la OPI. Proyecto independiente de la empresa.",
+
+  affiliationLinkLabel: "Transparencia legal",
 
   /** Formulación legal completa — docs, recibos y consentimientos. */
   shortDisclaimer:
     "openAI Protocol y el token OPEN no están afiliados, patrocinados ni respaldados por OpenAI, Inc. OPEN no es una acción de OpenAI ni un producto emitido por OpenAI, Inc.",
 
-  microDisclaimer: "OPEN es el token del openAI Protocol.",
+  microDisclaimer: "OPEN canaliza capital hacia acciones reales de OpenAI, Inc.",
+
+  /** Para secciones de valor / NAV — tono producto. */
+  navDisclaimerMarketing:
+    "El valor de OPEN sigue la tesorería del protocolo: equity en OpenAI, Inc. e ingresos del ecosistema open*.",
 
   navDisclaimer:
     "El precio de mercado de OPEN puede diferir del NAV publicado. No hay paridad 1:1 con acciones ni redención garantizada.",
@@ -136,25 +146,26 @@ export const brandLegal = {
   ],
 
   suggestedTagline:
-    "Protocolo con tesorería respaldada por acciones de OpenAI, Inc. e ingresos del ecosistema open*.",
+    "Invierte en acciones reales de OpenAI, Inc. a través del token OPEN.",
+
   suggestedCta: "Obtener OPEN",
 
   copy: {
     heroHeadline: "Invierte en OPEN antes de la OPI de OpenAI, Inc.",
     heroSubheadline:
-      "El capital del protocolo financia acciones reales de OpenAI, Inc. (vía SPV) y el ecosistema open* para generar ingresos.",
+      "Tu capital compra acciones reales de OpenAI, Inc. en la tesorería del protocolo — on-chain, con liquidez y sin esperar al bróker.",
     heroMicro: "",
     heroBadge: "Preventa abierta · OPI prevista 2027",
-    opiContext: "OPI prevista · septiembre de 2027 · fecha estimada, sujeta a cambios · no garantizada",
-    equityMicro: "Acciones de OpenAI, Inc. vía SPV independiente · sin derechos de accionista.",
-    ecosystemTitle: "Un token. Todo el ecosistema openAI Protocol.",
+    opiContext: "OPI prevista · septiembre de 2027 · fecha estimada, sujeta a cambios",
+    equityMicro: "Cada OPEN alimenta la compra de acciones reales de OpenAI, Inc. en mercados privados.",
+    ecosystemTitle: "Un token que invierte en acciones reales. Todo el ecosistema open*.",
     ecosystemLead:
-      "Los fondos de los inversores se asignan a equity real de OpenAI, Inc. y a infraestructura operativa open*. Los productos generan comisiones que recompran y queman OPEN.",
-    valueTitle: "Doble motor de valor: equity + ingresos operativos",
+      "La tesorería del protocolo adquiere equity de OpenAI, Inc. y opera openChat, openAPI y el resto de productos. Más uso, más ingresos, más demanda sobre OPEN.",
+    valueTitle: "Acciones reales + ingresos del ecosistema",
     valueLead:
-      "Motor 1: acciones reales de OpenAI, Inc. en custodia del SPV del protocolo. Motor 2: ingresos recurrentes de openChat, openAPI y el resto del ecosistema. El 30% de las comisiones financia recompra y quema de OPEN.",
+      "La tesorería acumula acciones de OpenAI, Inc. mientras open* genera comisiones recurrentes. El 30% se destina a recomprar y quemar OPEN.",
     buyConsentExtra:
-      "OPEN no es una acción de OpenAI, Inc. Es participación económica en la tesorería del protocolo. El precio puede desacoplarse del NAV. Puedo perder la totalidad del capital.",
+      "Entiendo que OPEN representa participación en la tesorería del protocolo, que invierte en acciones reales de OpenAI, Inc. Invertir conlleva riesgos, incluida la pérdida total del capital.",
     receiptLegalBlock:
       "OPEN no es acción. Sin afiliación con OpenAI, Inc. No es asesoramiento de inversión.",
     emailFooter:
@@ -170,22 +181,24 @@ export const brandLegal = {
       hero: "heroMicro",
       countdown: "opiContext",
       ecosystem: "equityMicro",
-      valueAccrual: "navDisclaimer",
+      valueAccrual: "navDisclaimerMarketing",
       buy: "affiliationNoticeSoft",
       swap: "affiliationNoticeSoft",
-      docCta: "buyConsentExtra",
+      docCta: "marketingPitch",
       footer: "footerDisclaimer",
     },
     consent: {
       card:
-        "Acepto términos, privacidad y riesgos. El pago con tarjeta lo procesa Transak/MoonPay. OPEN no es acción de OpenAI, Inc.",
+        "Acepto términos, privacidad y riesgos. El pago con tarjeta lo procesa Transak/MoonPay. OPEN canaliza inversión en acciones reales vía el protocolo.",
       crypto:
-        "Acepto términos, privacidad y riesgos. Entiendo que OPEN no es acción, que opero bajo mi responsabilidad y que las transacciones on-chain son irreversibles.",
+        "Acepto términos, privacidad y riesgos. Entiendo que OPEN invierte vía la tesorería del protocolo y que las operaciones on-chain son irreversibles.",
       swap:
-        "Entiendo que OPEN no es una acción de OpenAI, Inc. y que el swap on-chain es irreversible.",
+        "Entiendo que OPEN refleja la tesorería del protocolo y que el swap on-chain es irreversible.",
     },
     tokenNatureParagraph:
-      "OPEN representa participación económica en la tesorería del openAI Protocol. El protocolo, mediante un vehículo independiente (SPV), puede mantener exposición a acciones de OpenAI, Inc. OPEN no otorga derechos de accionista. El precio de mercado puede diferir del NAV. Invertir conlleva riesgo de pérdida total.",
+      "OPEN te da participación en la tesorería del openAI Protocol, que compra y custodia acciones reales de OpenAI, Inc. y opera el ecosistema open*. Es la vía on-chain para invertir antes de la OPI, con liquidez desde el primer día.",
+    tokenNatureLegal:
+      "OPEN no otorga derechos de accionista directos sobre OpenAI, Inc. El precio de mercado puede diferir del NAV. Invertir conlleva riesgo de pérdida total.",
     preLaunch: [
       "Disclaimer en footer, compra, recibos y docs legales",
       "Doc /docs/affiliation y /docs/compliance accesibles",
@@ -228,8 +241,8 @@ export function getLegalZoneText(zone: keyof typeof brandLegal.legalChecklist.zo
   if (key === "heroMicro") return brandLegal.copy.heroMicro;
   if (key === "opiContext") return brandLegal.copy.opiContext;
   if (key === "equityMicro") return brandLegal.copy.equityMicro;
-  if (key === "navDisclaimer") return brandLegal.navDisclaimer;
-  if (key === "buyConsentExtra") return brandLegal.copy.buyConsentExtra;
+  if (key === "navDisclaimerMarketing") return brandLegal.navDisclaimerMarketing;
+  if (key === "marketingPitch") return brandLegal.marketingPitch;
   if (key === "footerDisclaimer") return brandLegal.footerDisclaimer;
   return brandLegal.shortDisclaimer;
 }

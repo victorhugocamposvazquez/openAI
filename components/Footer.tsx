@@ -44,7 +44,7 @@ function Footer() {
           <p style={css("margin:0 0 14px")}>
             {brandLegal.affiliationNoticeSoft}{" "}
             <Link href="/docs/affiliation" prefetch className="footer-link" style={css("color:#6B6B76;text-decoration:underline")}>
-              Más información
+              {brandLegal.affiliationLinkLabel}
             </Link>
           </p>
           <p style={css("margin:0 0 12px;font-family:var(--font-mono);font-size:11px;line-height:1.5")}>{brandLegal.footerDisclaimer}</p>
