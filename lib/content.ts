@@ -8,7 +8,6 @@ const {
   tokenTicker,
   affiliationNoticeSoft,
   ecosystemDisclaimer,
-  navDisclaimer,
   navDisclaimerMarketing,
   legalChecklist,
   marketingPitch,
@@ -59,11 +58,11 @@ export const faqDefs: [string, string][] = [
   [`¿Cómo compro ${tokenTicker}?`, "Con tarjeta (vía Transak o MoonPay), con cripto desde tu saldo, o intercambiando los tokens de tu wallet (ETH, USDC, BTC) por OPEN. Solo necesitas conectar una wallet para recibir y custodiar tus tokens."],
   ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta: inviertes hoy on-chain en acciones reales de ${referencedCompany} antes de la OPI. ${brandLegal.copy.opiContext}.`],
   [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `${tokenTicker} tiene liquidez on-chain desde el primer día: puedes intercambiarlo por ETH, USDC u otros tokens en cualquier momento desde tu wallet.`],
-  [`¿En qué se diferencia ${tokenTicker} de comprar la acción en bolsa?`, `${tokenTicker} es el token del ${productBrand}: participas en la tesorería que acumula equity de ${referencedCompany}, con liquidez on-chain y acceso antes de la OPI. ${legalChecklist.tokenNatureLegal}`],
-  [`¿Existe paridad 1:1 entre ${tokenTicker} y acciones?`, `${navDisclaimer} ${navDisclaimerMarketing}`],
+  [`¿En qué se diferencia ${tokenTicker} de comprar la acción en bolsa?`, `${tokenTicker} es el token del ${productBrand}: participas en la tesorería que acumula equity de ${referencedCompany}, con liquidez on-chain y acceso antes de la OPI. Ideal si buscas exposición on-chain sin esperar al bróker.`],
+  [`¿Cómo se relaciona el precio de ${tokenTicker} con las acciones?`, `${navDisclaimerMarketing} ${legalChecklist.tokenNatureLegal}`],
   ["¿Quién custodia mis tokens?", `Tú. El protocolo no custodia tus ${tokenTicker}: se envían a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan en el widget del proveedor (Transak / MoonPay).`],
   ["¿Qué comisiones tiene?", "Compra con cripto o swap: 0,3%–1%. Compra con tarjeta: 1,5% con Transak o 1,9% con MoonPay. Todas las comisiones se muestran antes de confirmar."],
-  ["¿Es esto un riesgo?", `Sí. El valor de ${tokenTicker} puede subir o bajar. Invierte solo lo que puedas permitirte. ${affiliationNoticeSoft}`],
+  ["¿Es esto un riesgo?", `Como cualquier inversión, el valor de ${tokenTicker} puede subir o bajar. Invierte solo lo que puedas permitirte. ${affiliationNoticeSoft}`],
   [`¿Qué pasa después de la OPI?`, `La tesorería seguirá vinculada a ${referencedCompany} y el ecosistema open* seguirá generando ingresos. ${tokenTicker} acompaña el valor acumulado en acciones e ingresos del protocolo.`],
 ];
 

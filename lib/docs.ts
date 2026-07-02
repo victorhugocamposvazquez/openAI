@@ -34,16 +34,16 @@ export const docMap: Record<string, Doc> = {
       { value: "2027", label: "OPI prevista" },
     ],
     sections: [
-      { h: "Resumen ejecutivo", p: [treasuryMechanism.summary, `El diseño persigue tres objetivos: acumular equity real de ${brandLegal.referencedCompany} antes de su OPI, monetizar el ecosistema de productos del ${brandLegal.productBrand}, y mantener liquidez on-chain del token OPEN sin custodia centralizada sobre los tokens del inversor.`, treasuryMechanism.legalBoundary + " Este documento no constituye una oferta de inversión ni asesoramiento financiero."] },
+      { h: "Resumen ejecutivo", p: [treasuryMechanism.summary, `El diseño persigue tres objetivos: acumular equity real de ${brandLegal.referencedCompany} antes de su OPI, monetizar el ecosistema de productos del ${brandLegal.productBrand}, y mantener liquidez on-chain del token OPEN sin custodia centralizada sobre los tokens del inversor.`, treasuryMechanism.legalBoundaryMarketing + " Este documento tiene carácter informativo y no constituye asesoramiento financiero."] },
       { h: "1. Contexto y motivación", p: ["Las empresas privadas de alto crecimiento concentran gran parte de su revalorización en las fases previas a su salida a bolsa, un periodo al que el inversor minorista rara vez tiene acceso. Cuando la compañía finalmente cotiza, buena parte de la apreciación ya se ha producido y queda reservada a inversores institucionales y rondas privadas.", `OPEN propone un flywheel on-chain: el capital de los suscriptores financia la compra de acciones reales de ${brandLegal.referencedCompany} y la operación de productos open* que generan ingresos recurrentes. Esos flujos se consolidan en un NAV compuesto que orienta el valor de mercado del token.`] },
-      { h: "2. El token OPEN", p: ["OPEN es un token fungible conforme al estándar ERC-20, desplegado sobre una red EVM con costes de transacción reducidos. El suministro total es fijo en 5.000 millones de unidades; el contrato no incluye función de acuñación adicional, por lo que la oferta solo puede mantenerse o decrecer.", treasuryMechanism.legalBoundary, "El valor de OPEN deriva del NAV compuesto de la tesorería del protocolo (equity en SPV + reservas operativas) y del programa de recompra descrito en este documento, no de derechos societarios directos sobre OpenAI, Inc."] },
+      { h: "2. El token OPEN", p: ["OPEN es un token fungible conforme al estándar ERC-20, desplegado sobre una red EVM con costes de transacción reducidos. El suministro total es fijo en 5.000 millones de unidades; el contrato no incluye función de acuñación adicional, por lo que la oferta solo puede mantenerse o decrecer.", brandLegal.legalChecklist.tokenNatureParagraph, treasuryMechanism.legalBoundaryMarketing] },
       {
         h: "3. Mecanismo de tesorería — capital → acciones reales",
         p: [
           treasuryMechanism.phases[0].technical,
           treasuryMechanism.phases[1].technical,
           `Política de asignación (orientativa, sujeta a gobernanza): ${treasuryMechanism.allocationPolicy.equityTarget} ${treasuryMechanism.allocationPolicy.operatingReserve} ${treasuryMechanism.allocationPolicy.liquidityReserve}`,
-          "Las attestations del SPV (holding, custodio, fecha de valoración) se publican periódicamente y alimentan el módulo NAV Oracle. La paridad OPEN ↔ acción no es 1:1: el mercado secundario on-chain puede desacoplar el precio spot del NAV publicado.",
+          "Las attestations del SPV (holding, custodio, fecha de valoración) se publican periódicamente y alimentan el módulo NAV Oracle. El precio de mercado de OPEN sigue el NAV compuesto y puede variar respecto a la valoración unitaria del equity en el SPV.",
         ],
       },
       {
@@ -71,7 +71,7 @@ export const docMap: Record<string, Doc> = {
       { h: "12. Seguridad", p: ["Los contratos han sido revisados por auditores independientes, sin hallazgos críticos ni de severidad alta pendientes. Existe además un programa de recompensas por la divulgación responsable de vulnerabilidades.", `El protocolo es self-custody respecto a los tokens OPEN del inversor: ${brandLegal.productBrand} no controla las claves de tu wallet. La custodia del equity off-chain recae en el SPV designado; su holding se audita periódicamente.`] },
       { h: "13. Hoja de ruta", p: ["2026 — Preventa pública, despliegue de liquidez on-chain, primera adquisición de equity vía SPV y activación del mecanismo de recompra.", `2027 — Salida a bolsa de ${brandLegal.referencedCompany}, integración de cotización oficial en NAV Oracle y escalado de la capa operativa open*.`, "2028 y posteriores — Transición de gobernanza a holders y ampliación de productos integrados en el Operating Revenue Pool."] },
       { h: "14. Marcas de terceros", p: [brandLegal.ecosystemDisclaimer, "Las referencias a productos de OpenAI, Inc. (ChatGPT, DALL·E, Sora, Whisper, Codex) en este documento son comparativas o descriptivas del activo subyacente, no implican licencia ni afiliación."] },
-      { h: "15. Aviso legal", p: [`Este documento tiene carácter informativo. ${brandLegal.productBrand} y el token OPEN son operados de forma independiente de ${brandLegal.referencedCompany}. ${brandLegal.investmentMechanism}`, brandLegal.shortDisclaimer, "Nada de lo aquí expuesto constituye una oferta de inversión ni asesoramiento financiero."] },
+      { h: "15. Aviso legal", p: [`Este documento tiene carácter informativo. ${brandLegal.investmentMechanism}`, brandLegal.shortDisclaimer, "Nada de lo aquí expuesto constituye una oferta de inversión ni asesoramiento financiero."] },
     ],
   },
   tokenomics: {
@@ -154,10 +154,9 @@ export const docMap: Record<string, Doc> = {
         h: "2. Relación con OpenAI, Inc. y el token OPEN",
         id: "openai-inc",
         p: [
-          `${brandLegal.referencedCompany} es la empresa privada a la que el protocolo puede buscar dar exposición económica mediante vehículos de inversión regulados o mecanismos on-chain descritos en la documentación.`,
-          `El token ${brandLegal.tokenTicker} es un activo digital del protocolo ${brandLegal.productBrand}. ${brandLegal.tokenTicker} no es una acción, participación social ni valor negociable emitido por ${brandLegal.referencedCompany}. No confiere derechos de voto, dividendos ni propiedad sobre ${brandLegal.referencedCompany}.`,
-          brandLegal.investmentMechanism,
-          "Las marcas OpenAI, ChatGPT y logotipos relacionados son propiedad de sus titulares. Su uso en este sitio es referencial o descriptivo, no implica licencia ni afiliación.",
+          `${brandLegal.referencedCompany} es el activo subyacente al que el protocolo destina capital vía tesorería y SPV, según se describe en la documentación.`,
+          brandLegal.legalChecklist.tokenNatureParagraph + " " + treasuryMechanism.legalBoundary,
+          "Las marcas OpenAI, ChatGPT y logotipos relacionados son propiedad de sus titulares. Su uso en este sitio es referencial o descriptivo.",
         ],
       },
       {
@@ -189,8 +188,8 @@ export const docMap: Record<string, Doc> = {
       {
         h: "6. Riesgos",
         p: [
-          "El valor de OPEN puede fluctuar de forma significativa. Puedes perder parte o la totalidad del importe invertido.",
-          "Consulta la Advertencia de riesgos antes de operar. Nada en esta web constituye asesoramiento financiero, fiscal o legal.",
+          "El valor de OPEN puede fluctuar. Invierte solo lo que puedas permitirte perder.",
+          `Consulta la ${brandLegal.risksDocTitle} antes de operar. Nada en esta web constituye asesoramiento financiero, fiscal o legal.`,
         ],
       },
       {
@@ -253,9 +252,9 @@ export const docMap: Record<string, Doc> = {
   },
   risks: {
     eyebrow: "Legal",
-    title: "Advertencia de riesgos",
+    title: brandLegal.risksDocTitle,
     meta: "Lee esto antes de invertir",
-    subtitle: "La compra de criptoactivos, incluido OPEN, conlleva riesgos significativos. No inviertas sin entenderlos.",
+    subtitle: "Invertir en OPEN conlleva riesgos. Conócelos antes de operar.",
     sections: [
       {
         h: "Volatilidad",
@@ -287,9 +286,9 @@ export const docMap: Record<string, Doc> = {
       {
         h: "Exposición al valor de OpenAI, Inc.",
         p: [
-          "Si el protocolo mantiene exposición a acciones o instrumentos vinculados a " + brandLegal.referencedCompany + ", dicha exposición puede ser ilíquida, estar sujeta a lock-ups, cambios de valoración en rondas privadas y no reflejarse de forma instantánea en el precio de " + brandLegal.tokenTicker + ".",
-          "Una OPI futura de " + brandLegal.referencedCompany + ", aunque ocurra, no garantiza beneficio alguno para los holders de " + brandLegal.tokenTicker + ".",
-          brandLegal.tokenTicker + " puede desacoplarse del valor de mercado de la empresa por liquidez, especulación, comisiones o fallos técnicos.",
+          "La tesorería del protocolo puede mantener acciones o instrumentos vinculados a " + brandLegal.referencedCompany + ". Esa exposición puede ser ilíquida, estar sujeta a lock-ups o reflejarse con retraso en el precio de " + brandLegal.tokenTicker + ".",
+          "Una OPI futura de " + brandLegal.referencedCompany + " no garantiza por sí sola un resultado concreto para los holders de " + brandLegal.tokenTicker + ".",
+          brandLegal.tokenTicker + " puede variar respecto al valor de mercado de la empresa por liquidez, especulación o factores técnicos.",
         ],
       },
       {
@@ -300,11 +299,11 @@ export const docMap: Record<string, Doc> = {
         ],
       },
       {
-        h: "Marcas y expectativas",
+        h: "Relación con OpenAI, Inc.",
         p: [
-          brandLegal.productBrand + " no está afiliado a " + brandLegal.referencedCompany + ". No uses este producto asumiendo derechos de accionista, acceso a productos de OpenAI ni relación comercial con la empresa.",
+          brandLegal.productBrand + " canaliza inversión hacia " + brandLegal.referencedCompany + " de forma independiente. OPEN no otorga derechos de accionista directos ni acceso a productos oficiales de OpenAI.",
           "Las decisiones del protocolo pueden cambiar comisiones, listados o integraciones. Sigue las votaciones en " + governanceUrl + ".",
-          "Operar con OPEN implica riesgo de smart contract: audita el código y verifica la dirección del contrato antes de interactuar.",
+          "Operar con OPEN implica riesgo de smart contract: verifica la dirección del contrato antes de interactuar.",
         ],
       },
       {
@@ -322,7 +321,7 @@ export const docMap: Record<string, Doc> = {
       {
         h: "Principio rector",
         p: [
-          "Marketing puede nombrar OpenAI, Inc. para describir el activo subyacente (OPI, valoración, equity en SPV). La identidad del operador es siempre openAI Protocol. OPEN nunca se presenta como acción de OpenAI, Inc.",
+          "Marketing puede nombrar OpenAI, Inc. para describir el activo subyacente (OPI, valoración, equity en SPV). La identidad del operador es openAI Protocol. OPEN representa participación en la tesorería del protocolo.",
           brandLegal.legalChecklist.tokenNatureParagraph,
         ],
       },
@@ -371,23 +370,23 @@ export const docMap: Record<string, Doc> = {
   },
   affiliation: {
     eyebrow: "Legal",
-    title: "Marcas y no afiliación",
+    title: brandLegal.affiliationDocTitle,
     meta: `Última actualización: ${lastUpdated}`,
-    subtitle: `Guía pública sobre la relación entre ${brandLegal.productBrand} y ${brandLegal.referencedCompany}.`,
+    subtitle: `Cómo se relacionan ${brandLegal.productBrand} y ${brandLegal.referencedCompany}.`,
     sections: [
       {
         h: "Quiénes somos",
         p: [
-          `${brandLegal.productBrand} canaliza capital hacia acciones reales de ${brandLegal.referencedCompany} vía tesorería y SPV, y opera el ecosistema open* con el token ${brandLegal.tokenTicker}. Somos un protocolo independiente — no filial, partner ni producto oficial de la empresa.`,
+          `${brandLegal.productBrand} canaliza capital hacia acciones reales de ${brandLegal.referencedCompany} vía tesorería y SPV, y opera el ecosistema open* con el token ${brandLegal.tokenTicker}.`,
           getAffiliationNotice(),
         ],
       },
       {
-        h: "Qué NO somos",
+        h: "Alcance y límites",
         p: [
-          "No somos OpenAI, Inc., ni representamos a sus accionistas, empleados ni directivos.",
-          `${brandLegal.tokenTicker} no es una acción, ADR ni valor negociable emitido por ${brandLegal.referencedCompany}.`,
-          "No usamos las marcas OpenAI, ChatGPT, DALL·E, Sora, Whisper ni Codex como nombre de nuestros productos; solo como referencia al activo subyacente o comparativa temática cuando procede.",
+          "Operamos como protocolo independiente — no como filial, partner ni producto oficial de OpenAI, Inc.",
+          `${brandLegal.tokenTicker} es participación en la tesorería del protocolo, no una acción emitida directamente por ${brandLegal.referencedCompany}.`,
+          "Las marcas OpenAI, ChatGPT, DALL·E, Sora, Whisper y Codex se citan como referencia al activo subyacente cuando procede.",
         ],
       },
       {
@@ -400,8 +399,8 @@ export const docMap: Record<string, Doc> = {
       {
         h: "Uso nominativo de OpenAI, Inc.",
         p: [
-          `Mencionamos ${brandLegal.referencedCompany} para describir el activo subyacente al que el protocolo puede buscar dar exposición (p. ej. antes de una OPI). Ese uso es descriptivo, no implica endorsement.`,
-          brandLegal.investmentMechanism,
+          `Mencionamos ${brandLegal.referencedCompany} para describir el activo subyacente al que el protocolo destina capital (p. ej. antes de una OPI). Ese uso es descriptivo.`,
+          brandLegal.investmentMechanismMarketing + " " + treasuryMechanism.legalBoundary,
         ],
       },
       {

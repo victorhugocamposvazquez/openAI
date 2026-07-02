@@ -37,7 +37,7 @@ export function LegalConsent({ checked, onChange, variant = "crypto" }: Props) {
         </Link>{" "}
         y la{" "}
         <Link href={legalUrls.risks} prefetch style={css("color:#0D0D0D;font-weight:600")}>
-          Advertencia de riesgos
+          {brandLegal.risksDocTitle}
         </Link>
         . {consentLine} {brandLegal.copy.buyConsentExtra}
       </span>
