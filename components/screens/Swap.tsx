@@ -93,7 +93,7 @@ export default function Swap() {
               <div key={i} style={css("display:flex;justify-content:space-between;font:400 13px var(--font-hanken);color:#6B6B76")}><span>{l}</span><span style={css("font-family:var(--font-mono);color:#0D0D0D")}>{v}</span></div>
             ))}
           </div>
-          <LegalConsent checked={legalAccepted} onChange={setLegalAccepted} variant="swap" />
+          <LegalConsent checked={legalAccepted} onChange={setLegalAccepted} />
           <button onClick={app.swap} disabled={disabled} style={{ ...css("width:100%;appearance:none;color:#fff;border:none;border-radius:12px;padding:15px;font:600 16px var(--font-hanken);margin-top:20px"), cursor: disabled ? "not-allowed" : "pointer", background: disabled ? "#C8C8CE" : "#0D0D0D" }}>{btnLabel}</button>
         </div>
       </div>

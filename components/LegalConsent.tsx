@@ -8,12 +8,9 @@ import { brandLegal } from "@/lib/brand-legal";
 type Props = {
   checked: boolean;
   onChange: (checked: boolean) => void;
-  variant?: "card" | "crypto" | "swap";
 };
 
-export function LegalConsent({ checked, onChange, variant = "crypto" }: Props) {
-  const consentLine = brandLegal.legalChecklist.consent[variant];
-
+export function LegalConsent({ checked, onChange }: Props) {
   return (
     <label
       style={css(
@@ -39,7 +36,7 @@ export function LegalConsent({ checked, onChange, variant = "crypto" }: Props) {
         <Link href={legalUrls.risks} prefetch style={css("color:#0D0D0D;font-weight:600")}>
           {brandLegal.risksDocTitle}
         </Link>
-        . {consentLine} {brandLegal.copy.buyConsentExtra}
+        .
       </span>
     </label>
   );

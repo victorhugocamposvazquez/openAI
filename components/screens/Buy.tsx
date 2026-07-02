@@ -147,7 +147,7 @@ export default function Buy() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D14343" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>Saldo insuficiente de {app.payAsset}
             </div>
           )}
-          <LegalConsent checked={legalAccepted} onChange={setLegalAccepted} variant={isCard ? "card" : "crypto"} />
+          <LegalConsent checked={legalAccepted} onChange={setLegalAccepted} />
           <button onClick={app.buy} disabled={buyDisabled} style={{ ...css("width:100%;appearance:none;color:#fff;border:none;border-radius:12px;padding:15px;font:600 16px var(--font-hanken);margin-top:20px"), cursor: buyDisabled ? "not-allowed" : "pointer", background: buyDisabled ? "#C8C8CE" : "#0D0D0D" }}>{buyBtnLabel}</button>
         </div>
       </div>

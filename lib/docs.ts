@@ -350,9 +350,8 @@ export const docMap: Record<string, Doc> = {
       {
         h: "Consentimiento en flujos de operación",
         p: [
-          `Tarjeta: ${brandLegal.legalChecklist.consent.card}`,
-          `Cripto: ${brandLegal.legalChecklist.consent.crypto}`,
-          `Swap: ${brandLegal.legalChecklist.consent.swap}`,
+          "Checkbox UI (compra / swap): «He leído y acepto los Términos, la Política de privacidad y la Información de riesgos.»",
+          `Referencia extendida (docs legales, no UI): tarjeta — ${brandLegal.legalChecklist.consent.card}; cripto — ${brandLegal.legalChecklist.consent.crypto}; swap — ${brandLegal.legalChecklist.consent.swap}`,
         ],
       },
       {
