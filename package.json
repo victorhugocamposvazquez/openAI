@@ -2,7 +2,7 @@
   "name": "openai-nextjs",
   "version": "1.0.0",
   "private": true,
-  "description": "openAI — plataforma de inversión en el token OPEN (concepto de diseño ficticio). Next.js + Supabase + Vercel.",
+  "description": "openAI Protocol — plataforma del token OPEN. Next.js + Supabase + Vercel.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

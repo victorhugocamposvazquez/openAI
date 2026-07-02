@@ -9,7 +9,7 @@ import { brandLegal } from "@/lib/brand-legal";
 const COLS: { title: string; links: [string, string][] }[] = [
   { title: "Token", links: [["/comprar", "Comprar OPEN"], ["/docs/whitepaper", "Whitepaper"], ["/docs/tokenomics", "Tokenomics"]] },
   { title: "Recursos", links: [["/docs/docs", "Documentación"], ["/docs/audit", "Auditoría"], ["/docs/support", "Soporte"]] },
-  { title: "Legal", links: [["/docs/terms", "Términos"], ["/docs/privacy", "Privacidad"], ["/docs/risks", "Riesgos"], ["/docs/affiliation", "Marcas y no afiliación"]] },
+  { title: "Legal", links: [["/docs/terms", "Términos"], ["/docs/privacy", "Privacidad"], ["/docs/risks", "Riesgos"], ["/docs/affiliation", "Marcas y no afiliación"], ["/docs/compliance", "Cumplimiento"]] },
 ];
 
 function Footer() {
@@ -41,7 +41,8 @@ function Footer() {
           </div>
         </div>
         <div style={css("border-top:1px solid #ECECEC;padding-top:20px;font:400 12px/1.5 var(--font-mono);color:#A8A8AE")}>
-          {brandLegal.footerDisclaimer}
+          <p style={css("margin:0 0 12px")}>{brandLegal.footerDisclaimer}</p>
+          <p style={css("margin:0")}>{brandLegal.geoNotice}</p>
         </div>
       </div>
     </footer>

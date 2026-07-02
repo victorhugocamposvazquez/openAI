@@ -8,9 +8,12 @@ import { brandLegal } from "@/lib/brand-legal";
 type Props = {
   checked: boolean;
   onChange: (checked: boolean) => void;
+  variant?: "card" | "crypto" | "swap";
 };
 
-export function LegalConsent({ checked, onChange }: Props) {
+export function LegalConsent({ checked, onChange, variant = "crypto" }: Props) {
+  const consentLine = brandLegal.legalChecklist.consent[variant];
+
   return (
     <label
       style={css(
@@ -36,7 +39,7 @@ export function LegalConsent({ checked, onChange }: Props) {
         <Link href={legalUrls.risks} prefetch style={css("color:#0D0D0D;font-weight:600")}>
           Advertencia de riesgos
         </Link>
-        . Entiendo que el pago con tarjeta lo procesa un tercero (Transak/MoonPay), no esta web. {brandLegal.copy.buyConsentExtra}
+        . {consentLine} {brandLegal.copy.buyConsentExtra}
       </span>
     </label>
   );

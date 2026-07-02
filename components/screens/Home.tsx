@@ -35,7 +35,7 @@ function Countdown() {
       <div style={css("border:1px solid #ECECEC;border-radius:18px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px")}>
         <div>
           <div style={css("font:600 11px var(--font-mono);letter-spacing:0.06em;color:#9A9AA0;text-transform:uppercase;margin-bottom:5px")}>Cuenta atrás estimada hasta la OPI de {brandLegal.referencedCompany}</div>
-          <div style={css("font:400 14px var(--font-hanken);color:#8A8A94")}>OPI prevista · septiembre de 2027 · fecha sujeta a cambios</div>
+          <div style={css("font:400 14px var(--font-hanken);color:#8A8A94")}>{brandLegal.copy.opiContext}</div>
         </div>
         <div style={css("display:flex;align-items:baseline;gap:10px")}>
           {cell(String(dd), "d")}{sep}
@@ -146,7 +146,7 @@ function Faq() {
                   <span style={css("font:600 17px var(--font-hanken);letter-spacing:-0.01em;color:#0D0D0D")}>{q}</span>
                   <span style={{ ...css("flex:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:400 18px var(--font-hanken);transition:transform .2s ease"), background: isOpen ? ACCENT : "#F4F4F5", color: isOpen ? "#fff" : "#8A8A94", transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}>+</span>
                 </button>
-                <div style={{ overflow: "hidden", transition: "max-height .28s ease, opacity .2s ease", maxHeight: isOpen ? 260 : 0, opacity: isOpen ? 1 : 0 }}>
+                <div style={{ overflow: "hidden", transition: "max-height .28s ease, opacity .2s ease", maxHeight: isOpen ? 420 : 0, opacity: isOpen ? 1 : 0 }}>
                   <p style={css("font:400 15px/1.6 var(--font-hanken);color:#5C5C66;margin:0;padding:0 0 22px;max-width:560px")}>{a}</p>
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function Home() {
             </div>
             <h1 data-h1 style={css("font:600 64px/1.0 var(--font-hanken);letter-spacing:-0.045em;margin:0 0 22px;max-width:600px")}>{brandLegal.copy.heroHeadline}</h1>
             <p style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 8px;text-wrap:pretty")}>{brandLegal.copy.heroSubheadline}</p>
-            <LegalMicro />
+            <LegalMicro zone="hero" />
             <div style={css("display:flex;gap:12px;flex-wrap:wrap;margin-top:32px")}>
               <Hov as="button" onClick={() => router.push("/comprar")} style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="background:#000">Comprar OPEN</Hov>
               <Hov as="button" onClick={() => router.push("/swap")} style="appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #DADADD;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="border-color:#0D0D0D">Intercambiar desde wallet</Hov>
@@ -250,9 +250,11 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div style={{ ...css("font:600 11px var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px"), color: ACCENT }}>Value accrual</div>
+        <LegalMicro zone="ecosystem" />
+        <div style={{ ...css("font:600 11px var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;margin-top:32px"), color: ACCENT }}>Value accrual</div>
         <h3 style={css("font:600 27px var(--font-hanken);letter-spacing:-0.025em;margin:0 0 16px;max-width:700px")}>{brandLegal.copy.valueTitle}</h3>
-        <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;max-width:700px;margin:0 0 24px;text-wrap:pretty")}>{brandLegal.copy.valueLead}</p>
+        <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;max-width:700px;margin:0 0 8px;text-wrap:pretty")}>{brandLegal.copy.valueLead}</p>
+        <LegalMicro zone="valueAccrual" />
         <div style={css("display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:18px")}>
           {["Adopción del ecosistema", "Ingresos por comisiones", "Recompra programática", "Reducción de oferta"].map((t, i) => (
             <span key={i} style={css("display:inline-flex;align-items:center;gap:8px")}>
@@ -262,7 +264,7 @@ export default function Home() {
           ))}
           <span style={{ ...css("display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font-hanken);border-radius:999px;padding:8px 14px"), color: ACCENT, background: "color-mix(in srgb, var(--accent) 11%, #fff)" }}>Presión de demanda neta <span style={{ fontSize: 13 }}>↗</span></span>
         </div>
-        <p style={css("font:400 13px/1.5 var(--font-hanken);color:#9A9AA0;max-width:700px;margin:0 0 32px")}>Mecanismo on-chain: una fracción de las comisiones se enruta al protocolo para recomprar y quemar OPEN, reduciendo de forma verificable la oferta circulante.</p>
+        <p style={css("font:400 13px/1.5 var(--font-hanken);color:#9A9AA0;max-width:700px;margin:16px 0 32px")}>Mecanismo on-chain: una fracción de las comisiones se enruta al protocolo para recomprar y quemar OPEN, reduciendo de forma verificable la oferta circulante.</p>
         <div style={css("font:600 23px var(--font-hanken);letter-spacing:-0.02em;color:#0D0D0D;margin-bottom:8px")}>Servicios vinculados al token</div>
 
         <div data-hub style={{ ...css("position:relative;width:100%;margin:18px auto 0"), maxWidth: 600, aspectRatio: "600/520" }}>

@@ -178,9 +178,11 @@ export const docMap: Record<string, Doc> = {
       },
       {
         h: "5. Elegibilidad y territorios restringidos",
+        id: "elegibilidad",
         p: [
           "Debes ser mayor de edad en tu jurisdicción y tener capacidad legal para contratar.",
           `No puedes usar el servicio si resides en o accedes desde: ${restrictedList}.`,
+          brandLegal.geoNotice,
           "Eres responsable de comprobar que el uso de criptoactivos y la compra de tokens está permitido en tu país.",
         ],
       },
@@ -291,6 +293,13 @@ export const docMap: Record<string, Doc> = {
         ],
       },
       {
+        h: "Desacople NAV ↔ precio de mercado",
+        p: [
+          brandLegal.navDisclaimer,
+          "El NAV compuesto agrega equity en SPV y reservas operativas. Retrasos en attestations, illiquidez del SPV o especulación on-chain pueden ampliar la brecha entre NAV y precio spot de " + brandLegal.tokenTicker + ".",
+        ],
+      },
+      {
         h: "Marcas y expectativas",
         p: [
           brandLegal.productBrand + " no está afiliado a " + brandLegal.referencedCompany + ". No uses este producto asumiendo derechos de accionista, acceso a productos de OpenAI ni relación comercial con la empresa.",
@@ -301,6 +310,61 @@ export const docMap: Record<string, Doc> = {
       {
         h: "Sin asesoramiento",
         p: ["Esta plataforma no ofrece asesoramiento financiero, fiscal o legal. Consulta a un profesional independiente si lo necesitas."],
+      },
+    ],
+  },
+  compliance: {
+    eyebrow: "Legal",
+    title: "Guía de cumplimiento y copy",
+    meta: `Última actualización: ${lastUpdated}`,
+    subtitle: "Textos obligatorios, zonas de disclaimer y checklist pre-lanzamiento para el equipo y partners (on-ramps, exchanges).",
+    sections: [
+      {
+        h: "Principio rector",
+        p: [
+          "Marketing puede nombrar OpenAI, Inc. para describir el activo subyacente (OPI, valoración, equity en SPV). La identidad del operador es siempre openAI Protocol. OPEN nunca se presenta como acción de OpenAI, Inc.",
+          brandLegal.legalChecklist.tokenNatureParagraph,
+        ],
+      },
+      {
+        h: "Textos por zona de la interfaz",
+        p: [
+          `Layout (strip): ${brandLegal.shortDisclaimer}`,
+          `Hero (micro): ${brandLegal.copy.heroMicro}`,
+          `Countdown OPI: ${brandLegal.copy.opiContext}`,
+          `Ecosistema / equity: ${brandLegal.copy.equityMicro}`,
+          `Value accrual: ${brandLegal.navDisclaimer}`,
+          `Compra / swap: ${brandLegal.shortDisclaimer}`,
+          `Footer: ${brandLegal.footerDisclaimer}`,
+          `Geo: ${brandLegal.geoNotice}`,
+        ],
+      },
+      {
+        h: "Marketing permitido",
+        p: brandLegal.marketingAllowed.map((item) => "· " + item),
+      },
+      {
+        h: "Marketing prohibido",
+        p: brandLegal.marketingForbidden.map((item) => "· " + item),
+      },
+      {
+        h: "Consentimiento en flujos de operación",
+        p: [
+          `Tarjeta: ${brandLegal.legalChecklist.consent.card}`,
+          `Cripto: ${brandLegal.legalChecklist.consent.crypto}`,
+          `Swap: ${brandLegal.legalChecklist.consent.swap}`,
+        ],
+      },
+      {
+        h: "Checklist pre-lanzamiento",
+        p: brandLegal.legalChecklist.preLaunch.map((item, i) => `${i + 1}. ${item}`),
+      },
+      {
+        h: "Contacto",
+        p: [
+          `Legal: ${contactLegal}. Marcas: /docs/affiliation. Riesgos: /docs/risks.`,
+          "Esta guía no sustituye asesoramiento legal. Revisión externa obligatoria antes de producción con dinero real.",
+        ],
       },
     ],
   },

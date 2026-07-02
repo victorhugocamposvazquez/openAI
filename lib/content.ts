@@ -2,7 +2,7 @@
 
 import { brandLegal, treasuryMechanism } from "./brand-legal";
 
-const { referencedCompany, productBrand, tokenTicker, shortDisclaimer, ecosystemDisclaimer } = brandLegal;
+const { referencedCompany, productBrand, tokenTicker, shortDisclaimer, ecosystemDisclaimer, navDisclaimer, legalChecklist } = brandLegal;
 
 export const ecosystem = [
   { name: "openChat", desc: "Asistente conversacional del ecosistema openAI Protocol. Suscripciones y consumo generan ingresos que alimentan el mecanismo de recompra de OPEN." },
@@ -44,10 +44,13 @@ export const hubMeta: [string, string, string][] = [
 ];
 
 export const faqDefs: [string, string][] = [
+  [`¿OPEN es lo mismo que una acción de ${referencedCompany}?`, `No. ${legalChecklist.tokenNatureParagraph}`],
+  [`¿Existe paridad 1:1 entre OPEN y acciones?`, `No. ${navDisclaimer} El NAV compuesto (equity en SPV + reservas operativas) es una referencia publicada por el protocolo; el mercado secundario on-chain fija el precio spot.`],
+  [`¿Puedo canjear OPEN por acciones de ${referencedCompany}?`, "No hay redención garantizada por acciones de OpenAI, Inc. OPEN es participación económica en la tesorería del openAI Protocol, no un certificado de depósito ni ADR."],
   [`¿Qué es exactamente el token ${tokenTicker}?`, `${tokenTicker} es el token del ${productBrand}. ${treasuryMechanism.summary} ${treasuryMechanism.legalBoundary}`],
   [`¿Cómo se usan mis fondos?`, `El capital de la preventa entra en la tesorería del protocolo. Una parte se destina al SPV para comprar acciones reales de ${referencedCompany} en mercados privados. Otra parte financia la operación de productos open* (APIs, cómputo, distribución). Los ingresos operativos y la revalorización del equity se consolidan en un NAV compuesto que orienta el valor de ${tokenTicker}.`],
   [`¿Cómo compro ${tokenTicker}?`, "Con tarjeta (vía Transak o MoonPay), con cripto desde tu saldo, o intercambiando los tokens de tu wallet (ETH, USDC, BTC) por OPEN. Solo necesitas conectar una wallet para recibir y custodiar tus tokens."],
-  ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta ahora: te posicionas hoy, on-chain, sin esperar a la OPI de ${referencedCompany} ni a un bróker tradicional. La salida a bolsa está prevista para septiembre de 2027 (fecha estimada, sujeta a cambios).`],
+  ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta ahora: te posicionas hoy, on-chain, sin esperar a la OPI de ${referencedCompany} ni a un bróker tradicional. ${brandLegal.copy.opiContext}.`],
   [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `${tokenTicker} tiene liquidez on-chain desde el primer día: puedes intercambiarlo de vuelta por ETH, USDC u otros tokens en cualquier momento desde tu wallet, sin periodos de bloqueo para los compradores de preventa.`],
   ["¿Quién custodia mis tokens?", `Tú. El protocolo no tiene custodia de tus fondos: los ${tokenTicker} se envían directamente a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan íntegramente en el widget del proveedor (Transak / MoonPay).`],
   ["¿Qué comisiones tiene?", "Compra con cripto o swap: 0,3%–1%. Compra con tarjeta: 1,5% con Transak o 1,9% con MoonPay (incluye el procesamiento del pago). Todas las comisiones se muestran antes de confirmar la operación."],

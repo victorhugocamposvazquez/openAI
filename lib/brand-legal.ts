@@ -18,7 +18,7 @@ export const treasuryMechanism = {
 
   /** Límite legal: qué es y qué no es OPEN. */
   legalBoundary:
-    "OPEN no es una acción de OpenAI, Inc. ni confiere derechos de voto, dividendos directos ni registro en el cap table. Representa una unidad de participación económica en la tesorería del protocolo, cuyos activos incluyen exposición a acciones de OpenAI, Inc. mantenidas por un vehículo independiente.",
+    "OPEN no es una acción de OpenAI, Inc. ni confiere derechos de voto, dividendos directos ni registro en el cap table. Representa una unidad de participación económica en la tesorería del protocolo, cuyos activos pueden incluir exposición a acciones de OpenAI, Inc. mantenidas por un vehículo independiente (SPV). No existe paridad 1:1 OPEN ↔ acción ni redención garantizada por acciones de OpenAI, Inc.",
 
   phases: [
     {
@@ -96,7 +96,14 @@ export const brandLegal = {
   shortDisclaimer:
     "openAI Protocol y el token OPEN no están afiliados, patrocinados ni respaldados por OpenAI, Inc. OPEN no es una acción de OpenAI ni un producto emitido por OpenAI, Inc.",
 
-  microDisclaimer: "Referencia a OpenAI, Inc.; sin afiliación.",
+  microDisclaimer:
+    "OPEN es el token del openAI Protocol. No es una acción de OpenAI, Inc. Sin afiliación.",
+
+  navDisclaimer:
+    "El precio de mercado de OPEN puede diferir del NAV publicado. No hay paridad 1:1 con acciones ni redención garantizada.",
+
+  geoNotice:
+    "Este servicio no está dirigido a residentes de Estados Unidos (salvo jurisdicciones permitidas), ni a territorios sujetos a sanciones internacionales. Eres responsable de cumplir la normativa de tu país.",
 
   footerDisclaimer:
     "openAI Protocol es un ecosistema independiente operado de forma descentralizada. OpenAI, OpenAI, Inc. y marcas relacionadas son propiedad de sus respectivos titulares. Este sitio no constituye una oferta pública de valores ni asesoramiento de inversión. Invertir conlleva riesgos, incluida la pérdida total del capital.",
@@ -131,18 +138,62 @@ export const brandLegal = {
   copy: {
     heroHeadline: "Invierte en OPEN antes de la OPI de OpenAI, Inc.",
     heroSubheadline:
-      "Tu capital alimenta la tesorería del protocolo: compra acciones reales de OpenAI, Inc. y opera el ecosistema open* para generar ingresos. OPEN es el token de participación — no es una acción.",
+      "El capital del protocolo financia acciones reales de OpenAI, Inc. (vía SPV) y el ecosistema open* para generar ingresos.",
+    heroMicro:
+      "OPEN es el token del openAI Protocol. No es una acción de OpenAI, Inc. Sin afiliación.",
     heroBadge: "Preventa abierta · OPI prevista 2027",
+    opiContext: "OPI prevista · septiembre de 2027 · fecha estimada, sujeta a cambios · no garantizada",
+    equityMicro: "Acciones de OpenAI, Inc. vía SPV independiente · sin derechos de accionista.",
     ecosystemTitle: "Un token. Todo el ecosistema openAI Protocol.",
     ecosystemLead:
-      "Los fondos de los inversores se convierten en equity real de OpenAI, Inc. y en infraestructura operativa. Los productos open* generan comisiones que recompran y queman OPEN.",
+      "Los fondos de los inversores se asignan a equity real de OpenAI, Inc. y a infraestructura operativa open*. Los productos generan comisiones que recompran y queman OPEN.",
     valueTitle: "Doble motor de valor: equity + ingresos operativos",
     valueLead:
       "Motor 1: acciones reales de OpenAI, Inc. en custodia del SPV del protocolo. Motor 2: ingresos recurrentes de openChat, openAPI y el resto del ecosistema. El 30% de las comisiones financia recompra y quema de OPEN.",
     buyConsentExtra:
-      "OPEN no es una acción de OpenAI, Inc. Es participación económica en la tesorería del protocolo, respaldada por acciones reales y flujos operativos.",
+      "OPEN no es una acción de OpenAI, Inc. Es participación económica en la tesorería del protocolo. El precio puede desacoplarse del NAV. Puedo perder la totalidad del capital.",
+    receiptLegalBlock:
+      "OPEN no es acción. Sin afiliación con OpenAI, Inc. No es asesoramiento de inversión.",
+    emailFooter:
+      "openAI Protocol · independiente de OpenAI, Inc. · OPEN no es una acción · no es asesoramiento de inversión",
     receiptHeader: "openAI Protocol — Recibo de operación",
     receiptFooter: "Gracias por participar en el openAI Protocol.",
+  },
+
+  /** Textos obligatorios por zona — única fuente para marketing + cumplimiento UI. */
+  legalChecklist: {
+    zones: {
+      layout: "shortDisclaimer",
+      hero: "heroMicro",
+      countdown: "opiContext",
+      ecosystem: "equityMicro",
+      valueAccrual: "navDisclaimer",
+      buy: "shortDisclaimer",
+      swap: "shortDisclaimer",
+      docCta: "buyConsentExtra",
+      footer: "footerDisclaimer",
+    },
+    consent: {
+      card:
+        "Acepto términos, privacidad y riesgos. El pago con tarjeta lo procesa Transak/MoonPay. OPEN no es acción de OpenAI, Inc.",
+      crypto:
+        "Acepto términos, privacidad y riesgos. Entiendo que OPEN no es acción, que opero bajo mi responsabilidad y que las transacciones on-chain son irreversibles.",
+      swap:
+        "Entiendo que OPEN no es una acción de OpenAI, Inc. y que el swap on-chain es irreversible.",
+    },
+    tokenNatureParagraph:
+      "OPEN representa participación económica en la tesorería del openAI Protocol. El protocolo, mediante un vehículo independiente (SPV), puede mantener exposición a acciones de OpenAI, Inc. OPEN no otorga derechos de accionista. El precio de mercado puede diferir del NAV. Invertir conlleva riesgo de pérdida total.",
+    preLaunch: [
+      "Disclaimer en layout, compra, footer y recibos",
+      "Doc /docs/affiliation y /docs/compliance accesibles",
+      "Logo alt/title = openAI Protocol",
+      "Dominio y emails propios (no openai.com)",
+      "legal.config.ts completado (entidad, SPV, contrato)",
+      "Attestations de tesorería publicables",
+      "Geo-aviso visible en flujos de compra",
+      "Sin promesas de rentabilidad ni OPI garantizada",
+      "Revisión externa por abogado (marcas + valores)",
+    ],
   },
 
   nomenclature: {
@@ -165,6 +216,19 @@ export function withDisclaimer(claim: string) {
 
 export function getAffiliationNotice() {
   return `${brandLegal.productBrand} es independiente de ${brandLegal.referencedCompany}. ${brandLegal.referencedCompanyNote}`;
+}
+
+/** Texto legal de una zona del checklist (resuelve claves anidadas en copy). */
+export function getLegalZoneText(zone: keyof typeof brandLegal.legalChecklist.zones): string {
+  const key = brandLegal.legalChecklist.zones[zone];
+  if (key === "shortDisclaimer") return brandLegal.shortDisclaimer;
+  if (key === "heroMicro") return brandLegal.copy.heroMicro;
+  if (key === "opiContext") return brandLegal.copy.opiContext;
+  if (key === "equityMicro") return brandLegal.copy.equityMicro;
+  if (key === "navDisclaimer") return brandLegal.navDisclaimer;
+  if (key === "buyConsentExtra") return brandLegal.copy.buyConsentExtra;
+  if (key === "footerDisclaimer") return brandLegal.footerDisclaimer;
+  return brandLegal.shortDisclaimer;
 }
 
 /** Párrafo técnico del flywheel para docs / FAQ. */

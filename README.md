@@ -2,7 +2,7 @@
 
 Plataforma de inversión en el token **OPEN**: landing, mercado con gráfico en vivo, comprar (tarjeta vía Transak/MoonPay o cripto), swap desde wallet, cartera con P&L y páginas de documentación (whitepaper, tokenomics, legal…).
 
-> ⚠️ **Concepto de diseño ficticio.** "openAI" y "OPEN" son inventados, sin valor real y sin afiliación con OpenAI. **No** es una oferta de inversión. No conectes rampas de pago reales ni muevas fondos reales sin entender las implicaciones legales.
+> ⚠️ **Aviso legal.** openAI Protocol y el token OPEN son independientes de OpenAI, Inc. OPEN no es una acción. Esta demo no constituye una oferta de inversión. Revisión legal obligatoria antes de producción con dinero real. Ver `/docs/compliance` y `/docs/affiliation`.
 
 ---
 

@@ -1,10 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { css } from "@/lib/css";
 import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { useApp, prices } from "@/lib/store";
 import { useMarket } from "@/lib/market";
 import { Hov } from "../ui";
+import { LegalConsent } from "../LegalConsent";
+import { GeoNotice } from "../GeoNotice";
+import { getLegalZoneText } from "@/lib/brand-legal";
 
 const segStyle = (active: boolean) =>
   "appearance:none;cursor:pointer;border:1px solid " + (active ? "#0D0D0D" : "#E6E6E8") + ";background:" + (active ? "#0D0D0D" : "#fff") + ";color:" + (active ? "#fff" : "#5C5C66") + ";border-radius:10px;padding:9px 0;font:600 13px var(--font-mono)";
@@ -12,6 +16,7 @@ const segStyle = (active: boolean) =>
 export default function Swap() {
   const app = useApp();
   const { price } = useMarket();
+  const [legalAccepted, setLegalAccepted] = useState(false);
   const P = prices(price);
   const fromAmt = parseFloat(app.fromAmount) || 0;
   const side = app.swapSide;
@@ -24,7 +29,7 @@ export default function Swap() {
   const swapRecv = (swapUsd * 0.997) / P[recvToken];
   const payBal = app.balances[payToken] || 0;
   const insufficient = app.connected && fromAmt > payBal;
-  const disabled = app.processing || insufficient;
+  const disabled = app.processing || insufficient || !legalAccepted;
   const btnLabel = app.processing ? "Procesando…" : insufficient ? "Saldo insuficiente" : app.connected ? (side === "toOpen" ? "Intercambiar" : "Vender OPEN") : "Conectar wallet para intercambiar";
   const payBalance = app.connected ? fmtN(payBal, payDec) + " " + payToken : null;
 
@@ -32,7 +37,10 @@ export default function Swap() {
     <main style={css("padding:48px 24px;display:flex;justify-content:center")}>
       <div style={css("width:460px;max-width:100%")}>
         <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>Intercambiar</h2>
-        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 24px")}>Cambia los tokens de tu wallet por OPEN — o vende tus OPEN — al instante.</p>
+        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 8px")}>Cambia los tokens de tu wallet por OPEN — o vende tus OPEN — al instante.</p>
+        <p style={css("font:400 12px/1.45 var(--font-mono);color:#A8A8AE;margin:0 0 12px")}>{getLegalZoneText("swap")}</p>
+        <GeoNotice />
+        <div style={css("margin-bottom:24px")} />
         <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:20px;padding:22px;box-shadow:0 20px 50px -30px rgba(13,13,13,0.18)")}>
           <div style={css("background:#F7F7F8;border-radius:14px;padding:16px")}>
             <div style={css("display:flex;justify-content:space-between;align-items:center;margin-bottom:8px")}>
@@ -85,6 +93,7 @@ export default function Swap() {
               <div key={i} style={css("display:flex;justify-content:space-between;font:400 13px var(--font-hanken);color:#6B6B76")}><span>{l}</span><span style={css("font-family:var(--font-mono);color:#0D0D0D")}>{v}</span></div>
             ))}
           </div>
+          <LegalConsent checked={legalAccepted} onChange={setLegalAccepted} variant="swap" />
           <button onClick={app.swap} disabled={disabled} style={{ ...css("width:100%;appearance:none;color:#fff;border:none;border-radius:12px;padding:15px;font:600 16px var(--font-hanken);margin-top:20px"), cursor: disabled ? "not-allowed" : "pointer", background: disabled ? "#C8C8CE" : "#0D0D0D" }}>{btnLabel}</button>
         </div>
       </div>

@@ -11,21 +11,19 @@ export const legalConfig = {
   entityType: "decentralized" as const,
 
   /** Nombre público del protocolo / DAO. */
-  protocolName: "[COMPLETAR: ej. openAI Protocol]",
-  /** Cómo se toman decisiones (Snapshot, multisig, on-chain vote…). */
+  protocolName: "openAI Protocol",
   governanceModel:
-    "[COMPLETAR: ej. gobernanza on-chain por holders de OPEN; parámetros del protocolo votados por la comunidad]",
-  /** Contrato del token OPEN (cuando esté desplegado). */
-  tokenContractAddress: "[COMPLETAR: 0x… o pendiente]",
+    "Gobernanza on-chain por holders de OPEN; parámetros del protocolo (asignación tesorería, recompra, liquidez) votados por la comunidad",
+  tokenContractAddress: "[COMPLETAR: 0x… o pendiente de despliegue]",
   tokenChain: "[COMPLETAR: ej. Ethereum, Base, Arbitrum]",
 
   /**
    * Identificador para comunicaciones legales (DAO, contribuidores del protocolo,
    * foundation puente, multisig… — no una SL tradicional).
    */
-  operatorName: "[COMPLETAR: openAI Protocol / Contribuidores del protocolo]",
+  operatorName: "openAI Protocol — Contribuidores del protocolo",
   /** Jurisdicción de referencia o del wrapper legal, si existe. */
-  operatorCountry: "[COMPLETAR: ej. protocolo global / foundation en Suiza o Wyoming DAO LLC]",
+  operatorCountry: "Protocolo global; vehículo SPV sujeto a jurisdicción definida por gobernanza",
   operatorTaxId: "N/A — organización descentralizada sin CIF/NIF centralizado",
   operatorAddress:
     "Sin domicilio social único. Comunicaciones a través de los canales públicos del protocolo.",

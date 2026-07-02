@@ -413,6 +413,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const lines = [
       brandLegal.copy.receiptHeader,
       brandLegal.shortDisclaimer,
+      brandLegal.copy.receiptLegalBlock,
+      brandLegal.legalChecklist.tokenNatureParagraph,
       "----------------------------------------",
       "ID            " + t.id,
       "Tipo          " + t.type,
