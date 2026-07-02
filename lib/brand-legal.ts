@@ -119,9 +119,8 @@ export const brandLegal = {
 
   microDisclaimer: "OPEN canaliza capital hacia acciones reales de OpenAI, Inc.",
 
-  /** Para secciones de valor / NAV — tono producto. */
-  navDisclaimerMarketing:
-    "El valor de OPEN sigue la tesorería del protocolo: equity en OpenAI, Inc. e ingresos del ecosistema open*.",
+  /** Para secciones de valor / NAV — tono producto (referencia interna / compliance). */
+  navDisclaimerMarketing: "",
 
   navDisclaimer:
     "El precio de mercado puede variar respecto al NAV publicado; no hay paridad fija con acciones individuales.",
@@ -161,7 +160,7 @@ export const brandLegal = {
   suggestedCta: "Obtener OPEN",
 
   copy: {
-    heroHeadline: "Invierte en OPEN. Acciones reales de OpenAI, Inc. — antes, durante y después de la OPI.",
+    heroHeadline: "Invierte en OPEN. Acciones reales de OpenAI, Inc.",
     heroSubheadline:
       "Tu capital entra en la tesorería del protocolo para comprar acciones reales y operar open*. Cada uso de openAPI y los servicios open* alimenta recompras, quemas y más equity — sin parar en la salida a bolsa.",
     heroMicro: "",

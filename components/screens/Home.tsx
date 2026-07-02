@@ -254,7 +254,6 @@ export default function Home() {
         <div style={{ ...css("font:600 11px var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;margin-top:32px"), color: ACCENT }}>Value accrual</div>
         <h3 style={css("font:600 27px var(--font-hanken);letter-spacing:-0.025em;margin:0 0 16px;max-width:700px")}>{brandLegal.copy.valueTitle}</h3>
         <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;max-width:700px;margin:0 0 8px;text-wrap:pretty")}>{brandLegal.copy.valueLead}</p>
-        <LegalMicro zone="valueAccrual" />
         <div style={css("display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:18px")}>
           {["Adopción del ecosistema", "Ingresos por comisiones", "Recompra programática", "Reducción de oferta"].map((t, i) => (
             <span key={i} style={css("display:inline-flex;align-items:center;gap:8px")}>

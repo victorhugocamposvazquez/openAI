@@ -8,7 +8,6 @@ const {
   tokenTicker,
   affiliationNoticeSoft,
   ecosystemDisclaimer,
-  navDisclaimerMarketing,
   legalChecklist,
   marketingPitch,
 } = brandLegal;
@@ -59,7 +58,7 @@ export const faqDefs: [string, string][] = [
   ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta: inviertes hoy on-chain en acciones reales de ${referencedCompany}. La OPI es un hito de mercado, no el final del protocolo — ${brandLegal.copy.postOpiFlywheel}`],
   [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `${tokenTicker} tiene liquidez on-chain desde el primer día: puedes intercambiarlo por ETH, USDC u otros tokens en cualquier momento desde tu wallet.`],
   [`¿En qué se diferencia ${tokenTicker} de comprar la acción en bolsa?`, `${tokenTicker} es el token del ${productBrand}: participas en la tesorería que acumula equity de ${referencedCompany} de forma continua, con liquidez on-chain y recompra programática financiada por openAPI y los servicios open*.`],
-  [`¿Cómo se relaciona el precio de ${tokenTicker} con las acciones?`, `${navDisclaimerMarketing} ${legalChecklist.tokenNatureLegal}`],
+  [`¿Cómo se relaciona el precio de ${tokenTicker} con las acciones?`, legalChecklist.tokenNatureLegal],
   ["¿Quién custodia mis tokens?", `Tú. El protocolo no custodia tus ${tokenTicker}: se envían a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan en el widget del proveedor (Transak / MoonPay).`],
   ["¿Qué comisiones tiene?", "Compra con cripto o swap: 0,3%–1%. Compra con tarjeta: 1,5% con Transak o 1,9% con MoonPay. Todas las comisiones se muestran antes de confirmar."],
   ["¿Es esto un riesgo?", `Como cualquier inversión, el valor de ${tokenTicker} puede subir o bajar. Invierte solo lo que puedas permitirte. ${affiliationNoticeSoft}`],
