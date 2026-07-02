@@ -1,13 +1,31 @@
 import type { Doc } from "./content";
 
 /** Doc pages (whitepaper, tokenomics, docs, audit, support, legal). */
+
+import { legalConfig } from "./legal.config";
+import { brandLegal, getAffiliationNotice, treasuryMechanism } from "./brand-legal";
+
+const {
+  protocolName,
+  governanceModel,
+  tokenContractAddress,
+  tokenChain,
+  operatorName,
+  operatorCountry,
+  contactLegal,
+  contactPrivacy,
+  governanceUrl,
+  lastUpdated,
+  restrictedRegions,
+} = legalConfig;
+const restrictedList = restrictedRegions.join("; ");
 export const docMap: Record<string, Doc> = {
   whitepaper: {
     eyebrow: "Whitepaper",
     title: "OPEN Whitepaper",
     meta: "Versión 1.2 · Actualizado en 2026",
     subtitle:
-      "La especificación técnica y económica del token OPEN: su vínculo con la acción de openAI, el mecanismo de recompra y la arquitectura del protocolo.",
+      "Especificación del token OPEN: tesorería respaldada por acciones de OpenAI, Inc., capa operativa open* y mecanismo de recompra.",
     hasStats: true,
     stats: [
       { value: "5,000M", label: "Suministro total" },
@@ -16,19 +34,44 @@ export const docMap: Record<string, Doc> = {
       { value: "2027", label: "OPI prevista" },
     ],
     sections: [
-      { h: "Resumen ejecutivo", p: ["OPEN es un token ERC-20 cuyo valor está vinculado a las acciones de openAI y respaldado por los ingresos recurrentes del ecosistema. Una fracción de las comisiones generadas por los productos de openAI se destina, mediante un contrato auditado, a recomprar OPEN en el mercado abierto y retirarlo de circulación de forma permanente.", "El diseño persigue tres objetivos: ofrecer exposición temprana a la valoración de openAI antes de su salida a bolsa, alinear el valor del token con la adopción real de los productos, y garantizar liquidez on-chain sin custodia centralizada.", "Este documento describe el problema que aborda el protocolo, su diseño económico, su arquitectura técnica, el modelo de gobernanza y los riesgos asociados. No constituye una oferta de inversión ni asesoramiento financiero."] },
-      { h: "1. Contexto y motivación", p: ["Las empresas privadas de alto crecimiento concentran gran parte de su revalorización en las fases previas a su salida a bolsa, un periodo al que el inversor minorista rara vez tiene acceso. Cuando la compañía finalmente cotiza, buena parte de la apreciación ya se ha producido y queda reservada a inversores institucionales y rondas privadas.", "OPEN propone un instrumento on-chain que tiende un puente entre esa fase privada y el inversor general: un token líquido, sin custodia y vinculado a la evolución de la compañía, que además captura valor del uso cotidiano de sus productos."] },
-      { h: "2. El token OPEN", p: ["OPEN es un token fungible conforme al estándar ERC-20, desplegado sobre una red EVM con costes de transacción reducidos. El suministro total es fijo en 5.000 millones de unidades; el contrato no incluye función de acuñación adicional, por lo que la oferta solo puede mantenerse o decrecer.", "Cada OPEN representa una unidad de exposición al protocolo. No otorga derechos societarios sobre openAI ni dividendos; su valor deriva del mecanismo de anclaje a la acción y del programa de recompra descritos en este documento."] },
-      { h: "3. Vínculo con la acción de openAI", p: ["El precio de referencia de OPEN se ancla a la valoración de openAI mediante un oráculo descentralizado que publica de forma periódica el valor estimado de la compañía. Antes de la salida a bolsa, ese valor procede de las rondas de financiación y de valoraciones independientes; tras la OPI, el oráculo tomará la cotización oficial de la acción como referencia.", "El anclaje no es una paridad rígida: el mercado on-chain determina el precio en cada momento, pero el oráculo proporciona la señal fundamental que guía el arbitraje y mantiene la correlación entre el token y la compañía a lo largo del tiempo."] },
-      { h: "4. Acumulación de valor (value accrual)", p: ["El 30% de las comisiones netas generadas por los productos del ecosistema —openChat, la API, generación de imagen, vídeo, voz y código— se enruta de forma automática al contrato de recompra.", "El contrato adquiere OPEN en los pools de liquidez y envía los tokens a una dirección de quema verificable, de la que no pueden recuperarse. De este modo, a mayor adopción de los productos, mayor es el flujo de recompra y mayor la contracción de la oferta circulante.", "Este mecanismo convierte el uso cotidiano del ecosistema en presión de demanda estructural sobre el token, con independencia de la actividad especulativa del mercado."] },
-      { h: "5. Distribución del suministro", p: ["El suministro de 5.000 millones de OPEN se distribuye así: 30% a la preventa pública, 25% a liquidez on-chain, 20% al fondo de recompra y quema, 20% a marketing y crecimiento, y 5% al equipo.", "La asignación del equipo queda bloqueada durante 36 meses con liberación lineal a partir del mes 12. La reserva de marketing se libera por tramos ligados a hitos públicos de adopción, evitando presiones de venta repentinas sobre el mercado."] },
-      { h: "6. Liquidez y mercado", p: ["El 25% del suministro destinado a liquidez se despliega en pools on-chain que garantizan que cualquier inversor pueda comprar o vender OPEN en todo momento. Los compradores de preventa no están sujetos a periodos de bloqueo.", "La profundidad de los pools y los parámetros de las comisiones se calibran para minimizar el slippage en operaciones de tamaño habitual y para sostener un mercado ordenado durante los eventos de recompra."] },
-      { h: "7. Arquitectura técnica", p: ["El protocolo se compone de tres contratos inteligentes independientes y auditados: el token ERC-20, el módulo de recompra y quema, y el módulo de gobernanza.", "El módulo de recompra recibe las comisiones, ejecuta las órdenes de compra contra los pools y registra cada quema con un evento verificable on-chain. El módulo de gobernanza administra los parámetros ajustables del sistema dentro de límites preestablecidos.", "Todo el código es abierto, está verificado en el explorador de bloques y puede ser auditado por cualquiera. Las direcciones de los contratos y sus ABIs se publican en la documentación para desarrolladores."] },
-      { h: "8. Oráculo de precio", p: ["El oráculo agrega múltiples fuentes para publicar el valor de referencia de la compañía y el precio de mercado del token. Emplea ventanas temporales y medianas para resistir manipulaciones puntuales y picos de baja liquidez.", "En caso de discrepancia anómala entre fuentes, el oráculo entra en un modo conservador que pausa los parámetros sensibles hasta que los datos se normalizan."] },
-      { h: "9. Gobernanza", p: ["Determinados parámetros del protocolo —como el porcentaje de comisiones destinado a recompra o la configuración de liquidez— pueden ajustarse mediante gobernanza on-chain, dentro de rangos máximos y mínimos codificados en los contratos.", "El objetivo a medio plazo es transferir progresivamente estas decisiones a los holders de OPEN, avanzando hacia una administración descentralizada del protocolo."] },
-      { h: "10. Seguridad", p: ["Los contratos han sido revisados por auditores independientes, sin hallazgos críticos ni de severidad alta pendientes. Existe además un programa de recompensas por la divulgación responsable de vulnerabilidades.", "El protocolo es self-custody: openAI nunca tiene control sobre los fondos de los usuarios. La pérdida de las claves privadas implica la pérdida irreversible de los tokens, por lo que la custodia segura es responsabilidad del inversor."] },
-      { h: "11. Hoja de ruta", p: ["2026 — Preventa pública, despliegue de liquidez on-chain y activación del mecanismo de recompra.", "2027 — Salida a bolsa de openAI e integración de la cotización oficial en el oráculo de precio.", "2028 y posteriores — Transición de la gobernanza a los holders y ampliación de los productos del ecosistema integrados en el flujo de recompra."] },
-      { h: "12. Aviso legal", p: ["Este documento tiene carácter informativo y describe un concepto de diseño ficticio. openAI y el token OPEN no son reales, carecen de valor y no tienen afiliación con OpenAI. Nada de lo aquí expuesto constituye una oferta de inversión ni asesoramiento financiero."] },
+      { h: "Resumen ejecutivo", p: [treasuryMechanism.summary, `El diseño persigue tres objetivos: acumular equity real de ${brandLegal.referencedCompany} antes de su OPI, monetizar el ecosistema de productos del ${brandLegal.productBrand}, y mantener liquidez on-chain del token OPEN sin custodia centralizada sobre los tokens del inversor.`, treasuryMechanism.legalBoundary + " Este documento no constituye una oferta de inversión ni asesoramiento financiero."] },
+      { h: "1. Contexto y motivación", p: ["Las empresas privadas de alto crecimiento concentran gran parte de su revalorización en las fases previas a su salida a bolsa, un periodo al que el inversor minorista rara vez tiene acceso. Cuando la compañía finalmente cotiza, buena parte de la apreciación ya se ha producido y queda reservada a inversores institucionales y rondas privadas.", `OPEN propone un flywheel on-chain: el capital de los suscriptores financia la compra de acciones reales de ${brandLegal.referencedCompany} y la operación de productos open* que generan ingresos recurrentes. Esos flujos se consolidan en un NAV compuesto que orienta el valor de mercado del token.`] },
+      { h: "2. El token OPEN", p: ["OPEN es un token fungible conforme al estándar ERC-20, desplegado sobre una red EVM con costes de transacción reducidos. El suministro total es fijo en 5.000 millones de unidades; el contrato no incluye función de acuñación adicional, por lo que la oferta solo puede mantenerse o decrecer.", treasuryMechanism.legalBoundary, "El valor de OPEN deriva del NAV compuesto de la tesorería del protocolo (equity en SPV + reservas operativas) y del programa de recompra descrito en este documento, no de derechos societarios directos sobre OpenAI, Inc."] },
+      {
+        h: "3. Mecanismo de tesorería — capital → acciones reales",
+        p: [
+          treasuryMechanism.phases[0].technical,
+          treasuryMechanism.phases[1].technical,
+          `Política de asignación (orientativa, sujeta a gobernanza): ${treasuryMechanism.allocationPolicy.equityTarget} ${treasuryMechanism.allocationPolicy.operatingReserve} ${treasuryMechanism.allocationPolicy.liquidityReserve}`,
+          "Las attestations del SPV (holding, custodio, fecha de valoración) se publican periódicamente y alimentan el módulo NAV Oracle. La paridad OPEN ↔ acción no es 1:1: el mercado secundario on-chain puede desacoplar el precio spot del NAV publicado.",
+        ],
+      },
+      {
+        h: "4. Capa operativa — productos open* → ingresos",
+        p: [
+          treasuryMechanism.phases[2].technical,
+          "Los productos del ecosistema (openChat, openAPI, openImage, openMotion, openVoice, openCode) facturan por suscripción, consumo por token, crédito o asiento. Cada operación emite un evento FeeCollected verificable que alimenta el Operating Revenue Pool.",
+          treasuryMechanism.phases[3].technical,
+        ],
+      },
+      { h: "5. Vínculo con la valoración de OpenAI, Inc.", p: [`El NAV equity del SPV se marca a mercado con valoraciones de rondas privadas antes de la OPI y con cotización oficial tras la salida a bolsa. El oráculo agrega NAV equity + reservas operativas para publicar el NAV compuesto de referencia.`, "El anclaje no es una paridad rígida: el mercado on-chain determina el precio en cada momento, pero el NAV compuesto proporciona la señal fundamental que guía el arbitraje y mantiene la correlación entre el token y los activos subyacentes."] },
+      { h: "6. Acumulación de valor (value accrual)", p: [treasuryMechanism.phases[4].technical, `Política de split: ${treasuryMechanism.allocationPolicy.buybackRate}`, "Este mecanismo convierte el uso del ecosistema y la revalorización del equity en presión estructural sobre OPEN, con independencia de la actividad especulativa del mercado."] },
+      { h: "7. Distribución del suministro", p: ["El suministro de 5.000 millones de OPEN se distribuye así: 30% a la preventa pública, 25% a liquidez on-chain, 20% al fondo de recompra y quema, 20% a marketing y crecimiento, y 5% al equipo.", "La asignación del equipo queda bloqueada durante 36 meses con liberación lineal a partir del mes 12. La reserva de marketing se libera por tramos ligados a hitos públicos de adopción, evitando presiones de venta repentinas sobre el mercado."] },
+      { h: "8. Liquidez y mercado", p: ["El 25% del suministro destinado a liquidez se despliega en pools on-chain que garantizan que cualquier inversor pueda comprar o vender OPEN en todo momento. Los compradores de preventa no están sujetos a periodos de bloqueo.", "La profundidad de los pools y los parámetros de las comisiones se calibran para minimizar el slippage en operaciones de tamaño habitual y para sostener un mercado ordenado durante los eventos de recompra."] },
+      {
+        h: "9. Arquitectura técnica",
+        p: [
+          "Componentes del sistema:",
+          ...treasuryMechanism.components.map((c) => `· ${c.name}: ${c.role}`),
+          "Los contratos on-chain (OPEN, BuybackBurn, TreasuryRouter, gobernanza) son independientes, auditados y verificados en el explorador de bloques. El SPV y el Operating Revenue Pool off-chain publican informes periódicos enlazados on-chain mediante hash de attestations.",
+        ],
+      },
+      { h: "10. Oráculo de precio", p: ["El oráculo agrega NAV equity (attestations SPV), reservas operativas y precio de mercado de OPEN. Emplea ventanas temporales y medianas para resistir manipulaciones puntuales y picos de baja liquidez.", "En caso de discrepancia anómala entre fuentes, el oráculo entra en un modo conservador que pausa los parámetros sensibles hasta que los datos se normalizan."] },
+      { h: "11. Gobernanza", p: ["Determinados parámetros del protocolo —como el porcentaje de comisiones destinado a recompra, la política de asignación equity/ops o la configuración de liquidez— pueden ajustarse mediante gobernanza on-chain, dentro de rangos máximos y mínimos codificados en los contratos.", "El objetivo a medio plazo es transferir progresivamente estas decisiones a los holders de OPEN, avanzando hacia una administración descentralizada del protocolo."] },
+      { h: "12. Seguridad", p: ["Los contratos han sido revisados por auditores independientes, sin hallazgos críticos ni de severidad alta pendientes. Existe además un programa de recompensas por la divulgación responsable de vulnerabilidades.", `El protocolo es self-custody respecto a los tokens OPEN del inversor: ${brandLegal.productBrand} no controla las claves de tu wallet. La custodia del equity off-chain recae en el SPV designado; su holding se audita periódicamente.`] },
+      { h: "13. Hoja de ruta", p: ["2026 — Preventa pública, despliegue de liquidez on-chain, primera adquisición de equity vía SPV y activación del mecanismo de recompra.", `2027 — Salida a bolsa de ${brandLegal.referencedCompany}, integración de cotización oficial en NAV Oracle y escalado de la capa operativa open*.`, "2028 y posteriores — Transición de gobernanza a holders y ampliación de productos integrados en el Operating Revenue Pool."] },
+      { h: "14. Marcas de terceros", p: [brandLegal.ecosystemDisclaimer, "Las referencias a productos de OpenAI, Inc. (ChatGPT, DALL·E, Sora, Whisper, Codex) en este documento son comparativas o descriptivas del activo subyacente, no implican licencia ni afiliación."] },
+      { h: "15. Aviso legal", p: [`Este documento tiene carácter informativo. ${brandLegal.productBrand} y el token OPEN son operados de forma independiente de ${brandLegal.referencedCompany}. ${brandLegal.investmentMechanism}`, brandLegal.shortDisclaimer, "Nada de lo aquí expuesto constituye una oferta de inversión ni asesoramiento financiero."] },
     ],
   },
   tokenomics: {
@@ -77,7 +120,7 @@ export const docMap: Record<string, Doc> = {
     sections: [
       { h: "Alcance", p: ["La auditoría cubre el token ERC-20, el módulo de recompra/quema y el módulo de gobernanza, incluyendo control de acceso, aritmética de saldos y los flujos de quema."] },
       { h: "Resultados", p: ["Sin hallazgos críticos ni de severidad alta pendientes. Las observaciones de severidad media y baja fueron resueltas y reverificadas. El informe completo está disponible públicamente."] },
-      { h: "No custodia", p: ["openAI no custodia los fondos de los usuarios. Los OPEN se envían directamente a la wallet del inversor; solo el usuario controla sus claves privadas."] },
+      { h: "No custodia", p: [`${brandLegal.productBrand} no custodia los fondos de los usuarios. Los OPEN se envían directamente a la wallet del inversor; solo el usuario controla sus claves privadas.`] },
       { h: "Programa de recompensas", p: ["Existe un programa de bug bounty para incentivar la divulgación responsable de vulnerabilidades por parte de la comunidad de seguridad."] },
     ],
   },
@@ -89,45 +132,220 @@ export const docMap: Record<string, Doc> = {
     sections: [
       { h: "Contacto", p: ["Escríbenos a soporte@openai.demo o a través del chat de la aplicación. El equipo responde en menos de 24 horas en días laborables."] },
       { h: "Problemas con un pago", p: ["Las compras con tarjeta se procesan en Transak o MoonPay. Si un pago queda pendiente, consulta primero el panel del proveedor; desde ahí podrás ver el estado y solicitar asistencia."] },
-      { h: "Recuperar el acceso", p: ["openAI no custodia tus claves: si pierdes el acceso a tu wallet, deberás recuperarla con tu frase de recuperación. Nunca compartas tu frase semilla con nadie, tampoco con el soporte."] },
+      { h: "Recuperar el acceso", p: [`El protocolo no custodia tus claves: si pierdes el acceso a tu wallet, deberás recuperarla con tu frase de recuperación. Nunca compartas tu frase semilla con nadie, tampoco con el soporte.`] },
       { h: "Estado del servicio", p: ["Publicamos incidencias y mantenimiento programado en la página de estado. La liquidez on-chain permite operar incluso durante el mantenimiento de la interfaz."] },
     ],
   },
   terms: {
     eyebrow: "Legal",
     title: "Términos y condiciones",
-    meta: "Última actualización: 2026",
-    subtitle: "Condiciones de uso de la plataforma openAI. Al utilizarla, aceptas los términos descritos a continuación.",
+    meta: `Última actualización: ${lastUpdated}`,
+    subtitle: `Condiciones de uso del protocolo ${protocolName}. Al utilizar esta interfaz, aceptas estos términos.`,
     sections: [
-      { h: "1. Naturaleza del servicio", p: ["openAI es una interfaz que facilita la compra, el intercambio y la custodia self-custody del token OPEN. No actuamos como entidad de custodia ni como asesor de inversión."] },
-      { h: "2. Elegibilidad", p: ["Debes ser mayor de edad en tu jurisdicción y no residir en territorios donde el uso de criptoactivos esté restringido. Eres responsable de cumplir la normativa aplicable en tu país."] },
-      { h: "3. Riesgos", p: ["El valor de OPEN puede fluctuar y podrías perder parte o la totalidad de tu inversión. Operas bajo tu propia responsabilidad y criterio."] },
-      { h: "4. Limitación de responsabilidad", p: ["En la máxima medida permitida por la ley, openAI no se hace responsable de pérdidas derivadas del uso de la plataforma, de fallos de terceros (proveedores de pago, wallets) o de la volatilidad del mercado."] },
-      { h: "5. Aviso", p: ["Esta web es un concepto de diseño ficticio, sin valor real y sin afiliación con OpenAI. No constituye una oferta de inversión."] },
+      {
+        h: "1. Naturaleza descentralizada",
+        p: [
+          `${protocolName} es un protocolo y ecosistema tokenizado operado de forma descentralizada. No existe una sociedad limitada (SL) ni un operador central único que custodie activos o actúe como entidad de inversión.`,
+          `Las reglas del protocolo se ejecutan mediante contratos inteligentes y decisiones de gobernanza: ${governanceModel}. Contrato del token OPEN (cuando aplique): ${tokenContractAddress} en ${tokenChain}.`,
+          "Esta web es una interfaz mantenida por contribuidores del ecosistema. " + brandLegal.referencedCompanyNote,
+        ],
+      },
+      {
+        h: "2. Relación con OpenAI, Inc. y el token OPEN",
+        id: "openai-inc",
+        p: [
+          `${brandLegal.referencedCompany} es la empresa privada a la que el protocolo puede buscar dar exposición económica mediante vehículos de inversión regulados o mecanismos on-chain descritos en la documentación.`,
+          `El token ${brandLegal.tokenTicker} es un activo digital del protocolo ${brandLegal.productBrand}. ${brandLegal.tokenTicker} no es una acción, participación social ni valor negociable emitido por ${brandLegal.referencedCompany}. No confiere derechos de voto, dividendos ni propiedad sobre ${brandLegal.referencedCompany}.`,
+          brandLegal.investmentMechanism,
+          "Las marcas OpenAI, ChatGPT y logotipos relacionados son propiedad de sus titulares. Su uso en este sitio es referencial o descriptivo, no implica licencia ni afiliación.",
+        ],
+      },
+      {
+        h: "3. Interfaz y contribuidores",
+        p: [
+          "La interfaz facilita consultar datos de mercado, conectar una wallet y solicitar operaciones con el token OPEN. Los contribuidores del protocolo pueden actualizar el frontend, la documentación o integraciones, sujetos a gobernanza cuando corresponda.",
+          `Comunicaciones legales designadas: ${contactLegal}. Foro de gobernanza: ${governanceUrl}.`,
+          "No somos banco, entidad de pago centralizada ni asesor de inversiones. No guardamos tus claves privadas.",
+        ],
+      },
+      {
+        h: "4. Pagos con tarjeta (on-ramp)",
+        p: [
+          "Los pagos con tarjeta, Apple Pay, SEPA u otros métodos fiat se procesan exclusivamente a través de proveedores terceros regulados (Transak, MoonPay u otros que indiquemos).",
+          "Al pagar con tarjeta, abandonas temporalmente nuestro sitio o se abre el widget del proveedor. Ese proveedor es responsable del procesamiento del pago, KYC/AML y cumplimiento PCI. Nosotros no recibimos ni almacenamos números de tarjeta, CVC ni datos bancarios completos.",
+          "Las comisiones del proveedor y del protocolo se muestran antes de confirmar. Los reembolsos y disputas de tarjeta se rigen por la política del proveedor de pago.",
+        ],
+      },
+      {
+        h: "5. Elegibilidad y territorios restringidos",
+        p: [
+          "Debes ser mayor de edad en tu jurisdicción y tener capacidad legal para contratar.",
+          `No puedes usar el servicio si resides en o accedes desde: ${restrictedList}.`,
+          "Eres responsable de comprobar que el uso de criptoactivos y la compra de tokens está permitido en tu país.",
+        ],
+      },
+      {
+        h: "6. Riesgos",
+        p: [
+          "El valor de OPEN puede fluctuar de forma significativa. Puedes perder parte o la totalidad del importe invertido.",
+          "Consulta la Advertencia de riesgos antes de operar. Nada en esta web constituye asesoramiento financiero, fiscal o legal.",
+        ],
+      },
+      {
+        h: "7. Limitación de responsabilidad",
+        p: [
+          "En la máxima medida permitida por la ley, los contribuidores del protocolo y mantenedores de la interfaz no responden por pérdidas derivadas de la volatilidad del mercado, fallos de contratos inteligentes, bugs en el frontend, fallos de terceros (wallets, blockchains, proveedores de pago), errores de usuario o fuerza mayor.",
+          "El protocolo se ofrece «tal cual». La gobernanza comunitaria puede modificar parámetros; es tu responsabilidad informarte de las propuestas vigentes.",
+        ],
+      },
+      {
+        h: "8. Modificaciones",
+        p: ["Podemos actualizar estos términos. La fecha de la última versión figura al inicio. El uso continuado del servicio implica la aceptación de los cambios."],
+      },
     ],
   },
   privacy: {
     eyebrow: "Legal",
     title: "Política de privacidad",
-    meta: "Última actualización: 2026",
-    subtitle: "Cómo tratamos tus datos cuando usas openAI. Recopilamos lo mínimo imprescindible para operar.",
+    meta: `Última actualización: ${lastUpdated}`,
+    subtitle: `Protocolo ${protocolName}. Cómo se tratan los datos al usar esta interfaz.`,
     sections: [
-      { h: "1. Datos que tratamos", p: ["Dirección de wallet pública, importes de las operaciones y datos técnicos básicos (dispositivo, idioma). Los datos de tarjeta se procesan íntegramente en Transak o MoonPay; openAI no los almacena."] },
-      { h: "2. Finalidad", p: ["Ejecutar tus operaciones, mostrar tu cartera, prevenir el fraude y mejorar el servicio. No vendemos tus datos a terceros."] },
-      { h: "3. Conservación", p: ["Conservamos los datos el tiempo necesario para prestar el servicio y cumplir obligaciones legales. La actividad on-chain es pública e inmutable por naturaleza."] },
-      { h: "4. Tus derechos", p: ["Puedes solicitar acceso, rectificación o supresión de tus datos personales escribiendo a privacidad@openai.demo."] },
+      {
+        h: "1. Responsables del tratamiento",
+        p: [
+          `${protocolName} es un ecosistema descentralizado. Para cumplimiento del RGPD y consultas de privacidad, contacta con el canal designado por la comunidad: ${contactPrivacy} (${operatorName}).`,
+          `Referencia jurisdiccional: ${operatorCountry}. ${legalConfig.operatorAddress}`,
+          "Los datos on-chain (direcciones de wallet, transacciones) son públicos por diseño de la blockchain.",
+        ],
+      },
+      {
+        h: "2. Datos que tratamos",
+        p: [
+          "Dirección pública de wallet, historial de operaciones en la plataforma, preferencias de idioma y datos técnicos (IP, dispositivo, logs de errores).",
+          "Si te registras o conectas wallet, podemos asociar tu dirección a tu cuenta.",
+          "Los datos de tarjeta, identidad (KYC) y documentos los recogen y tratan Transak, MoonPay u otros proveedores de on-ramp conforme a sus propias políticas. Nosotros no almacenamos PAN, CVC ni copias de DNI salvo que la ley lo exija en un procedimiento concreto.",
+        ],
+      },
+      {
+        h: "3. Proveedores de pago (Transak / MoonPay)",
+        p: [
+          "Al pagar con tarjeta, compartimos con el proveedor los datos mínimos necesarios: importe, moneda, dirección de wallet de destino, identificador de pedido y URL de retorno.",
+          "Consulta la política de privacidad de Transak (transak.com) y MoonPay (moonpay.com) para saber cómo tratan tus datos personales.",
+        ],
+      },
+      {
+        h: "4. Finalidad y base legal",
+        p: [
+          "Ejecutar operaciones, mostrar tu cartera, prevenir fraude, cumplir obligaciones legales y mejorar el servicio.",
+          "Base legal: ejecución del contrato, interés legítimo y, cuando aplique, consentimiento.",
+        ],
+      },
+      {
+        h: "5. Conservación y derechos",
+        p: [
+          "Conservamos los datos el tiempo necesario para prestar el servicio y cumplir la normativa. La actividad on-chain es pública e inmutable.",
+          `Puedes ejercer acceso, rectificación, supresión, oposición y portabilidad escribiendo a ${contactPrivacy}. También puedes reclamar ante la autoridad de protección de datos de tu país.`,
+        ],
+      },
     ],
   },
   risks: {
     eyebrow: "Legal",
     title: "Advertencia de riesgos",
     meta: "Lee esto antes de invertir",
-    subtitle: "Invertir en criptoactivos conlleva riesgos significativos. Asegúrate de entenderlos antes de operar.",
+    subtitle: "La compra de criptoactivos, incluido OPEN, conlleva riesgos significativos. No inviertas sin entenderlos.",
     sections: [
-      { h: "Volatilidad", p: ["El precio de OPEN puede subir o bajar con rapidez. El rendimiento pasado no garantiza resultados futuros."] },
-      { h: "Riesgo de pérdida total", p: ["Podrías perder la totalidad del capital invertido. Invierte únicamente lo que puedas permitirte perder."] },
-      { h: "Riesgo tecnológico", p: ["Los contratos inteligentes, aunque auditados, pueden contener vulnerabilidades. La pérdida de tus claves privadas implica la pérdida irreversible de tus fondos."] },
-      { h: "Sin asesoramiento", p: ["Esta plataforma no ofrece asesoramiento financiero. Consulta a un profesional independiente si lo necesitas. Recuerda: openAI es un concepto de diseño ficticio, sin valor real."] },
+      {
+        h: "Volatilidad",
+        p: ["El precio de OPEN puede subir o bajar con rapidez. El rendimiento pasado no garantiza resultados futuros."],
+      },
+      {
+        h: "Riesgo de pérdida total",
+        p: ["Podrías perder la totalidad del capital invertido. Invierte únicamente lo que puedas permitirte perder."],
+      },
+      {
+        h: "Riesgo tecnológico",
+        p: [
+          "Los contratos inteligentes pueden contener errores. La pérdida de claves privadas implica pérdida irreversible de fondos. Las transacciones on-chain suelen ser irreversibles.",
+        ],
+      },
+      {
+        h: "Pagos con tarjeta",
+        p: [
+          "Los pagos fiat los procesa un tercero (Transak/MoonPay). Pueden aplicarse comisiones, límites diarios, rechazos bancarios o retrasos por verificación de identidad.",
+          "Los contracargos y disputas se gestionan con el emisor de la tarjeta y el proveedor de on-ramp, no directamente con nosotros.",
+        ],
+      },
+      {
+        h: "Regulación",
+        p: [
+          "La normativa sobre criptoactivos varía por país y puede cambiar. Es tu responsabilidad cumplir las leyes aplicables, incluidas obligaciones fiscales sobre plusvalías.",
+        ],
+      },
+      {
+        h: "Exposición al valor de OpenAI, Inc.",
+        p: [
+          "Si el protocolo mantiene exposición a acciones o instrumentos vinculados a " + brandLegal.referencedCompany + ", dicha exposición puede ser ilíquida, estar sujeta a lock-ups, cambios de valoración en rondas privadas y no reflejarse de forma instantánea en el precio de " + brandLegal.tokenTicker + ".",
+          "Una OPI futura de " + brandLegal.referencedCompany + ", aunque ocurra, no garantiza beneficio alguno para los holders de " + brandLegal.tokenTicker + ".",
+          brandLegal.tokenTicker + " puede desacoplarse del valor de mercado de la empresa por liquidez, especulación, comisiones o fallos técnicos.",
+        ],
+      },
+      {
+        h: "Marcas y expectativas",
+        p: [
+          brandLegal.productBrand + " no está afiliado a " + brandLegal.referencedCompany + ". No uses este producto asumiendo derechos de accionista, acceso a productos de OpenAI ni relación comercial con la empresa.",
+          "Las decisiones del protocolo pueden cambiar comisiones, listados o integraciones. Sigue las votaciones en " + governanceUrl + ".",
+          "Operar con OPEN implica riesgo de smart contract: audita el código y verifica la dirección del contrato antes de interactuar.",
+        ],
+      },
+      {
+        h: "Sin asesoramiento",
+        p: ["Esta plataforma no ofrece asesoramiento financiero, fiscal o legal. Consulta a un profesional independiente si lo necesitas."],
+      },
+    ],
+  },
+  affiliation: {
+    eyebrow: "Legal",
+    title: "Marcas y no afiliación",
+    meta: `Última actualización: ${lastUpdated}`,
+    subtitle: `Guía pública sobre la relación entre ${brandLegal.productBrand} y ${brandLegal.referencedCompany}.`,
+    sections: [
+      {
+        h: "Quiénes somos",
+        p: [
+          `${brandLegal.productBrand} es un ecosistema descentralizado e independiente. Operamos una interfaz y un token (${brandLegal.tokenTicker}) que busca dar exposición temática o económica a la valoración de ${brandLegal.referencedCompany}, sin ser filial, partner ni producto oficial de esa empresa.`,
+          getAffiliationNotice(),
+        ],
+      },
+      {
+        h: "Qué NO somos",
+        p: [
+          "No somos OpenAI, Inc., ni representamos a sus accionistas, empleados ni directivos.",
+          `${brandLegal.tokenTicker} no es una acción, ADR ni valor negociable emitido por ${brandLegal.referencedCompany}.`,
+          "No usamos las marcas OpenAI, ChatGPT, DALL·E, Sora, Whisper ni Codex como nombre de nuestros productos; solo como referencia al activo subyacente o comparativa temática cuando procede.",
+        ],
+      },
+      {
+        h: "Nomenclatura del ecosistema",
+        p: [
+          brandLegal.ecosystemDisclaimer,
+          "Los nombres openChat, openAPI, openImage, openMotion, openVoice y openCode designan productos del protocolo, no servicios oficiales de OpenAI, Inc.",
+        ],
+      },
+      {
+        h: "Uso nominativo de OpenAI, Inc.",
+        p: [
+          `Mencionamos ${brandLegal.referencedCompany} para describir el activo subyacente al que el protocolo puede buscar dar exposición (p. ej. antes de una OPI). Ese uso es descriptivo, no implica endorsement.`,
+          brandLegal.investmentMechanism,
+        ],
+      },
+      {
+        h: "Contacto y cumplimiento",
+        p: [
+          `Consultas legales: ${contactLegal}. Términos completos: /docs/terms. Riesgos: /docs/risks.`,
+          "Si eres un proveedor de on-ramp, exchange o regulador y necesitas confirmación escrita de no afiliación, contacta por el canal legal designado.",
+        ],
+      },
     ],
   },
 };

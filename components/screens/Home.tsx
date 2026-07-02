@@ -9,7 +9,9 @@ import { useMarket } from "@/lib/market";
 import { useApp } from "@/lib/store";
 import { Chart } from "../Chart";
 import { Hov } from "../ui";
-import { ecosystem, tokenWhy, steps, hubPos, hubMeta, faqDefs, tkSegs } from "@/lib/content";
+import { ecosystem, tokenWhy, steps, hubPos, hubMeta, faqDefs, tkSegs, ecosystemDisclaimer } from "@/lib/content";
+import { brandLegal } from "@/lib/brand-legal";
+import { LegalMicro } from "../LegalMicro";
 
 const series = buildSeries();
 const SUPPLY = 850000000;
@@ -32,7 +34,7 @@ function Countdown() {
     <section style={css("max-width:1200px;margin:0 auto;padding:24px 24px")}>
       <div style={css("border:1px solid #ECECEC;border-radius:18px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px")}>
         <div>
-          <div style={css("font:600 11px var(--font-mono);letter-spacing:0.06em;color:#9A9AA0;text-transform:uppercase;margin-bottom:5px")}>Cuenta atrás estimada hasta la salida a bolsa</div>
+          <div style={css("font:600 11px var(--font-mono);letter-spacing:0.06em;color:#9A9AA0;text-transform:uppercase;margin-bottom:5px")}>Cuenta atrás estimada hasta la OPI de {brandLegal.referencedCompany}</div>
           <div style={css("font:400 14px var(--font-hanken);color:#8A8A94")}>OPI prevista · septiembre de 2027 · fecha sujeta a cambios</div>
         </div>
         <div style={css("display:flex;align-items:baseline;gap:10px")}>
@@ -181,15 +183,16 @@ export default function Home() {
             <div style={css("display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:22px")}>
               <span style={{ ...css("display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px"), background: "color-mix(in srgb, var(--accent) 11%, #fff)" }}>
                 <span style={css("width:6px;height:6px;border-radius:50%;background:" + ACCENT)} />
-                <span style={{ ...css("font:600 12px var(--font-mono);letter-spacing:0.04em;text-transform:uppercase"), color: ACCENT }}>Preventa abierta</span>
+                <span style={{ ...css("font:600 12px var(--font-mono);letter-spacing:0.04em;text-transform:uppercase"), color: ACCENT }}>{brandLegal.copy.heroBadge.split(" · ")[0]}</span>
               </span>
               <span style={css("display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;border:1px solid #E2E2E4")}>
-                <span style={css("font:600 12px var(--font-mono);letter-spacing:0.03em;color:#6B6B76;text-transform:uppercase")}>OPI prevista · sept 2027</span>
+                <span style={css("font:600 12px var(--font-mono);letter-spacing:0.03em;color:#6B6B76;text-transform:uppercase")}>{brandLegal.copy.heroBadge.split(" · ")[1]}</span>
               </span>
             </div>
-            <h1 data-h1 style={css("font:600 64px/1.0 var(--font-hanken);letter-spacing:-0.045em;margin:0 0 22px;max-width:600px")}>Adquiere OPEN, el token de openAI.</h1>
-            <p style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 32px;text-wrap:pretty")}>Hazte con el token antes de su salida a bolsa, prevista para septiembre de 2027. Compra OPEN con tarjeta o cripto, o intercámbialo desde tu wallet. Sin custodia y con liquidez on-chain.</p>
-            <div style={css("display:flex;gap:12px;flex-wrap:wrap")}>
+            <h1 data-h1 style={css("font:600 64px/1.0 var(--font-hanken);letter-spacing:-0.045em;margin:0 0 22px;max-width:600px")}>{brandLegal.copy.heroHeadline}</h1>
+            <p style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 8px;text-wrap:pretty")}>{brandLegal.copy.heroSubheadline}</p>
+            <LegalMicro />
+            <div style={css("display:flex;gap:12px;flex-wrap:wrap;margin-top:32px")}>
               <Hov as="button" onClick={() => router.push("/comprar")} style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="background:#000">Comprar OPEN</Hov>
               <Hov as="button" onClick={() => router.push("/swap")} style="appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #DADADD;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="border-color:#0D0D0D">Intercambiar desde wallet</Hov>
             </div>
@@ -235,9 +238,9 @@ export default function Home() {
 
       {/* token explanation + value accrual + hub */}
       <section style={css("max-width:1200px;margin:0 auto;padding:48px 24px")}>
-        <h2 style={css("font:600 38px var(--font-hanken);letter-spacing:-0.035em;margin:0 0 16px;max-width:680px")}>Un token. Todo el ecosistema openAI.</h2>
+        <h2 style={css("font:600 38px var(--font-hanken);letter-spacing:-0.035em;margin:0 0 16px;max-width:680px")}>{brandLegal.copy.ecosystemTitle}</h2>
         <div data-2col style={css("display:grid;grid-template-columns:1.05fr 0.95fr;gap:40px;align-items:start;margin-bottom:40px")}>
-          <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;margin:0;text-wrap:pretty")}>OPEN es un <strong style={css("color:#0D0D0D;font-weight:600")}>token cripto vinculado a las acciones de openAI en bolsa</strong>: su valor sigue al de la compañía. Adquirirlo es entrar hoy, on-chain y sin intermediarios, en una empresa en plena expansión — con cada vez más usuarios, productos e ingresos — antes de su salida a bolsa.</p>
+          <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;margin:0;text-wrap:pretty")}>{brandLegal.copy.ecosystemLead}</p>
           <div style={css("display:flex;flex-direction:column;gap:12px")}>
             {tokenWhy.map((w, i) => (
               <div key={i} style={css("display:flex;gap:14px;align-items:flex-start;background:#F7F7F8;border-radius:14px;padding:16px 18px")}>
@@ -248,8 +251,8 @@ export default function Home() {
           </div>
         </div>
         <div style={{ ...css("font:600 11px var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px"), color: ACCENT }}>Value accrual</div>
-        <h3 style={css("font:600 27px var(--font-hanken);letter-spacing:-0.025em;margin:0 0 16px;max-width:700px")}>Un activo con respaldo: ingresos recurrentes y oferta decreciente.</h3>
-        <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;max-width:700px;margin:0 0 24px;text-wrap:pretty")}>El valor de OPEN se apoya en dos fundamentos. Está <strong style={css("color:#0D0D0D;font-weight:600")}>vinculado a las acciones de openAI en bolsa</strong>, por lo que acompaña la valoración de la compañía; y una parte de los ingresos por comisiones de cada producto se destina a <strong style={css("color:#0D0D0D;font-weight:600")}>recomprar y retirar OPEN de circulación</strong>. A mayor adopción, mayor demanda recurrente sobre una oferta que se contrae de forma programada.</p>
+        <h3 style={css("font:600 27px var(--font-hanken);letter-spacing:-0.025em;margin:0 0 16px;max-width:700px")}>{brandLegal.copy.valueTitle}</h3>
+        <p style={css("font:400 18px/1.6 var(--font-hanken);color:#5C5C66;max-width:700px;margin:0 0 24px;text-wrap:pretty")}>{brandLegal.copy.valueLead}</p>
         <div style={css("display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:18px")}>
           {["Adopción del ecosistema", "Ingresos por comisiones", "Recompra programática", "Reducción de oferta"].map((t, i) => (
             <span key={i} style={css("display:inline-flex;align-items:center;gap:8px")}>
@@ -297,6 +300,7 @@ export default function Home() {
             </Hov>
           ))}
         </div>
+        <p style={css("font:400 12px/1.5 var(--font-mono);color:#A8A8AE;margin:16px 0 0;max-width:900px")}>{ecosystemDisclaimer}</p>
       </section>
 
       <Donut />

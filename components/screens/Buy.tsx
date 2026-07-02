@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { css } from "@/lib/css";
 import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { useApp, prices } from "@/lib/store";
 import { useMarket } from "@/lib/market";
 import { Hov } from "../ui";
+import { LegalConsent } from "../LegalConsent";
 import { provDefs } from "@/lib/content";
+import { brandLegal } from "@/lib/brand-legal";
 
 const segStyle = (active: boolean) =>
   "appearance:none;cursor:pointer;border:1px solid " + (active ? "#0D0D0D" : "#E6E6E8") + ";background:" + (active ? "#0D0D0D" : "#fff") + ";color:" + (active ? "#fff" : "#5C5C66") + ";border-radius:10px;padding:9px 0;font:600 13px var(--font-mono)";
@@ -17,6 +20,7 @@ const ccStyle = (active: boolean) =>
 export default function Buy() {
   const app = useApp();
   const { price } = useMarket();
+  const [legalAccepted, setLegalAccepted] = useState(false);
   const P = prices(price);
   const isCard = app.buyMethod === "card";
   const payAmt = parseFloat(app.payAmount) || 0;
@@ -34,7 +38,7 @@ export default function Buy() {
     : [100, 500, 1000, 5000, 10000, 20000];
   const payBalance = !isCard && app.connected ? fmtN(app.balances[app.payAsset] || 0, app.payAsset === "BTC" ? 4 : 2) + " " + app.payAsset : null;
   const buyInsufficient = app.connected && !isCard && payAmt > (app.balances[app.payAsset] || 0);
-  const buyDisabled = app.processing || buyInsufficient;
+  const buyDisabled = app.processing || buyInsufficient || (isCard && !legalAccepted);
   const buyBtnLabel = app.processing ? "Procesando…" : buyInsufficient ? "Saldo insuficiente" : isCard ? "Continuar con " + provName : app.connected ? "Comprar OPEN" : "Conectar wallet para comprar";
   const buyTotal = isCard ? fmtN(payAmt, 2) + " " + cardSym : fmtN(payAmt, app.payAsset === "BTC" ? 5 : 2) + " " + app.payAsset;
   const secureText = "Pago securizado vía " + provName + " · Visa, Mastercard y Amex";
@@ -43,7 +47,8 @@ export default function Buy() {
     <main style={css("padding:48px 24px;display:flex;justify-content:center")}>
       <div style={css("width:460px;max-width:100%")}>
         <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>Comprar OPEN</h2>
-        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 24px")}>Con tarjeta o cripto. Liquidación instantánea.</p>
+        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 8px")}>Con tarjeta o cripto. Liquidación instantánea.</p>
+        <p style={css("font:400 12px/1.45 var(--font-mono);color:#A8A8AE;margin:0 0 24px")}>{brandLegal.shortDisclaimer}</p>
         <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:20px;padding:22px;box-shadow:0 20px 50px -30px rgba(13,13,13,0.18)")}>
           <div style={css("display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#F4F4F5;padding:4px;border-radius:12px;margin-bottom:18px")}>
             {(["card", "crypto"] as const).map((k) => (
@@ -139,6 +144,7 @@ export default function Buy() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D14343" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 8v4M12 16h.01" /></svg>Saldo insuficiente de {app.payAsset}
             </div>
           )}
+          {isCard && <LegalConsent checked={legalAccepted} onChange={setLegalAccepted} />}
           <button onClick={app.buy} disabled={buyDisabled} style={{ ...css("width:100%;appearance:none;color:#fff;border:none;border-radius:12px;padding:15px;font:600 16px var(--font-hanken);margin-top:20px"), cursor: buyDisabled ? "not-allowed" : "pointer", background: buyDisabled ? "#C8C8CE" : "#0D0D0D" }}>{buyBtnLabel}</button>
         </div>
       </div>

@@ -3,18 +3,19 @@ import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
 import Header from "@/components/Header";
+import AffiliationStrip from "@/components/AffiliationStrip";
 import Marquee from "@/components/Marquee";
 import Footer from "@/components/Footer";
 import { MobileNav, MobileCta } from "@/components/MobileNav";
 import { WalletModal, ProviderModal, SuccessModal, Toast } from "@/components/Modals";
+import { brandLegal } from "@/lib/brand-legal";
 
 const hanken = Hanken_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-hanken", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "openAI — Invierte en el token OPEN",
-  description:
-    "Adquiere OPEN, el token de openAI, antes de su salida a bolsa. Concepto de diseño ficticio, sin valor real y sin afiliación con OpenAI.",
+  title: "openAI Protocol — Token OPEN",
+  description: brandLegal.suggestedTagline + " " + brandLegal.shortDisclaimer,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AppProvider>
           <div data-pad style={{ minHeight: "100vh", background: "#fff" }}>
             <Header />
+            <AffiliationStrip />
             <Marquee />
             {children}
             <Footer />

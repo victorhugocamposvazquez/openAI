@@ -1,6 +1,7 @@
 -- ============================================================
 -- openAI — Supabase schema (Postgres)
 -- Run in Supabase SQL editor, or via `supabase db push` with migrations.
+-- Safe to re-run: skips existing types/tables; replaces policies & functions.
 -- Demo/concept project: OPEN is a FICTIONAL token. No real funds move.
 -- ============================================================
 
@@ -33,7 +34,11 @@ create table if not exists public.balances (
 -- ============================================================
 -- transactions : audit log of buys and swaps
 -- ============================================================
-create type tx_kind as enum ('buy','swap');
+do $$ begin
+  create type public.tx_kind as enum ('buy','swap');
+exception
+  when duplicate_object then null;
+end $$;
 
 create table if not exists public.transactions (
   id           uuid primary key default gen_random_uuid(),
@@ -68,18 +73,25 @@ alter table public.transactions enable row level security;
 alter table public.price_ticks  enable row level security;
 
 -- profiles: a user can read/update only their own row
+drop policy if exists "profiles self read" on public.profiles;
 create policy "profiles self read"   on public.profiles for select using (auth.uid() = id);
+drop policy if exists "profiles self upsert" on public.profiles;
 create policy "profiles self upsert" on public.profiles for insert with check (auth.uid() = id);
+drop policy if exists "profiles self update" on public.profiles;
 create policy "profiles self update" on public.profiles for update using (auth.uid() = id);
 
 -- balances: scoped to owner
+drop policy if exists "balances self read" on public.balances;
 create policy "balances self read"   on public.balances for select using (auth.uid() = user_id);
+drop policy if exists "balances self write" on public.balances;
 create policy "balances self write"  on public.balances for all    using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- transactions: owner can read; writes go through the RPC below (security definer)
+drop policy if exists "tx self read" on public.transactions;
 create policy "tx self read" on public.transactions for select using (auth.uid() = user_id);
 
 -- price_ticks: public read, no client writes
+drop policy if exists "price public read" on public.price_ticks;
 create policy "price public read" on public.price_ticks for select using (true);
 
 -- ============================================================
@@ -88,7 +100,7 @@ create policy "price public read" on public.price_ticks for select using (true);
 -- Call from the client with supabase.rpc('execute_trade', {...}).
 -- ============================================================
 create or replace function public.execute_trade(
-  p_kind       tx_kind,
+  p_kind       public.tx_kind,
   p_pay_asset  text,
   p_pay_amount numeric,
   p_price_usd  numeric

@@ -1,18 +1,22 @@
-/** Static content for the openAI demo, ported verbatim from the design prototype. */
+/** Static content for the openAI Protocol demo. */
+
+import { brandLegal, treasuryMechanism } from "./brand-legal";
+
+const { referencedCompany, productBrand, tokenTicker, shortDisclaimer, ecosystemDisclaimer } = brandLegal;
 
 export const ecosystem = [
-  { name: "openChat (ChatGPT)", desc: "Asistente conversacional para cientos de millones de usuarios. Suscripciones y consumo generan los ingresos base del ecosistema." },
-  { name: "openAPI (API)", desc: "Modelos servidos vía API. Cada millón de tokens procesados se factura; parte de la comisión recompra OPEN." },
-  { name: "openImage (DALL·E)", desc: "Generación de imágenes por difusión. El consumo por crédito alimenta el flujo de recompra del token." },
-  { name: "openMotion (Sora)", desc: "Generación de vídeo a partir de texto. Cargas de cómputo intensivas, facturadas por segundo renderizado." },
-  { name: "openVoice (Whisper)", desc: "Voz y transcripción en tiempo real. Uso medido por minuto de audio procesado." },
-  { name: "openCode (Codex)", desc: "Copiloto de programación. Plan por asiento más consumo de cómputo por sugerencia generada." },
+  { name: "openChat", desc: "Asistente conversacional del ecosistema openAI Protocol. Suscripciones y consumo generan ingresos que alimentan el mecanismo de recompra de OPEN." },
+  { name: "openAPI", desc: "Modelos servidos vía API del protocolo. Cada millón de tokens procesados se factura; parte de la comisión recompra OPEN." },
+  { name: "openImage", desc: "Generación de imágenes por difusión. El consumo por crédito alimenta el flujo de recompra del token." },
+  { name: "openMotion", desc: "Generación de vídeo a partir de texto. Cargas de cómputo intensivas, facturadas por segundo renderizado." },
+  { name: "openVoice", desc: "Voz y transcripción en tiempo real. Uso medido por minuto de audio procesado." },
+  { name: "openCode", desc: "Copiloto de programación del protocolo. Plan por asiento más consumo de cómputo por sugerencia generada." },
 ];
 
 export const tokenWhy = [
-  { icon: "↗", title: "Ligado al valor de la empresa", desc: "El precio de OPEN sigue a las acciones de openAI: si la compañía crece, el token lo refleja." },
-  { icon: "◴", title: "Entra antes de la OPI", desc: "Te posicionas hoy, on-chain, sin esperar a la salida a bolsa ni a un bróker tradicional." },
-  { icon: "◆", title: "Una empresa en crecimiento", desc: "Más usuarios, más productos y más ingresos cada trimestre impulsan la demanda del token." },
+  { icon: "↗", title: "Respaldado por equity real", desc: `La tesorería compra acciones reales de ${referencedCompany} vía SPV. El NAV equity alimenta el valor de ${tokenTicker}.` },
+  { icon: "◴", title: "Ingresos del ecosistema open*", desc: "openChat, openAPI y el resto de productos generan comisiones; el 30% recompra y quema OPEN." },
+  { icon: "◆", title: "Entra antes de la OPI", desc: "Te posicionas hoy, on-chain, con liquidez secundaria, sin esperar a un bróker tradicional." },
 ];
 
 export const steps = [
@@ -31,23 +35,24 @@ export const hubPos = [
   "position:absolute;left:15.8%;top:28.8%;transform:translate(-50%,-50%)",
 ];
 export const hubMeta: [string, string, string][] = [
-  ["openChat", "ChatGPT", "por suscripción"],
+  ["openChat", "Suscripción", "por suscripción"],
   ["openAPI", "API", "por token"],
-  ["openImage", "DALL·E", "por crédito"],
-  ["openMotion", "Sora", "por segundo"],
-  ["openVoice", "Whisper", "por minuto"],
-  ["openCode", "Codex", "por asiento"],
+  ["openImage", "Imagen", "por crédito"],
+  ["openMotion", "Vídeo", "por segundo"],
+  ["openVoice", "Voz", "por minuto"],
+  ["openCode", "Código", "por asiento"],
 ];
 
 export const faqDefs: [string, string][] = [
-  ["¿Qué es exactamente el token OPEN?", "OPEN es un token cripto vinculado a las acciones de openAI en bolsa: su valor sigue al de la compañía. Además, una parte de las comisiones que generan los servicios de openAI se destina a recomprar y quemar OPEN, reduciendo su oferta a medida que crece el uso."],
-  ["¿Cómo compro OPEN?", "Con tarjeta (vía Transak o MoonPay), con cripto desde tu saldo, o intercambiando los tokens de tu wallet (ETH, USDC, BTC) por OPEN. Solo necesitas conectar una wallet para recibir y custodiar tus tokens."],
-  ["¿Tengo que esperar a la salida a bolsa para invertir?", "No. La preventa está abierta ahora: te posicionas hoy, on-chain, sin esperar a la OPI ni a un bróker tradicional. La salida a bolsa está prevista para septiembre de 2027 (fecha estimada, sujeta a cambios)."],
-  ["¿Cómo y cuándo puedo vender mis OPEN?", "OPEN tiene liquidez on-chain desde el primer día: puedes intercambiarlo de vuelta por ETH, USDC u otros tokens en cualquier momento desde tu wallet, sin periodos de bloqueo para los compradores de preventa."],
-  ["¿Quién custodia mis tokens?", "Tú. openAI no tiene custodia de tus fondos: los OPEN se envían directamente a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan íntegramente en el widget del proveedor (Transak / MoonPay)."],
+  [`¿Qué es exactamente el token ${tokenTicker}?`, `${tokenTicker} es el token del ${productBrand}. ${treasuryMechanism.summary} ${treasuryMechanism.legalBoundary}`],
+  [`¿Cómo se usan mis fondos?`, `El capital de la preventa entra en la tesorería del protocolo. Una parte se destina al SPV para comprar acciones reales de ${referencedCompany} en mercados privados. Otra parte financia la operación de productos open* (APIs, cómputo, distribución). Los ingresos operativos y la revalorización del equity se consolidan en un NAV compuesto que orienta el valor de ${tokenTicker}.`],
+  [`¿Cómo compro ${tokenTicker}?`, "Con tarjeta (vía Transak o MoonPay), con cripto desde tu saldo, o intercambiando los tokens de tu wallet (ETH, USDC, BTC) por OPEN. Solo necesitas conectar una wallet para recibir y custodiar tus tokens."],
+  ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta ahora: te posicionas hoy, on-chain, sin esperar a la OPI de ${referencedCompany} ni a un bróker tradicional. La salida a bolsa está prevista para septiembre de 2027 (fecha estimada, sujeta a cambios).`],
+  [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `${tokenTicker} tiene liquidez on-chain desde el primer día: puedes intercambiarlo de vuelta por ETH, USDC u otros tokens en cualquier momento desde tu wallet, sin periodos de bloqueo para los compradores de preventa.`],
+  ["¿Quién custodia mis tokens?", `Tú. El protocolo no tiene custodia de tus fondos: los ${tokenTicker} se envían directamente a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan íntegramente en el widget del proveedor (Transak / MoonPay).`],
   ["¿Qué comisiones tiene?", "Compra con cripto o swap: 0,3%–1%. Compra con tarjeta: 1,5% con Transak o 1,9% con MoonPay (incluye el procesamiento del pago). Todas las comisiones se muestran antes de confirmar la operación."],
-  ["¿Es esto un riesgo?", "Sí. Invertir en cripto conlleva riesgo y el valor de OPEN puede subir o bajar. Invierte solo lo que puedas permitirte y, si lo necesitas, consulta a un asesor. (Nota: esta web es un concepto de diseño ficticio, sin valor real ni afiliación con OpenAI.)"],
-  ["¿Qué pasa después de la salida a bolsa?", "Los OPEN seguirán siempre vinculados a las acciones en bolsa y sincronizados con los servicios de openAI (ChatGPT, Codex, API, Whisper, DALL·E y Sora). La OPI no cambia el mecanismo: el token sigue acompañando al valor de la compañía y beneficiándose del uso del ecosistema."],
+  ["¿Es esto un riesgo?", `Sí. Invertir en cripto conlleva riesgo y el valor de ${tokenTicker} puede subir o bajar. Invierte solo lo que puedas permitirte y, si lo necesitas, consulta a un asesor. ${shortDisclaimer}`],
+  [`¿Qué pasa después de la salida a bolsa?`, `Los ${tokenTicker} seguirán vinculados a la valoración de ${referencedCompany} y sincronizados con los productos del ${productBrand}. La OPI no cambia el mecanismo: el token sigue acompañando al valor de la compañía y beneficiándose del uso del ecosistema.`],
 ];
 
 export const tkSegs: [string, number, string][] = [
@@ -71,7 +76,7 @@ export const provDefs: [string, string, string, string, string, string][] = [
 ];
 
 export const assetMeta: Record<string, { name: string; color: string; sym: string }> = {
-  OPEN: { name: "openAI Token", color: "#0E8C6A", sym: "A" },
+  OPEN: { name: "OPEN Token", color: "#0E8C6A", sym: "A" },
   ETH: { name: "Ethereum", color: "#6478F0", sym: "Ξ" },
   BTC: { name: "Bitcoin", color: "#E9962E", sym: "₿" },
   USDC: { name: "USD Coin", color: "#2775CA", sym: "$" },
@@ -90,7 +95,7 @@ export const baseTk: { s: string; p: string; c: string; up: boolean }[] = [
   { s: "DOT", p: "$7.14", c: "-0.7%", up: false },
 ];
 
-export type DocSection = { h?: string; p: string[] };
+export type DocSection = { h?: string; p: string[]; id?: string };
 export type Doc = {
   eyebrow: string;
   title: string;
@@ -100,3 +105,6 @@ export type Doc = {
   stats?: { value: string; label: string }[];
   sections: DocSection[];
 };
+
+/** Shown under ecosystem grid on Home. */
+export { ecosystemDisclaimer };

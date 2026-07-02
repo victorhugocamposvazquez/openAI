@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PRICES_USD } from "./format";
 import { getMarket, startMarketTicker } from "./market";
+import { brandLegal } from "./brand-legal";
 
 /* ──────────────────────────────────────────────────────────
    openAI demo store. All trading logic is simulated client-side
@@ -410,8 +411,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const t = sref.current.successTx;
     if (!t) return;
     const lines = [
-      "openAI — Recibo de operación",
-      "(concepto de diseño ficticio · sin valor real)",
+      brandLegal.copy.receiptHeader,
+      brandLegal.shortDisclaimer,
       "----------------------------------------",
       "ID            " + t.id,
       "Tipo          " + t.type,
@@ -422,14 +423,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       "Comisión      " + t.fee,
       "Wallet        " + sref.current.address,
       "----------------------------------------",
-      "Gracias por invertir en OPEN.",
+      brandLegal.copy.receiptFooter,
     ].join("\n");
     try {
       const blob = new Blob([lines], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "openAI-recibo-" + t.id + ".txt";
+      a.download = "openai-protocol-recibo-" + t.id + ".txt";
       document.body.appendChild(a);
       a.click();
       a.remove();

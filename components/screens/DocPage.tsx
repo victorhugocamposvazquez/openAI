@@ -31,7 +31,7 @@ export default function DocPage({ doc }: { doc: Doc }) {
 
       <div style={css("display:flex;flex-direction:column;gap:32px")}>
         {doc.sections.map((sec, i) => (
-          <div key={i}>
+          <div key={i} id={sec.id}>
             {sec.h && <h3 style={css("font:600 21px var(--font-hanken);letter-spacing:-0.02em;margin:0 0 12px")}>{sec.h}</h3>}
             <div style={css("display:flex;flex-direction:column;gap:14px")}>
               {sec.p.map((para, j) => (
