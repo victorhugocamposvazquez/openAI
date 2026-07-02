@@ -8,6 +8,7 @@ import { fmtUSD, ACCENT, NEG } from "@/lib/format";
 import { useApp } from "@/lib/store";
 import { useMarket } from "@/lib/market";
 import { Hov, Logo } from "./ui";
+import { brandLegal } from "@/lib/brand-legal";
 
 const NAV: [string, string][] = [
   ["/", "Inicio"],
@@ -93,11 +94,9 @@ export default function Header() {
   return (
     <header style={css("position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.82);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid #ECECEC")}>
       <div style={css("max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:20px")}>
-        <Link href="/" prefetch style={css("text-decoration:none;display:flex;align-items:center;gap:10px")}>
+        <Link href="/" prefetch title={brandLegal.productBrand} style={css("text-decoration:none;display:flex;align-items:center;gap:10px")}>
           <Logo />
-          <span style={css("font:700 19px var(--font-hanken);letter-spacing:-0.04em;color:#0D0D0D")}>
-            open<span style={{ color: ACCENT }}>AI</span>
-          </span>
+          <span style={css("font:700 19px var(--font-hanken);letter-spacing:-0.04em;color:#0D0D0D")}>Protocol</span>
         </Link>
 
         <NavLinks />
