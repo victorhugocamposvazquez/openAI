@@ -190,9 +190,8 @@ export default function Home() {
               </span>
             </div>
             <h1 data-h1 style={css("font:600 64px/1.0 var(--font-hanken);letter-spacing:-0.045em;margin:0 0 22px;max-width:600px")}>{brandLegal.copy.heroHeadline}</h1>
-            <p style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 8px;text-wrap:pretty")}>{brandLegal.copy.heroSubheadline}</p>
-            <LegalMicro zone="hero" />
-            <div style={css("display:flex;gap:12px;flex-wrap:wrap;margin-top:32px")}>
+            <p style={css("font:400 19px/1.55 var(--font-hanken);color:#5C5C66;max-width:520px;margin:0 0 32px;text-wrap:pretty")}>{brandLegal.copy.heroSubheadline}</p>
+            <div style={css("display:flex;gap:12px;flex-wrap:wrap")}>
               <Hov as="button" onClick={() => router.push("/comprar")} style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="background:#000">Comprar OPEN</Hov>
               <Hov as="button" onClick={() => router.push("/swap")} style="appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #DADADD;border-radius:12px;padding:15px 26px;font:600 16px var(--font-hanken);letter-spacing:-0.01em" hover="border-color:#0D0D0D">Intercambiar desde wallet</Hov>
             </div>

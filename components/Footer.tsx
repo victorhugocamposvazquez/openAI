@@ -40,9 +40,15 @@ function Footer() {
             ))}
           </div>
         </div>
-        <div style={css("border-top:1px solid #ECECEC;padding-top:20px;font:400 12px/1.5 var(--font-mono);color:#A8A8AE")}>
-          <p style={css("margin:0 0 12px")}>{brandLegal.footerDisclaimer}</p>
-          <p style={css("margin:0")}>{brandLegal.geoNotice}</p>
+        <div style={css("border-top:1px solid #ECECEC;padding-top:20px;font:400 12px/1.5 var(--font-hanken);color:#A8A8AE")}>
+          <p style={css("margin:0 0 14px")}>
+            {brandLegal.affiliationNoticeSoft}{" "}
+            <Link href="/docs/affiliation" prefetch className="footer-link" style={css("color:#6B6B76;text-decoration:underline")}>
+              Más información
+            </Link>
+          </p>
+          <p style={css("margin:0 0 12px;font-family:var(--font-mono);font-size:11px;line-height:1.5")}>{brandLegal.footerDisclaimer}</p>
+          <p style={css("margin:0;font-family:var(--font-mono);font-size:11px;line-height:1.5")}>{brandLegal.geoNotice}</p>
         </div>
       </div>
     </footer>

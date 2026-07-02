@@ -41,7 +41,7 @@ export function Logo({ height = 28 }: { height?: number }) {
     <img
       src="/openai-logo.png"
       alt={brandLegal.productBrand}
-      title={brandLegal.shortDisclaimer}
+      title={brandLegal.productBrand}
       height={height}
       style={{ height, width: "auto", display: "block" }}
     />

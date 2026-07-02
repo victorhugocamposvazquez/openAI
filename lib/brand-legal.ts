@@ -93,11 +93,15 @@ export const brandLegal = {
 
   investmentMechanism: treasuryMechanism.summary + " " + treasuryMechanism.legalBoundary,
 
+  /** Aviso de afiliación — tono suave para footer y flujos de producto. */
+  affiliationNoticeSoft:
+    "openAI Protocol es un ecosistema independiente. OPEN es el token del protocolo — no es una acción ni un producto oficial de OpenAI, Inc.",
+
+  /** Formulación legal completa — docs, recibos y consentimientos. */
   shortDisclaimer:
     "openAI Protocol y el token OPEN no están afiliados, patrocinados ni respaldados por OpenAI, Inc. OPEN no es una acción de OpenAI ni un producto emitido por OpenAI, Inc.",
 
-  microDisclaimer:
-    "OPEN es el token del openAI Protocol. No es una acción de OpenAI, Inc. Sin afiliación.",
+  microDisclaimer: "OPEN es el token del openAI Protocol.",
 
   navDisclaimer:
     "El precio de mercado de OPEN puede diferir del NAV publicado. No hay paridad 1:1 con acciones ni redención garantizada.",
@@ -139,8 +143,7 @@ export const brandLegal = {
     heroHeadline: "Invierte en OPEN antes de la OPI de OpenAI, Inc.",
     heroSubheadline:
       "El capital del protocolo financia acciones reales de OpenAI, Inc. (vía SPV) y el ecosistema open* para generar ingresos.",
-    heroMicro:
-      "OPEN es el token del openAI Protocol. No es una acción de OpenAI, Inc. Sin afiliación.",
+    heroMicro: "",
     heroBadge: "Preventa abierta · OPI prevista 2027",
     opiContext: "OPI prevista · septiembre de 2027 · fecha estimada, sujeta a cambios · no garantizada",
     equityMicro: "Acciones de OpenAI, Inc. vía SPV independiente · sin derechos de accionista.",
@@ -163,13 +166,13 @@ export const brandLegal = {
   /** Textos obligatorios por zona — única fuente para marketing + cumplimiento UI. */
   legalChecklist: {
     zones: {
-      layout: "shortDisclaimer",
+      footerAffiliation: "affiliationNoticeSoft",
       hero: "heroMicro",
       countdown: "opiContext",
       ecosystem: "equityMicro",
       valueAccrual: "navDisclaimer",
-      buy: "shortDisclaimer",
-      swap: "shortDisclaimer",
+      buy: "affiliationNoticeSoft",
+      swap: "affiliationNoticeSoft",
       docCta: "buyConsentExtra",
       footer: "footerDisclaimer",
     },
@@ -184,7 +187,7 @@ export const brandLegal = {
     tokenNatureParagraph:
       "OPEN representa participación económica en la tesorería del openAI Protocol. El protocolo, mediante un vehículo independiente (SPV), puede mantener exposición a acciones de OpenAI, Inc. OPEN no otorga derechos de accionista. El precio de mercado puede diferir del NAV. Invertir conlleva riesgo de pérdida total.",
     preLaunch: [
-      "Disclaimer en layout, compra, footer y recibos",
+      "Disclaimer en footer, compra, recibos y docs legales",
       "Doc /docs/affiliation y /docs/compliance accesibles",
       "Logo alt/title = openAI Protocol",
       "Dominio y emails propios (no openai.com)",
@@ -221,7 +224,7 @@ export function getAffiliationNotice() {
 /** Texto legal de una zona del checklist (resuelve claves anidadas en copy). */
 export function getLegalZoneText(zone: keyof typeof brandLegal.legalChecklist.zones): string {
   const key = brandLegal.legalChecklist.zones[zone];
-  if (key === "shortDisclaimer") return brandLegal.shortDisclaimer;
+  if (key === "affiliationNoticeSoft") return brandLegal.affiliationNoticeSoft;
   if (key === "heroMicro") return brandLegal.copy.heroMicro;
   if (key === "opiContext") return brandLegal.copy.opiContext;
   if (key === "equityMicro") return brandLegal.copy.equityMicro;

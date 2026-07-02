@@ -329,14 +329,15 @@ export const docMap: Record<string, Doc> = {
       {
         h: "Textos por zona de la interfaz",
         p: [
-          `Layout (strip): ${brandLegal.shortDisclaimer}`,
-          `Hero (micro): ${brandLegal.copy.heroMicro}`,
+          `Footer (aviso afiliación): ${brandLegal.affiliationNoticeSoft}`,
+          `Hero (micro): ${brandLegal.copy.heroMicro || "—"}`,
           `Countdown OPI: ${brandLegal.copy.opiContext}`,
           `Ecosistema / equity: ${brandLegal.copy.equityMicro}`,
           `Value accrual: ${brandLegal.navDisclaimer}`,
-          `Compra / swap: ${brandLegal.shortDisclaimer}`,
-          `Footer: ${brandLegal.footerDisclaimer}`,
+          `Compra / swap: ${brandLegal.affiliationNoticeSoft}`,
+          `Footer legal: ${brandLegal.footerDisclaimer}`,
           `Geo: ${brandLegal.geoNotice}`,
+          `Legal estricto (recibos, docs): ${brandLegal.shortDisclaimer}`,
         ],
       },
       {

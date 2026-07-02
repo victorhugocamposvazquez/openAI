@@ -3,7 +3,6 @@ import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
 import Header from "@/components/Header";
-import AffiliationStrip from "@/components/AffiliationStrip";
 import Marquee from "@/components/Marquee";
 import Footer from "@/components/Footer";
 import { MobileNav, MobileCta } from "@/components/MobileNav";
@@ -15,7 +14,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500", "600"],
 
 export const metadata: Metadata = {
   title: "openAI Protocol — Token OPEN",
-  description: brandLegal.suggestedTagline + " " + brandLegal.shortDisclaimer,
+  description: brandLegal.suggestedTagline + " " + brandLegal.affiliationNoticeSoft,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -25,7 +24,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AppProvider>
           <div data-pad style={{ minHeight: "100vh", background: "#fff" }}>
             <Header />
-            <AffiliationStrip />
             <Marquee />
             {children}
             <Footer />
