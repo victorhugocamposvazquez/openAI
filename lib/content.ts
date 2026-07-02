@@ -24,7 +24,7 @@ export const ecosystem = [
 
 export const tokenWhy = [
   { icon: "↗", title: "Acciones reales en tesorería", desc: `El capital de ${tokenTicker} se destina a comprar acciones de ${referencedCompany} en mercados privados.` },
-  { icon: "◴", title: "Antes de la OPI, on-chain", desc: "Posiciónate hoy con liquidez secundaria, sin esperar a la salida a bolsa ni al bróker tradicional." },
+  { icon: "◴", title: "Flywheel permanente", desc: "Accede on-chain hoy. Tras la OPI, la tesorería sigue acumulando acciones y quemando OPEN con cada uso de openAPI y los servicios open*." },
   { icon: "◆", title: "Ingresos del ecosistema open*", desc: "openChat, openAPI y el resto de productos generan comisiones; el 30% recompra y quema OPEN." },
 ];
 
@@ -54,16 +54,16 @@ export const hubMeta: [string, string, string][] = [
 
 export const faqDefs: [string, string][] = [
   [`¿Qué es ${tokenTicker} y qué hace con mi capital?`, `${marketingPitch} ${legalChecklist.tokenNatureParagraph}`],
-  [`¿Cómo se invierte en ${referencedCompany}?`, `La tesorería del protocolo destina el capital de las suscripciones a comprar acciones reales de ${referencedCompany} en mercados privados, vía un vehículo legal (SPV). Paralelamente financia la operación de productos open* cuyos ingresos refuerzan el valor del protocolo.`],
+  [`¿Cómo se invierte en ${referencedCompany}?`, `La tesorería destina el capital a comprar acciones reales de ${referencedCompany} vía SPV — antes y después de la OPI. Paralelamente opera openChat, openAPI y el resto de servicios open*; el 30% de sus comisiones recompra y quema OPEN, y el resto refuerza la acumulación de acciones.`],
   [`¿Cómo compro ${tokenTicker}?`, "Con tarjeta (vía Transak o MoonPay), con cripto desde tu saldo, o intercambiando los tokens de tu wallet (ETH, USDC, BTC) por OPEN. Solo necesitas conectar una wallet para recibir y custodiar tus tokens."],
-  ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta: inviertes hoy on-chain en acciones reales de ${referencedCompany} antes de la OPI. ${brandLegal.copy.opiContext}.`],
+  ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta: inviertes hoy on-chain en acciones reales de ${referencedCompany}. La OPI es un hito de mercado, no el final del protocolo — ${brandLegal.copy.postOpiFlywheel}`],
   [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `${tokenTicker} tiene liquidez on-chain desde el primer día: puedes intercambiarlo por ETH, USDC u otros tokens en cualquier momento desde tu wallet.`],
-  [`¿En qué se diferencia ${tokenTicker} de comprar la acción en bolsa?`, `${tokenTicker} es el token del ${productBrand}: participas en la tesorería que acumula equity de ${referencedCompany}, con liquidez on-chain y acceso antes de la OPI. Ideal si buscas exposición on-chain sin esperar al bróker.`],
+  [`¿En qué se diferencia ${tokenTicker} de comprar la acción en bolsa?`, `${tokenTicker} es el token del ${productBrand}: participas en la tesorería que acumula equity de ${referencedCompany} de forma continua, con liquidez on-chain y recompra programática financiada por openAPI y los servicios open*.`],
   [`¿Cómo se relaciona el precio de ${tokenTicker} con las acciones?`, `${navDisclaimerMarketing} ${legalChecklist.tokenNatureLegal}`],
   ["¿Quién custodia mis tokens?", `Tú. El protocolo no custodia tus ${tokenTicker}: se envían a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan en el widget del proveedor (Transak / MoonPay).`],
   ["¿Qué comisiones tiene?", "Compra con cripto o swap: 0,3%–1%. Compra con tarjeta: 1,5% con Transak o 1,9% con MoonPay. Todas las comisiones se muestran antes de confirmar."],
   ["¿Es esto un riesgo?", `Como cualquier inversión, el valor de ${tokenTicker} puede subir o bajar. Invierte solo lo que puedas permitirte. ${affiliationNoticeSoft}`],
-  [`¿Qué pasa después de la OPI?`, `La tesorería seguirá vinculada a ${referencedCompany} y el ecosistema open* seguirá generando ingresos. ${tokenTicker} acompaña el valor acumulado en acciones e ingresos del protocolo.`],
+  [`¿Qué pasa después de la OPI?`, brandLegal.copy.postOpiFlywheel + ` ${tokenTicker} sigue reflejando la tesorería: más acciones de ${referencedCompany}, más ingresos de servicios y recompras verificables on-chain.`],
 ];
 
 export const tkSegs: [string, number, string][] = [

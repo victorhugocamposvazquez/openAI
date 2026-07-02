@@ -34,8 +34,9 @@ function Countdown() {
     <section style={css("max-width:1200px;margin:0 auto;padding:24px 24px")}>
       <div style={css("border:1px solid #ECECEC;border-radius:18px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px")}>
         <div>
-          <div style={css("font:600 11px var(--font-mono);letter-spacing:0.06em;color:#9A9AA0;text-transform:uppercase;margin-bottom:5px")}>Cuenta atrás estimada hasta la OPI de {brandLegal.referencedCompany}</div>
+          <div style={css("font:600 11px var(--font-mono);letter-spacing:0.06em;color:#9A9AA0;text-transform:uppercase;margin-bottom:5px")}>Próximo hito: OPI de {brandLegal.referencedCompany}</div>
           <div style={css("font:400 14px var(--font-hanken);color:#8A8A94")}>{brandLegal.copy.opiContext}</div>
+          <div style={css("font:400 13px/1.45 var(--font-hanken);color:#9A9AA0;margin-top:8px;max-width:520px")}>{brandLegal.copy.postOpiFlywheel}</div>
         </div>
         <div style={css("display:flex;align-items:baseline;gap:10px")}>
           {cell(String(dd), "d")}{sep}

@@ -61,9 +61,9 @@ export const treasuryMechanism = {
     },
     {
       id: "buyback-burn",
-      title: "5. Recompra y quema — retorno al holder",
+      title: "5. Recompra y quema — retorno al holder (permanente)",
       technical:
-        "El 30% de las comisiones netas del Operating Revenue Pool se enruta automáticamente al contrato BuybackBurn. El contrato ejecuta órdenes de compra de OPEN contra pools de liquidez y envía los tokens a una dirección de quema irreversible. El resto se reinvierte: acumulación de equity, liquidez o crecimiento del ecosistema, según gobernanza.",
+        "El 30% de las comisiones netas del Operating Revenue Pool se enruta automáticamente al contrato BuybackBurn — antes y después de la OPI. El contrato ejecuta órdenes de compra de OPEN contra pools de liquidez y envía los tokens a una dirección de quema irreversible. El resto se reinvierte: acumulación de equity en OpenAI, Inc., liquidez o crecimiento del ecosistema open*, según gobernanza.",
       outputs: ["Contracción verificable de oferta circulante", "Presión de demanda estructural"],
     },
   ] as const satisfies readonly TreasuryPhase[],
@@ -82,7 +82,7 @@ export const treasuryMechanism = {
     equityTarget: "Mayoría del capital neto de nuevas suscripciones destinado a acumulación de equity en OpenAI, Inc.",
     operatingReserve: "Reserva operativa para APIs, cómputo y distribución del ecosistema open*.",
     liquidityReserve: "Colateral en pools on-chain para liquidez secundaria de OPEN.",
-    buybackRate: "30% de comisiones netas → BuybackBurn; resto según propuesta de gobernanza.",
+    buybackRate: "30% de comisiones netas → BuybackBurn de forma continua (pre y post OPI); resto según propuesta de gobernanza (refuerzo de equity y crecimiento open*).",
   },
 } as const;
 
@@ -107,7 +107,7 @@ export const brandLegal = {
 
   /** Aviso de afiliación — tono suave para footer y flujos de producto. */
   affiliationNoticeSoft:
-    "Con OPEN inviertes en acciones reales de OpenAI, Inc. a través del openAI Protocol — on-chain, con liquidez y antes de la OPI.",
+    "Con OPEN participas en la tesorería que invierte en acciones reales de OpenAI, Inc. — on-chain, con liquidez y un flywheel que sigue activo después de la OPI.",
 
   affiliationLinkLabel: "Transparencia legal",
   affiliationDocTitle: "Marcas y transparencia",
@@ -161,19 +161,22 @@ export const brandLegal = {
   suggestedCta: "Obtener OPEN",
 
   copy: {
-    heroHeadline: "Invierte en OPEN antes de la OPI de OpenAI, Inc.",
+    heroHeadline: "Invierte en OPEN. Acciones reales de OpenAI, Inc. — antes, durante y después de la OPI.",
     heroSubheadline:
-      "Tu capital compra acciones reales de OpenAI, Inc. en la tesorería del protocolo — on-chain, con liquidez y sin esperar al bróker.",
+      "Tu capital entra en la tesorería del protocolo para comprar acciones reales y operar open*. Cada uso de openAPI y los servicios open* alimenta recompras, quemas y más equity — sin parar en la salida a bolsa.",
     heroMicro: "",
-    heroBadge: "Preventa abierta · OPI prevista 2027",
-    opiContext: "OPI prevista · septiembre de 2027 · fecha estimada, sujeta a cambios",
-    equityMicro: "Cada OPEN alimenta la compra de acciones reales de OpenAI, Inc. en mercados privados.",
+    heroBadge: "Preventa abierta · Flywheel permanente",
+    opiContext: "OPI prevista · septiembre de 2027 · hito de mercado; el protocolo sigue acumulando acciones y recomprando OPEN",
+    postOpiFlywheel:
+      "La OPI no cierra el ciclo: la tesorería sigue comprando acciones de OpenAI, Inc. (mercado público y privado), openChat, openAPI y el resto de servicios generan ingresos por uso, y el 30% de esas comisiones se destina de forma continua a recomprar y quemar OPEN.",
+    equityMicro:
+      "La tesorería acumula acciones reales de OpenAI, Inc. antes y después de la OPI; los ingresos de open* financian más equity y recompra de OPEN.",
     ecosystemTitle: "Un token que invierte en acciones reales. Todo el ecosistema open*.",
     ecosystemLead:
-      "La tesorería del protocolo adquiere equity de OpenAI, Inc. y opera openChat, openAPI y el resto de productos. Más uso, más ingresos, más demanda sobre OPEN.",
-    valueTitle: "Acciones reales + ingresos del ecosistema",
+      "La tesorería adquiere equity de OpenAI, Inc. y opera openChat, openAPI y el resto de productos. Más uso de la API y los servicios, más ingresos, más acciones en tesorería y más demanda sobre OPEN.",
+    valueTitle: "Acciones reales + ingresos del ecosistema — para siempre",
     valueLead:
-      "La tesorería acumula acciones de OpenAI, Inc. mientras open* genera comisiones recurrentes. El 30% se destina a recomprar y quemar OPEN.",
+      "La tesorería acumula acciones de OpenAI, Inc. mientras open* genera comisiones recurrentes. El 30% recompra y quema OPEN; el resto refuerza la posición en acciones y el crecimiento del ecosistema.",
     buyConsentExtra:
       "Entiendo que OPEN refleja la tesorería del protocolo, que invierte en acciones reales de OpenAI, Inc., y que toda inversión conlleva riesgos.",
     receiptLegalBlock:
@@ -206,7 +209,7 @@ export const brandLegal = {
         "OPEN refleja la tesorería del protocolo. El swap on-chain es irreversible.",
     },
     tokenNatureParagraph:
-      "OPEN te da participación en la tesorería del openAI Protocol, que compra y custodia acciones reales de OpenAI, Inc. y opera el ecosistema open*. Es la vía on-chain para invertir antes de la OPI, con liquidez desde el primer día.",
+      "OPEN te da participación en la tesorería del openAI Protocol, que compra y custodia acciones reales de OpenAI, Inc. y opera el ecosistema open*. Accede on-chain hoy; tras la OPI, la tesorería sigue acumulando acciones y recomprando OPEN con los ingresos de openAPI y los servicios open*.",
     tokenNatureLegal:
       "OPEN participa en la tesorería del protocolo con exposición a OpenAI, Inc.; el precio de mercado puede variar respecto al NAV.",
     preLaunch: [
