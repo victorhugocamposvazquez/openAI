@@ -7,8 +7,6 @@ import { useApp, prices } from "@/lib/store";
 import { useMarket } from "@/lib/market";
 import { Hov } from "../ui";
 import { LegalConsent } from "../LegalConsent";
-import { GeoNotice } from "../GeoNotice";
-import { getLegalZoneText } from "@/lib/brand-legal";
 
 const segStyle = (active: boolean) =>
   "appearance:none;cursor:pointer;border:1px solid " + (active ? "#0D0D0D" : "#E6E6E8") + ";background:" + (active ? "#0D0D0D" : "#fff") + ";color:" + (active ? "#fff" : "#5C5C66") + ";border-radius:10px;padding:9px 0;font:600 13px var(--font-mono)";
@@ -37,10 +35,7 @@ export default function Swap() {
     <main style={css("padding:48px 24px;display:flex;justify-content:center")}>
       <div style={css("width:460px;max-width:100%")}>
         <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>Intercambiar</h2>
-        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 8px")}>Cambia los tokens de tu wallet por OPEN — o vende tus OPEN — al instante.</p>
-        <p style={css("font:400 12px/1.45 var(--font-mono);color:#A8A8AE;margin:0 0 12px")}>{getLegalZoneText("swap")}</p>
-        <GeoNotice />
-        <div style={css("margin-bottom:24px")} />
+        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 24px")}>Cambia los tokens de tu wallet por OPEN — o vende tus OPEN — al instante.</p>
         <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:20px;padding:22px;box-shadow:0 20px 50px -30px rgba(13,13,13,0.18)")}>
           <div style={css("background:#F7F7F8;border-radius:14px;padding:16px")}>
             <div style={css("display:flex;justify-content:space-between;align-items:center;margin-bottom:8px")}>

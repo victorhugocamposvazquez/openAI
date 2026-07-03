@@ -7,9 +7,8 @@ import { useApp, prices } from "@/lib/store";
 import { useMarket } from "@/lib/market";
 import { Hov } from "../ui";
 import { LegalConsent } from "../LegalConsent";
-import { GeoNotice } from "../GeoNotice";
 import { provDefs } from "@/lib/content";
-import { brandLegal, getLegalZoneText } from "@/lib/brand-legal";
+import { brandLegal } from "@/lib/brand-legal";
 
 const segStyle = (active: boolean) =>
   "appearance:none;cursor:pointer;border:1px solid " + (active ? "#0D0D0D" : "#E6E6E8") + ";background:" + (active ? "#0D0D0D" : "#fff") + ";color:" + (active ? "#fff" : "#5C5C66") + ";border-radius:10px;padding:9px 0;font:600 13px var(--font-mono)";
@@ -48,10 +47,7 @@ export default function Buy() {
     <main style={css("padding:48px 24px;display:flex;justify-content:center")}>
       <div style={css("width:460px;max-width:100%")}>
         <h2 style={css("font:600 30px var(--font-hanken);letter-spacing:-0.03em;margin:0 0 6px")}>{brandLegal.suggestedCta}</h2>
-        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 8px")}>Con tarjeta o cripto. Liquidación instantánea.</p>
-        <p style={css("font:400 12px/1.45 var(--font-mono);color:#A8A8AE;margin:0 0 12px")}>{getLegalZoneText("buy")}</p>
-        <GeoNotice />
-        <div style={css("margin-bottom:24px")} />
+        <p style={css("font:400 15px var(--font-hanken);color:#6B6B76;margin:0 0 24px")}>Con tarjeta o cripto. Liquidación instantánea.</p>
         <div style={css("background:#fff;border:1px solid #ECECEC;border-radius:20px;padding:22px;box-shadow:0 20px 50px -30px rgba(13,13,13,0.18)")}>
           <div style={css("display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#F4F4F5;padding:4px;border-radius:12px;margin-bottom:18px")}>
             {(["card", "crypto"] as const).map((k) => (
