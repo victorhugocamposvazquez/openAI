@@ -1,5 +1,5 @@
-import Buy from "@/components/screens/Buy";
+import BuyFlow from "@/components/buy/BuyFlow";
 
 export default function Page() {
-  return <Buy />;
+  return <BuyFlow />;
 }

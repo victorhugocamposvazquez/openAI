@@ -5,8 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { css } from "@/lib/css";
 import { fmtUSD, ACCENT, NEG } from "@/lib/format";
+import { useAccount } from "wagmi";
 import { useApp } from "@/lib/store";
 import { useMarket } from "@/lib/market";
+import { formatAddress } from "@/lib/wagmi/format-address";
 import { Hov, Logo } from "./ui";
 import { brandLegal } from "@/lib/brand-legal";
 
@@ -62,7 +64,27 @@ function PriceChip() {
 }
 
 function WalletActions() {
+  const pathname = usePathname();
   const app = useApp();
+  const { address, isConnected } = useAccount();
+  const onComprar = pathname === "/comprar";
+
+  if (onComprar && isConnected && address) {
+    return (
+      <Link
+        href="/comprar"
+        prefetch
+        style={css("text-decoration:none;cursor:default;display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #ECECEC;background:#fff;border-radius:999px")}
+      >
+        <span style={css("width:7px;height:7px;border-radius:50%;background:" + ACCENT)} />
+        <span style={css("font:500 13px var(--font-mono);color:#0D0D0D")}>{formatAddress(address)}</span>
+      </Link>
+    );
+  }
+
+  if (onComprar) {
+    return null;
+  }
 
   if (app.connected) {
     return (

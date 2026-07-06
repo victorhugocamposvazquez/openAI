@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
+import { Web3Provider } from "@/components/providers/Web3Provider";
 import Header from "@/components/Header";
 import Marquee from "@/components/Marquee";
 import Footer from "@/components/Footer";
@@ -22,17 +23,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className={`${hanken.variable} ${mono.variable}`}>
       <body>
         <AppProvider>
-          <div data-pad style={{ minHeight: "100vh", background: "#fff" }}>
-            <Header />
-            <Marquee />
-            {children}
-            <Footer />
-            <MobileDock />
-          </div>
-          <WalletModal />
-          <ProviderModal />
-          <SuccessModal />
-          <Toast />
+          <Web3Provider>
+            <div data-pad style={{ minHeight: "100vh", background: "#fff" }}>
+              <Header />
+              <Marquee />
+              {children}
+              <Footer />
+              <MobileDock />
+            </div>
+            <WalletModal />
+            <ProviderModal />
+            <SuccessModal />
+            <Toast />
+          </Web3Provider>
         </AppProvider>
       </body>
     </html>
