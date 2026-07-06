@@ -14,7 +14,7 @@ export const RAMP_URL_PARAMS_ENABLED = false;
 
 /** Modo de obtención de fondos en sin_fondos. Default tras tests: decidir entre ambos. */
 export type FundingMode = "smart_wallet" | "ramp_manual";
-export const FUNDING_MODE: FundingMode = "ramp_manual";
+export const FUNDING_MODE: FundingMode = "smart_wallet";
 
 /** Importe fiat (solo si se reactiva Ramp con params). */
 export const ONRAMP_FIAT = {
