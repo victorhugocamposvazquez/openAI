@@ -21,6 +21,8 @@ export const RAMP_CONFIG = {
   productionUrl: "https://app.rampnetwork.com",
   demoUrl: "https://app.demo.rampnetwork.com",
   hostAppName: brandLegal.productBrand,
+  /** Logo de respaldo si /openai-logo.png no está disponible en el origen. */
+  hostLogoUrlFallback: "https://assets.rampnetwork.com/misc/test-logo.png",
 };
 
 export const BUY_FLOW_COPY = {
@@ -42,6 +44,8 @@ export const BUY_FLOW_COPY = {
   listoSubtitle: (balance: string) => `Tienes ${balance} disponibles para invertir en OPEN.`,
   continueCta: "Continuar a la compra",
   paymentCancelled: "No se inició el pago. Puedes volver a intentarlo cuando quieras.",
+  rampIntegrationFailed:
+    "No pudimos abrir el pago integrado. Te llevamos a la pasarela segura en una nueva pestaña.",
   fallbackWarning:
     "Abriremos el proceso de pago en una nueva pestaña. Completa el pago allí y vuelve aquí para continuar.",
   fiatInvalid: "Introduce un importe válido en euros.",

@@ -7,6 +7,7 @@ import { Hov } from "@/components/ui";
 import { ONRAMP_FIAT, RAMP_CONFIG } from "@/lib/onramp/constants";
 import { openRampWidgetA } from "@/lib/onramp/ramp-open";
 import { buildRampFallbackUrl } from "@/lib/onramp/ramp-fallback";
+import { resolveRampWidgetUrl } from "@/lib/onramp/ramp-env";
 
 type LogLine = { id: number; text: string };
 
@@ -37,7 +38,7 @@ export default function TestRampClient() {
         onWidgetClose: (had) => pushLog(`WIDGET_CLOSE (purchase=${had})`),
         onError: (reason) => {
           pushLog(`Error / fallback: ${reason}`);
-          const url = buildRampFallbackUrl(address, ONRAMP_FIAT.defaultValue, rampUrl ?? RAMP_CONFIG.productionUrl);
+          const url = buildRampFallbackUrl(address, ONRAMP_FIAT.defaultValue, resolveRampWidgetUrl(rampUrl));
           pushLog(`URL B: ${url}`);
         },
       }

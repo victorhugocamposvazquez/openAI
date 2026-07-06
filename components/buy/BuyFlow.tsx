@@ -11,6 +11,7 @@ import {
   USDC_BASE,
 } from "@/lib/onramp/constants";
 import { openRampFallbackTab } from "@/lib/onramp/ramp-fallback";
+import { canUseRampOverlay } from "@/lib/onramp/ramp-env";
 import { openRampWidgetA } from "@/lib/onramp/ramp-open";
 import { continueToPresale } from "@/lib/onramp/presale";
 import { buyFlowReducer, INITIAL_BUY_FLOW } from "@/lib/onramp/types";
@@ -61,12 +62,17 @@ export default function BuyFlow() {
   useEffect(() => () => cleanupRamp(), [cleanupRamp]);
 
   const startViaB = useCallback(
-    (fiatValue: string) => {
+    (fiatValue: string, options?: { skipConfirm?: boolean; fromIntegrationError?: boolean }) => {
       if (!address) return;
-      const proceed = window.confirm(BUY_FLOW_COPY.fallbackWarning);
-      if (!proceed) {
-        openingRampRef.current = false;
-        return;
+      if (!options?.skipConfirm) {
+        const proceed = window.confirm(BUY_FLOW_COPY.fallbackWarning);
+        if (!proceed) {
+          openingRampRef.current = false;
+          if (options?.fromIntegrationError) {
+            dispatch({ type: "PAYMENT_CANCELLED", message: BUY_FLOW_COPY.rampIntegrationFailed });
+          }
+          return;
+        }
       }
       if (process.env.NODE_ENV === "development") {
         console.log("[ramp] vía B — pestaña externa");
@@ -83,6 +89,11 @@ export default function BuyFlow() {
       if (!address || openingRampRef.current) return;
       openingRampRef.current = true;
       cleanupRamp();
+
+      if (!canUseRampOverlay()) {
+        startViaB(fiatValue, { skipConfirm: true, fromIntegrationError: true });
+        return;
+      }
 
       const session = await openRampWidgetA(
         { userAddress: address, fiatValue },
@@ -109,7 +120,7 @@ export default function BuyFlow() {
             if (process.env.NODE_ENV === "development") {
               console.warn("[ramp] fallback por", reason);
             }
-            startViaB(fiatValue);
+            startViaB(fiatValue, { skipConfirm: true, fromIntegrationError: true });
           },
         }
       );
