@@ -40,8 +40,11 @@ export const BUY_FLOW_COPY = {
   pageSubtitle: "Primero añade fondos. Después participarás en la preventa.",
   sinWalletTitle: "Crea tu cuenta o conecta tu wallet",
   sinWalletSubtitle: "Necesitas una cuenta segura para recibir tus fondos y completar la compra.",
-  connectSmartWallet: "Crear cuenta con Face ID",
-  connectInjected: "Ya tengo wallet",
+  connectSmartWallet: "Crear cuenta Base (Face ID)",
+  connectExtensionHint:
+    "Si tienes la extensión Coinbase instalada, ignórala y usa el botón de arriba. La extensión no muestra el flujo de funding integrado.",
+  wrongWalletForFunding:
+    "Estás conectado con Coinbase Wallet (extensión), no con Base Account. Desconecta y pulsa «Crear cuenta Base (Face ID)».",
   sinFondosTitle: "Añade fondos para continuar",
   sinFondosSubtitle: "Sigue los pasos para recibir fondos en tu cuenta.",
   sinFondosSmartSubtitle: "Tu wallet puede ayudarte a añadir fondos de forma segura.",

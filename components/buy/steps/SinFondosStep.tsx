@@ -8,13 +8,14 @@ import { formatAddress } from "@/lib/wagmi/format-address";
 import {
   BUY_FLOW_COPY,
   FUNDING_MODE,
-  ONRAMP_FIAT,
 } from "@/lib/onramp/constants";
+import type { WalletFundingProfile } from "@/lib/wagmi/wallet-kind";
 import { CopyAddressButton, InfoBanner, StepCard, StepTitle } from "../ui/CopyAddressButton";
 
 type Props = {
   fiatValue: string;
   address?: string;
+  walletProfile: WalletFundingProfile;
   infoMessage?: string;
   onFiatChange: (value: string) => void;
   onRampManual: () => void;
@@ -121,9 +122,11 @@ function RampManualVariant({
 }
 
 function SmartWalletVariant({
+  walletProfile,
   infoMessage,
   onSmartWalletFunding,
 }: {
+  walletProfile: WalletFundingProfile;
   infoMessage?: string;
   onSmartWalletFunding: () => void;
 }) {
@@ -154,6 +157,16 @@ function SmartWalletVariant({
         </div>
       ) : null}
 
+      {!walletProfile.supportsIntegratedFunding && walletProfile.hint ? (
+        <div style={css("margin-bottom:16px")}>
+          <InfoBanner message={walletProfile.hint} />
+        </div>
+      ) : null}
+
+      <p style={css("font:400 13px var(--font-hanken);color:#8A8A94;margin:0 0 16px")}>
+        Conectado: <strong>{walletProfile.label}</strong>
+      </p>
+
       <div style={css("margin-bottom:20px")}>
         <LegalConsent checked={consent} onChange={setConsent} />
       </div>
@@ -165,7 +178,7 @@ function SmartWalletVariant({
       <Hov
         as="button"
         type="button"
-        disabled={pending}
+        disabled={pending || !walletProfile.supportsIntegratedFunding}
         onClick={handleSubmit}
         style="appearance:none;cursor:pointer;width:100%;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px;font:600 15px var(--font-hanken)"
         hover="background:#000"
@@ -179,6 +192,7 @@ function SmartWalletVariant({
 export function SinFondosStep({
   fiatValue,
   address,
+  walletProfile,
   infoMessage,
   onFiatChange,
   onRampManual,
@@ -194,7 +208,11 @@ export function SinFondosStep({
       {FUNDING_MODE === "ramp_manual" ? (
         <RampManualVariant address={address} infoMessage={infoMessage} onRampManual={onRampManual} />
       ) : (
-        <SmartWalletVariant infoMessage={infoMessage} onSmartWalletFunding={onSmartWalletFunding} />
+        <SmartWalletVariant
+          walletProfile={walletProfile}
+          infoMessage={infoMessage}
+          onSmartWalletFunding={onSmartWalletFunding}
+        />
       )}
     </StepCard>
   );

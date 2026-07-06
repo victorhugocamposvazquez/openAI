@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useReducer } from "react";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { formatUnits } from "viem";
 import { css } from "@/lib/css";
 import {
@@ -14,12 +14,12 @@ import {
 import { openRampManualTab } from "@/lib/onramp/ramp-fallback";
 import { continueToPresale } from "@/lib/onramp/presale";
 import {
-  buildSelfTransferConfig,
-  interpretFundingProbeError,
-  interpretFundingProbeSuccess,
+  fetchWalletCapabilities,
+  runSmartWalletFundingProbe,
 } from "@/lib/onramp/smart-wallet-funding";
 import { buyFlowReducer, INITIAL_BUY_FLOW } from "@/lib/onramp/types";
 import { useUsdcBalance } from "@/hooks/useUsdcBalance";
+import { getWalletFundingProfile } from "@/lib/wagmi/wallet-kind";
 import { SinWalletStep } from "./steps/SinWalletStep";
 import { SinFondosStep } from "./steps/SinFondosStep";
 import { EsperandoFondosStep } from "./steps/EsperandoFondosStep";
@@ -27,9 +27,9 @@ import { ListoStep } from "./steps/ListoStep";
 
 export default function BuyFlow() {
   const [state, dispatch] = useReducer(buyFlowReducer, INITIAL_BUY_FLOW);
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, connector } = useAccount();
   const { data: balanceData, isSuccess } = useUsdcBalance(address);
-  const { writeContractAsync } = useWriteContract();
+  const walletProfile = getWalletFundingProfile(connector?.id);
 
   const syncBalance = useCallback(() => {
     if (!isConnected || !address) {
@@ -69,24 +69,38 @@ export default function BuyFlow() {
   const handleSmartWalletFunding = useCallback(async () => {
     if (!address) return;
 
-    try {
-      const hash = await writeContractAsync(buildSelfTransferConfig(address));
-      if (process.env.NODE_ENV === "development") {
-        console.log("[funding] smart wallet probe tx", interpretFundingProbeSuccess(hash));
-      }
-      goToWaiting(ONRAMP_FIAT.defaultValue);
-    } catch (error) {
-      const result = interpretFundingProbeError(error);
-      if (process.env.NODE_ENV === "development") {
-        console.log("[funding] smart wallet probe", result);
-      }
-      if (result.outcome === "rejected") {
-        dispatch({ type: "PAYMENT_CANCELLED", message: BUY_FLOW_COPY.paymentCancelled });
-        return;
-      }
-      goToWaiting(ONRAMP_FIAT.defaultValue);
+    if (!walletProfile.supportsIntegratedFunding) {
+      dispatch({
+        type: "PAYMENT_CANCELLED",
+        message: walletProfile.hint ?? BUY_FLOW_COPY.wrongWalletForFunding,
+      });
+      return;
     }
-  }, [address, writeContractAsync, goToWaiting]);
+
+    const provider = (await connector?.getProvider()) as
+      | { request: (args: { method: string; params?: unknown }) => Promise<unknown> }
+      | undefined;
+
+    const capabilities = provider ? await fetchWalletCapabilities(provider, address) : null;
+
+    const result = await runSmartWalletFundingProbe({
+      address,
+      useSendCalls: true,
+      provider,
+      capabilities,
+    });
+
+    if (process.env.NODE_ENV === "development") {
+      console.log("[funding] probe", result);
+    }
+
+    if (result.outcome === "rejected") {
+      dispatch({ type: "PAYMENT_CANCELLED", message: BUY_FLOW_COPY.paymentCancelled });
+      return;
+    }
+
+    goToWaiting(ONRAMP_FIAT.defaultValue);
+  }, [address, connector, walletProfile, goToWaiting]);
 
   const handleAddFunds = useCallback(async () => {
     if (FUNDING_MODE === "smart_wallet") {
@@ -116,6 +130,7 @@ export default function BuyFlow() {
         <SinFondosStep
           fiatValue={state.fiatValue}
           address={address}
+          walletProfile={walletProfile}
           infoMessage={state.infoMessage}
           onFiatChange={(value) => dispatch({ type: "UPDATE_FIAT", fiatValue: value })}
           onRampManual={handleRampManual}
