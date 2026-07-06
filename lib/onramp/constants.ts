@@ -42,13 +42,20 @@ export const BUY_FLOW_COPY = {
   sinWalletSubtitle: "Necesitas una cuenta segura para recibir tus fondos y completar la compra.",
   connectSmartWallet: "Crear cuenta Base (Face ID)",
   connectExtensionHint:
-    "Si tienes la extensión Coinbase instalada, ignórala y usa el botón de arriba. La extensión no muestra el flujo de funding integrado.",
+    "Si tienes la extensión Coinbase instalada, ignórala y usa el botón de arriba. La extensión no muestra el flujo integrado para añadir fondos.",
   wrongWalletForFunding:
-    "Estás conectado con Coinbase Wallet (extensión), no con Base Account. Desconecta y pulsa «Crear cuenta Base (Face ID)».",
+    "Estás conectado con Coinbase Wallet (extensión), no con Cuenta Base. Desconecta y pulsa «Crear cuenta Base (Face ID)».",
   sinFondosTitle: "Añade fondos para continuar",
   sinFondosSubtitle: "Sigue los pasos para recibir fondos en tu cuenta.",
   sinFondosSmartSubtitle: "Tu wallet puede ayudarte a añadir fondos de forma segura.",
   smartWalletFundsCta: "Añadir fondos con mi cuenta",
+  smartWalletPopupHint:
+    "Se abrirá una ventana pequeña de Cuenta Base para firmar. No abandonas esta página. Permite ventanas emergentes si el navegador lo pide.",
+  baseAccountPopupTitle: "Continuar con Cuenta Base",
+  baseAccountPopupMessage:
+    "Para conectar o añadir fondos, Cuenta Base necesita abrir una ventana segura. Si el navegador la bloqueó, Coinbase puede mostrar un aviso en inglés: pulsa «Try again» (equivale a Reintentar) y autoriza las ventanas emergentes para este sitio.",
+  baseAccountPopupConfirm: "Entendido, continuar",
+  baseAccountPopupCancel: "Cancelar",
   rampManualOpenCta: "Abrir pasarela de pago",
   rampManualBeforeOpen:
     "Abriremos la pasarela de pago en una nueva pestaña. Completa el proceso allí y vuelve aquí.",

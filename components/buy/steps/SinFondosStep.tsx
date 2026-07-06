@@ -11,6 +11,7 @@ import {
 } from "@/lib/onramp/constants";
 import type { WalletFundingProfile } from "@/lib/wagmi/wallet-kind";
 import { CopyAddressButton, InfoBanner, StepCard, StepTitle } from "../ui/CopyAddressButton";
+import { BaseAccountPopupGuide } from "../ui/BaseAccountPopupGuide";
 
 type Props = {
   fiatValue: string;
@@ -133,23 +134,33 @@ function SmartWalletVariant({
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!consent) {
-      setError(BUY_FLOW_COPY.consentRequired);
-      return;
-    }
-    setError(null);
+  const runFunding = async () => {
     setPending(true);
     try {
       await onSmartWalletFunding();
     } finally {
       setPending(false);
+      setShowGuide(false);
     }
+  };
+
+  const handleSubmit = () => {
+    if (!consent) {
+      setError(BUY_FLOW_COPY.consentRequired);
+      return;
+    }
+    setError(null);
+    setShowGuide(true);
   };
 
   return (
     <>
+      {showGuide ? (
+        <BaseAccountPopupGuide onConfirm={runFunding} onCancel={() => setShowGuide(false)} />
+      ) : null}
+
       <StepTitle title={BUY_FLOW_COPY.sinFondosTitle} subtitle={BUY_FLOW_COPY.sinFondosSmartSubtitle} />
       {infoMessage ? (
         <div style={css("margin-bottom:16px")}>
@@ -162,6 +173,10 @@ function SmartWalletVariant({
           <InfoBanner message={walletProfile.hint} />
         </div>
       ) : null}
+
+      <p style={css("font:400 13px/1.5 var(--font-hanken);color:#8A8A94;margin:0 0 16px")}>
+        {BUY_FLOW_COPY.smartWalletPopupHint}
+      </p>
 
       <p style={css("font:400 13px var(--font-hanken);color:#8A8A94;margin:0 0 16px")}>
         Conectado: <strong>{walletProfile.label}</strong>

@@ -11,29 +11,11 @@ import { resolveRampWidgetUrl, isRampDemoMode } from "@/lib/onramp/ramp-env";
 import {
   fetchWalletCapabilities,
   runSmartWalletFundingProbe,
-  type SmartWalletFundingProbeResult,
 } from "@/lib/onramp/smart-wallet-funding";
 import { BASE_ACCOUNT_CONNECTOR_ID, getWalletFundingProfile } from "@/lib/wagmi/wallet-kind";
+import { formatProbeResult } from "./format-probe";
 
 type LogLine = { id: number; text: string };
-
-function formatProbeResult(result: SmartWalletFundingProbeResult): string[] {
-  return [
-    "── Resultado funding ──",
-    `método: ${result.method}`,
-    `outcome: ${result.outcome}`,
-    `wallet: ${result.method === "wallet_sendCalls" ? "Base Account (sendCalls)" : "EOA / extensión"}`,
-    `popup probable: ${result.popupLikelyShown ? "sí" : "no"}`,
-    `funding (heurística): ${result.fundingOfferLikely ? "sí" : "no"}`,
-    `interpretación: ${result.interpretation}`,
-    ...(result.capabilities ? [`capabilities: ${JSON.stringify(result.capabilities, null, 2)}`] : []),
-    ...(result.errorName ? [`error.name: ${result.errorName}`] : []),
-    ...(result.errorMessage ? [`error.message: ${result.errorMessage}`] : []),
-    ...(result.hash ? [`hash/id: ${result.hash}`] : []),
-    "opciones:",
-    ...result.observedOptions.map((o) => `  · ${o}`),
-  ];
-}
 
 export default function TestRampClient() {
   const { address, isConnected, connector } = useAccount();
@@ -68,15 +50,15 @@ export default function TestRampClient() {
 
   const runSmartWalletFundingProbeTest = async () => {
     if (!address || !isConnected) {
-      pushLog("Conecta Base Account primero (botón de abajo).");
+      pushLog("Conecta Cuenta Base primero (botón de abajo).");
       return;
     }
 
     pushLog(`Conector: ${connector?.id ?? "?"} (${walletProfile.label})`);
 
     if (!walletProfile.supportsIntegratedFunding) {
-      pushLog(walletProfile.hint ?? "Necesitas Base Account, no la extensión Coinbase.");
-      pushLog("Desconecta → «Conectar Base Account (Face ID)».");
+      pushLog(walletProfile.hint ?? "Necesitas Cuenta Base, no la extensión Coinbase.");
+      pushLog("Desconecta y vuelve a conectar con «Conectar Cuenta Base (Face ID)».");
       return;
     }
 
@@ -90,8 +72,8 @@ export default function TestRampClient() {
     }
 
     const capabilities = await fetchWalletCapabilities(provider, address);
-    pushLog(`capabilities: ${JSON.stringify(capabilities)}`);
-    pushLog("Disparando wallet_sendCalls (1 USDC self-transfer)…");
+    pushLog(`capacidades: ${JSON.stringify(capabilities)}`);
+    pushLog("Lanzando wallet_sendCalls (transferencia de prueba de 1 USDC)…");
 
     const result = await runSmartWalletFundingProbe({
       address,
@@ -120,9 +102,9 @@ export default function TestRampClient() {
     const session = await openRampWidgetA(
       { userAddress: address, fiatValue: "50", rampUrl },
       {
-        onConfigDone: () => pushLog("WIDGET_CONFIG_DONE"),
-        onPurchaseCreated: () => pushLog("PURCHASE_CREATED"),
-        onWidgetClose: (had) => pushLog(`WIDGET_CLOSE (purchase=${had})`),
+        onConfigDone: () => pushLog("Widget configurado"),
+        onPurchaseCreated: () => pushLog("Compra creada"),
+        onWidgetClose: (had) => pushLog(`Widget cerrado (compra=${had ? "sí" : "no"})`),
         onError: (reason) => pushLog(`Error vía A: ${reason}`),
       }
     );
@@ -132,16 +114,16 @@ export default function TestRampClient() {
 
   return (
     <main style={css("max-width:800px;margin:0 auto;padding:48px 24px 120px")}>
-      <h1 style={css("font:700 28px var(--font-hanken);margin:0 0 8px")}>Sandbox funding</h1>
+      <h1 style={css("font:700 28px var(--font-hanken);margin:0 0 8px")}>Pruebas de funding</h1>
       <p style={css("font:400 14px var(--font-hanken);color:#8A8A94;margin:0 0 8px")}>
-        Wallet: {address ?? "no conectada"}
+        Dirección: {address ?? "sin conectar"}
       </p>
       <p style={css("font:400 13px var(--font-hanken);color:#B8B8BD;margin:0 0 24px")}>
         Conector: {connector?.id ?? "—"} · {walletProfile.label}
       </p>
 
       <section style={css("margin-bottom:32px")}>
-        <h2 style={css("font:600 18px var(--font-hanken);margin:0 0 12px")}>Base Account (Smart Wallet)</h2>
+        <h2 style={css("font:600 18px var(--font-hanken);margin:0 0 12px")}>Cuenta Base (Smart Wallet)</h2>
         <div style={css("display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px")}>
           {!isConnected ? (
             <Hov
@@ -152,7 +134,7 @@ export default function TestRampClient() {
               style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:10px;padding:12px 16px;font:600 14px var(--font-hanken)"
               hover="background:#000"
             >
-              {connecting ? "Conectando…" : "Conectar Base Account (Face ID)"}
+              {connecting ? "Conectando…" : "Conectar Cuenta Base (Face ID)"}
             </Hov>
           ) : (
             <Hov
@@ -172,7 +154,7 @@ export default function TestRampClient() {
             style="appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:10px;padding:12px 16px;font:600 14px var(--font-hanken)"
             hover="background:#000"
           >
-            Probar funding Smart Wallet
+            Probar funding de Cuenta Base
           </Hov>
         </div>
         {!walletProfile.supportsIntegratedFunding && isConnected ? (
@@ -183,7 +165,7 @@ export default function TestRampClient() {
       </section>
 
       <section style={css("margin-bottom:24px")}>
-        <h2 style={css("font:600 18px var(--font-hanken);margin:0 0 12px")}>Ramp (legacy)</h2>
+        <h2 style={css("font:600 18px var(--font-hanken);margin:0 0 12px")}>Ramp (heredado)</h2>
         <Hov
           as="button"
           type="button"
@@ -191,7 +173,7 @@ export default function TestRampClient() {
           style="appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #E6E6E8;border-radius:10px;padding:12px 16px;font:600 14px var(--font-hanken)"
           hover="border-color:#0D0D0D"
         >
-          Abrir Ramp sin params
+          Abrir Ramp sin parámetros
         </Hov>
         {RAMP_SDK_ENABLED ? (
           <Hov

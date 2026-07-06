@@ -12,21 +12,21 @@ export function getWalletFundingProfile(connectorId?: string): WalletFundingProf
   if (connectorId === BASE_ACCOUNT_CONNECTOR_ID) {
     return {
       supportsIntegratedFunding: true,
-      label: "Base Account (Smart Wallet)",
+      label: "Cuenta Base (Smart Wallet)",
     };
   }
 
   if (connectorId === "coinbaseWalletSDK") {
     return {
       supportsIntegratedFunding: false,
-      label: "Coinbase Wallet",
-      hint: "Parece la extensión o app Coinbase, no Base Account. Desconecta y usa «Crear cuenta Base (Face ID)».",
+      label: "Coinbase Wallet (extensión)",
+      hint: "Estás con la extensión o app Coinbase, no con Cuenta Base. Desconecta y pulsa «Crear cuenta Base (Face ID)».",
     };
   }
 
   return {
     supportsIntegratedFunding: false,
     label: connectorId ?? "Wallet desconocida",
-    hint: "Conecta con Base Account (Face ID) para probar el funding integrado.",
+    hint: "Conecta con Cuenta Base (Face ID) para añadir fondos de forma integrada.",
   };
 }

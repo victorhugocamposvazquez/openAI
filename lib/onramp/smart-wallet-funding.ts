@@ -159,12 +159,12 @@ export function interpretFundingProbeError(
       fundingOfferLikely: matchedHints.length > 0,
       interpretation:
         matchedHints.length > 0
-          ? "Popup abierto con pistas de funding en el error."
-          : "Popup cerrado o rechazado. Si viste «Revisar alerta» sin opción de comprar, probablemente no es Base Account.",
+          ? "Ventana emergente abierta; el error sugiere opciones de añadir fondos."
+          : "Ventana cerrada o rechazada. Si viste «Revisar alerta» sin opción de comprar, probablemente no es Cuenta Base.",
       observedOptions:
         matchedHints.length > 0
-          ? matchedHints.map((h) => `Pista: "${h}"`)
-          : ["Popup de confirmación estándar (extensión Coinbase) — no funding integrado"],
+          ? matchedHints.map((h) => `Pista en error: «${h}»`)
+          : ["Ventana de confirmación estándar (extensión Coinbase) — sin funding integrado"],
     };
   }
 
@@ -179,8 +179,8 @@ export function interpretFundingProbeError(
       fundingOfferLikely: method === "wallet_sendCalls",
       interpretation:
         method === "wallet_sendCalls"
-          ? "Fondos insuficientes vía sendCalls. Base Account podría ofrecer funding antes del fallo."
-          : "«Es probable que falle» + tarifa no disponible = extensión Coinbase, no Smart Wallet con funding.",
+          ? "Fondos insuficientes vía sendCalls. Cuenta Base podría ofrecer añadir fondos antes del fallo."
+          : "«Es probable que falle» y tarifa no disponible = extensión Coinbase, no Cuenta Base con funding integrado.",
       observedOptions: [
         insufficient ? "Saldo / gas insuficiente" : "Error desconocido",
         ...matchedHints.map((h) => `Pista: "${h}"`),
@@ -196,7 +196,7 @@ export function interpretFundingProbeError(
     errorRaw: errorText(error),
     popupLikelyShown: true,
     fundingOfferLikely: matchedHints.length > 0,
-    interpretation: "Error inesperado. Verifica que usas Base Account (Face ID), no la extensión.",
+    interpretation: "Error inesperado. Verifica que usas Cuenta Base (Face ID), no la extensión.",
     observedOptions:
       matchedHints.length > 0
         ? matchedHints.map((h) => `Pista: "${h}"`)
@@ -215,8 +215,8 @@ export function interpretFundingProbeSuccess(
     popupLikelyShown: true,
     fundingOfferLikely: false,
     interpretation:
-      "Tx firmada. Self-transfer de 1 USDC si había saldo (sin pérdida neta).",
-    observedOptions: ["Tx completada"],
+      "Transacción firmada. Transferencia de prueba de 1 USDC si había saldo (sin pérdida neta).",
+    observedOptions: ["Transacción completada"],
   };
 }
 
