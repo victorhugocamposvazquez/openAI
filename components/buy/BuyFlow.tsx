@@ -11,7 +11,6 @@ import {
   USDC_BASE,
 } from "@/lib/onramp/constants";
 import { openRampFallbackTab } from "@/lib/onramp/ramp-fallback";
-import { canUseRampOverlay } from "@/lib/onramp/ramp-env";
 import { openRampWidgetA } from "@/lib/onramp/ramp-open";
 import { continueToPresale } from "@/lib/onramp/presale";
 import { buyFlowReducer, INITIAL_BUY_FLOW } from "@/lib/onramp/types";
@@ -89,11 +88,6 @@ export default function BuyFlow() {
       if (!address || openingRampRef.current) return;
       openingRampRef.current = true;
       cleanupRamp();
-
-      if (!canUseRampOverlay()) {
-        startViaB(fiatValue, { skipConfirm: true, fromIntegrationError: true });
-        return;
-      }
 
       const session = await openRampWidgetA(
         { userAddress: address, fiatValue },

@@ -1,5 +1,5 @@
-import { ONRAMP_FIAT, RAMP_CONFIG } from "./constants";
-import { getRampHostLogoUrl, resolveRampWidgetUrl } from "./ramp-env";
+import { RAMP_CONFIG } from "./constants";
+import { buildRampSdkConfig } from "./ramp-env";
 
 export type RampSessionHandlers = {
   onConfigDone: () => void;
@@ -48,20 +48,9 @@ export async function openRampWidgetA(
 
   try {
     const { RampInstantSDK } = await import("@ramp-network/ramp-instant-sdk");
-    const widgetUrl = resolveRampWidgetUrl(params.rampUrl);
-    const hostApiKey = process.env.NEXT_PUBLIC_RAMP_HOST_API_KEY;
+    const sdkConfig = buildRampSdkConfig(params);
 
-    instance = new RampInstantSDK({
-      url: widgetUrl,
-      hostAppName: RAMP_CONFIG.hostAppName,
-      hostLogoUrl: getRampHostLogoUrl(),
-      swapAsset: RAMP_CONFIG.swapAsset,
-      fiatCurrency: ONRAMP_FIAT.currency,
-      fiatValue: params.fiatValue,
-      userAddress: params.userAddress,
-      variant: RAMP_CONFIG.variant,
-      ...(hostApiKey ? { hostApiKey } : {}),
-    }) as RampInstance;
+    instance = new RampInstantSDK(sdkConfig) as RampInstance;
 
     timeoutId = setTimeout(() => {
       if (!configDone) failToFallback("timeout_sin_WIDGET_CONFIG_DONE");

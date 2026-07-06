@@ -21,7 +21,8 @@ export const RAMP_CONFIG = {
   productionUrl: "https://app.rampnetwork.com",
   demoUrl: "https://app.demo.rampnetwork.com",
   hostAppName: brandLegal.productBrand,
-  /** Logo de respaldo si /openai-logo.png no está disponible en el origen. */
+  selectedCountryCode: "ES",
+  /** Logo HTTPS de Ramp — válido sin partner; evita 404 del logo local. */
   hostLogoUrlFallback: "https://assets.rampnetwork.com/misc/test-logo.png",
 };
 

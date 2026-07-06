@@ -1,29 +1,62 @@
-import { RAMP_CONFIG } from "./constants";
+import { ONRAMP_FIAT, RAMP_CONFIG } from "./constants";
 
-const RAMP_TEST_LOGO = "https://assets.rampnetwork.com/misc/test-logo.png";
+export type RampSdkParams = {
+  userAddress: string;
+  fiatValue: string;
+  rampUrl?: string;
+};
 
-/** Logo HTTPS requerido por Ramp en el SDK embebido. */
-export function getRampHostLogoUrl(): string {
-  if (typeof window !== "undefined" && window.location.origin.startsWith("http")) {
-    return `${window.location.origin}/openai-logo.png`;
-  }
-  return RAMP_TEST_LOGO;
+export function hasRampHostApiKey(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_RAMP_HOST_API_KEY);
 }
 
-/** En local usamos demo; en producción sin API key el overlay suele fallar → B. */
+/**
+ * Sin hostApiKey Ramp solo permite overlay en el entorno demo.
+ * Con clave de partner → producción (salvo override o flag de demo).
+ */
 export function resolveRampWidgetUrl(override?: string): string {
   if (override) return override;
-
-  if (typeof window !== "undefined") {
-    const host = window.location.hostname;
-    if (host === "localhost" || host === "127.0.0.1") {
-      return RAMP_CONFIG.demoUrl;
-    }
-  }
-
+  if (process.env.NEXT_PUBLIC_RAMP_USE_DEMO === "true") return RAMP_CONFIG.demoUrl;
+  if (!hasRampHostApiKey()) return RAMP_CONFIG.demoUrl;
   return RAMP_CONFIG.productionUrl;
 }
 
-export function canUseRampOverlay(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_RAMP_HOST_API_KEY);
+/** Logo HTTPS fiable; el asset local /openai-logo.png no existe en el repo. */
+export function getRampHostLogoUrl(): string {
+  const custom = process.env.NEXT_PUBLIC_RAMP_HOST_LOGO_URL;
+  if (custom) return custom;
+  return RAMP_CONFIG.hostLogoUrlFallback;
+}
+
+export function buildRampSdkConfig(params: RampSdkParams) {
+  const hostApiKey = process.env.NEXT_PUBLIC_RAMP_HOST_API_KEY;
+  const widgetUrl = resolveRampWidgetUrl(params.rampUrl);
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("[ramp] SDK config", {
+      widgetUrl,
+      hasApiKey: Boolean(hostApiKey),
+      swapAsset: RAMP_CONFIG.swapAsset,
+    });
+  }
+
+  return {
+    url: widgetUrl,
+    hostAppName: RAMP_CONFIG.hostAppName,
+    hostLogoUrl: getRampHostLogoUrl(),
+    swapAsset: RAMP_CONFIG.swapAsset,
+    fiatCurrency: ONRAMP_FIAT.currency,
+    fiatValue: params.fiatValue,
+    userAddress: params.userAddress,
+    variant: RAMP_CONFIG.variant,
+    defaultFlow: "ONRAMP" as const,
+    enabledFlows: ["ONRAMP" as const],
+    selectedCountryCode: RAMP_CONFIG.selectedCountryCode,
+    closeable: true,
+    ...(hostApiKey ? { hostApiKey } : {}),
+  };
+}
+
+export function isRampDemoMode(): boolean {
+  return resolveRampWidgetUrl().includes("demo.rampnetwork.com");
 }

@@ -7,7 +7,7 @@ import { Hov } from "@/components/ui";
 import { ONRAMP_FIAT, RAMP_CONFIG } from "@/lib/onramp/constants";
 import { openRampWidgetA } from "@/lib/onramp/ramp-open";
 import { buildRampFallbackUrl } from "@/lib/onramp/ramp-fallback";
-import { resolveRampWidgetUrl } from "@/lib/onramp/ramp-env";
+import { resolveRampWidgetUrl, isRampDemoMode } from "@/lib/onramp/ramp-env";
 
 type LogLine = { id: number; text: string };
 
@@ -28,7 +28,8 @@ export default function TestRampClient() {
       return;
     }
     cleanupRef.current?.();
-    pushLog(`Abriendo widget (${rampUrl ?? "producción"})…`);
+    const resolved = resolveRampWidgetUrl(rampUrl);
+    pushLog(`Abriendo vía A → ${resolved}${isRampDemoMode() ? " (demo, sin API key)" : ""}`);
 
     const session = await openRampWidgetA(
       { userAddress: address, fiatValue: ONRAMP_FIAT.defaultValue, rampUrl },
@@ -71,7 +72,16 @@ export default function TestRampClient() {
           style="appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #E6E6E8;border-radius:10px;padding:12px 16px;font:600 14px var(--font-hanken)"
           hover="border-color:#0D0D0D"
         >
-          Producción
+          Auto (demo sin API key)
+        </Hov>
+        <Hov
+          as="button"
+          type="button"
+          onClick={() => runWidget(RAMP_CONFIG.productionUrl)}
+          style="appearance:none;cursor:pointer;background:#fff;color:#0D0D0D;border:1px solid #E6E6E8;border-radius:10px;padding:12px 14px;font:600 13px var(--font-hanken)"
+          hover="border-color:#0D0D0D"
+        >
+          Prod (requiere API key)
         </Hov>
       </div>
 
