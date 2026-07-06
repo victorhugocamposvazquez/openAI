@@ -1,18 +1,23 @@
 "use client";
 
-import { useCallback, useEffect, useReducer, useRef } from "react";
-import { useAccount } from "wagmi";
+import { useCallback, useEffect, useReducer } from "react";
+import { useAccount, useWriteContract } from "wagmi";
 import { formatUnits } from "viem";
 import { css } from "@/lib/css";
 import {
   BUY_FLOW_COPY,
   formatUserBalance,
+  FUNDING_MODE,
   ONRAMP_FIAT,
   USDC_BASE,
 } from "@/lib/onramp/constants";
-import { openRampFallbackTab } from "@/lib/onramp/ramp-fallback";
-import { openRampWidgetA } from "@/lib/onramp/ramp-open";
+import { openRampManualTab } from "@/lib/onramp/ramp-fallback";
 import { continueToPresale } from "@/lib/onramp/presale";
+import {
+  buildSelfTransferConfig,
+  interpretFundingProbeError,
+  interpretFundingProbeSuccess,
+} from "@/lib/onramp/smart-wallet-funding";
 import { buyFlowReducer, INITIAL_BUY_FLOW } from "@/lib/onramp/types";
 import { useUsdcBalance } from "@/hooks/useUsdcBalance";
 import { SinWalletStep } from "./steps/SinWalletStep";
@@ -24,8 +29,7 @@ export default function BuyFlow() {
   const [state, dispatch] = useReducer(buyFlowReducer, INITIAL_BUY_FLOW);
   const { address, isConnected } = useAccount();
   const { data: balanceData, isSuccess } = useUsdcBalance(address);
-  const rampCleanupRef = useRef<(() => void) | null>(null);
-  const openingRampRef = useRef(false);
+  const { writeContractAsync } = useWriteContract();
 
   const syncBalance = useCallback(() => {
     if (!isConnected || !address) {
@@ -53,76 +57,44 @@ export default function BuyFlow() {
     syncBalance();
   }, [syncBalance]);
 
-  const cleanupRamp = useCallback(() => {
-    rampCleanupRef.current?.();
-    rampCleanupRef.current = null;
+  const goToWaiting = useCallback((fiatValue: string) => {
+    dispatch({ type: "START_WAITING", fiatValue, rampVia: "B" });
   }, []);
 
-  useEffect(() => () => cleanupRamp(), [cleanupRamp]);
+  const handleRampManual = useCallback(() => {
+    openRampManualTab();
+    goToWaiting(ONRAMP_FIAT.defaultValue);
+  }, [goToWaiting]);
 
-  const startViaB = useCallback(
-    (fiatValue: string, options?: { skipConfirm?: boolean; fromIntegrationError?: boolean }) => {
-      if (!address) return;
-      if (!options?.skipConfirm) {
-        const proceed = window.confirm(BUY_FLOW_COPY.fallbackWarning);
-        if (!proceed) {
-          openingRampRef.current = false;
-          if (options?.fromIntegrationError) {
-            dispatch({ type: "PAYMENT_CANCELLED", message: BUY_FLOW_COPY.rampIntegrationFailed });
-          }
-          return;
-        }
-      }
+  const handleSmartWalletFunding = useCallback(async () => {
+    if (!address) return;
+
+    try {
+      const hash = await writeContractAsync(buildSelfTransferConfig(address));
       if (process.env.NODE_ENV === "development") {
-        console.log("[ramp] vía B — pestaña externa");
+        console.log("[funding] smart wallet probe tx", interpretFundingProbeSuccess(hash));
       }
-      openRampFallbackTab(address, fiatValue);
-      dispatch({ type: "START_WAITING", fiatValue, rampVia: "B" });
-      openingRampRef.current = false;
-    },
-    [address]
-  );
+      goToWaiting(ONRAMP_FIAT.defaultValue);
+    } catch (error) {
+      const result = interpretFundingProbeError(error);
+      if (process.env.NODE_ENV === "development") {
+        console.log("[funding] smart wallet probe", result);
+      }
+      if (result.outcome === "rejected") {
+        dispatch({ type: "PAYMENT_CANCELLED", message: BUY_FLOW_COPY.paymentCancelled });
+        return;
+      }
+      goToWaiting(ONRAMP_FIAT.defaultValue);
+    }
+  }, [address, writeContractAsync, goToWaiting]);
 
-  const openOnramp = useCallback(
-    async (fiatValue: string) => {
-      if (!address || openingRampRef.current) return;
-      openingRampRef.current = true;
-      cleanupRamp();
-
-      const session = await openRampWidgetA(
-        { userAddress: address, fiatValue },
-        {
-          onConfigDone: () => {
-            if (process.env.NODE_ENV === "development") {
-              console.log("[ramp] vía A — WIDGET_CONFIG_DONE");
-            }
-            dispatch({ type: "START_WAITING", fiatValue, rampVia: "A" });
-            openingRampRef.current = false;
-          },
-          onPurchaseCreated: () => {
-            if (process.env.NODE_ENV === "development") {
-              console.log("[ramp] PURCHASE_CREATED");
-            }
-          },
-          onWidgetClose: (hadPurchase) => {
-            openingRampRef.current = false;
-            if (!hadPurchase) {
-              dispatch({ type: "PAYMENT_CANCELLED", message: BUY_FLOW_COPY.paymentCancelled });
-            }
-          },
-          onError: (reason) => {
-            if (process.env.NODE_ENV === "development") {
-              console.warn("[ramp] fallback por", reason);
-            }
-            startViaB(fiatValue, { skipConfirm: true, fromIntegrationError: true });
-          },
-        }
-      );
-
-      if (session) rampCleanupRef.current = session.cleanup;
-    },
-    [address, cleanupRamp, startViaB]
-  );
+  const handleAddFunds = useCallback(async () => {
+    if (FUNDING_MODE === "smart_wallet") {
+      await handleSmartWalletFunding();
+    } else {
+      handleRampManual();
+    }
+  }, [handleSmartWalletFunding, handleRampManual]);
 
   const handleContinue = () => {
     if (!address || state.step !== "listo") return;
@@ -143,15 +115,17 @@ export default function BuyFlow() {
       {state.step === "sin_fondos" && (
         <SinFondosStep
           fiatValue={state.fiatValue}
+          address={address}
           infoMessage={state.infoMessage}
           onFiatChange={(value) => dispatch({ type: "UPDATE_FIAT", fiatValue: value })}
-          onAddFunds={openOnramp}
+          onRampManual={handleRampManual}
+          onSmartWalletFunding={handleSmartWalletFunding}
           onClearInfo={() => dispatch({ type: "CLEAR_INFO" })}
         />
       )}
 
       {state.step === "esperando_fondos" && (
-        <EsperandoFondosStep onRetry={() => openOnramp(state.fiatValue)} />
+        <EsperandoFondosStep onRetry={handleAddFunds} />
       )}
 
       {state.step === "listo" && (
