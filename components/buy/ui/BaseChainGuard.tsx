@@ -9,11 +9,13 @@ import { StepCard, StepTitle } from "./CopyAddressButton";
 
 type Props = {
   children: React.ReactNode;
+  /** Sin tarjeta propia — para usar dentro de otro StepCard. */
+  inline?: boolean;
 };
 
-export function BaseChainGuard({ children }: Props) {
+export function BaseChainGuard({ children, inline }: Props) {
   // chainId de useAccount() es la red real de la wallet; useChainId() devolvería
-  // siempre la de la config (solo Base) y la guardia nunca saltaría.
+  // siempre la de la config y la guardia nunca saltaría.
   const { isConnected, chainId } = useAccount();
   const { switchChain, isPending, error } = useSwitchChain();
 
@@ -21,8 +23,8 @@ export function BaseChainGuard({ children }: Props) {
 
   if (chainId === base.id) return <>{children}</>;
 
-  return (
-    <StepCard>
+  const content = (
+    <>
       <StepTitle title={BUY_FLOW_COPY.switchChainTitle} subtitle={BUY_FLOW_COPY.switchChainSubtitle} />
       <Hov
         as="button"
@@ -39,6 +41,10 @@ export function BaseChainGuard({ children }: Props) {
           {BUY_FLOW_COPY.switchChainRejected}
         </p>
       ) : null}
-    </StepCard>
+    </>
   );
+
+  if (inline) return content;
+
+  return <StepCard>{content}</StepCard>;
 }

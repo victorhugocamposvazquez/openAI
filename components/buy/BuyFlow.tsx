@@ -69,11 +69,12 @@ export default function BuyFlow() {
         {state.step === "listo" && (
           <ListoStep balanceLabel={state.balanceLabel} onContinue={handleContinue} />
         )}
-
-        {state.step === "comprando" && (
-          <PresalePurchaseStep onBack={() => dispatch({ type: "EXIT_PURCHASE" })} />
-        )}
       </BaseChainGuard>
+
+      {/* Fuera de la guardia: la pestaña "Desde otra red" opera en la red de origen. */}
+      {state.step === "comprando" && (
+        <PresalePurchaseStep onBack={() => dispatch({ type: "EXIT_PURCHASE" })} />
+      )}
     </main>
   );
 }

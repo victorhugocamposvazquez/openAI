@@ -1,5 +1,5 @@
 import { http, createConfig } from "wagmi";
-import { base } from "wagmi/chains";
+import { arbitrum, base, bsc, mainnet, optimism, polygon } from "wagmi/chains";
 import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
 import { WALLET_CONNECT_METADATA } from "@/lib/onramp/constants";
 import { brandLegal } from "@/lib/brand-legal";
@@ -34,11 +34,17 @@ const connectors = [
     : []),
 ];
 
+// Base es la cadena principal (compra). El resto son orígenes del puente cross-chain.
 export const wagmiConfig = createConfig({
-  chains: [base],
+  chains: [base, mainnet, arbitrum, optimism, polygon, bsc],
   connectors,
   transports: {
     [base.id]: http(),
+    [mainnet.id]: http(),
+    [arbitrum.id]: http(),
+    [optimism.id]: http(),
+    [polygon.id]: http(),
+    [bsc.id]: http(),
   },
   ssr: true,
 });

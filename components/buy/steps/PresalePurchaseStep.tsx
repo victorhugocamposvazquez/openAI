@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { formatUnits } from "viem";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAccount } from "wagmi";
 import { css } from "@/lib/css";
 import { Hov } from "@/components/ui";
 import { BUY_FLOW_COPY, OPEN_TOKEN_DECIMALS } from "@/lib/onramp/constants";
@@ -9,15 +12,30 @@ import { usePresaleOpenQuote } from "@/hooks/usePresaleReads";
 import { usePaymentTokenBalances } from "@/hooks/usePaymentTokenBalances";
 import { PAYMENT_TOKEN_LIST } from "@/lib/onramp/payment-tokens";
 import { InfoBanner, StepCard, StepTitle } from "../ui/CopyAddressButton";
+import { BaseChainGuard } from "../ui/BaseChainGuard";
+import { CrossChainFundingStep } from "./CrossChainFundingStep";
 
 type Props = {
   onBack?: () => void;
 };
 
+type FundingMode = "base" | "bridge";
+
 export function PresalePurchaseStep({ onBack }: Props) {
+  const { address } = useAccount();
+  const queryClient = useQueryClient();
+  const [mode, setMode] = useState<FundingMode>("base");
   const purchase = usePresalePurchase();
   const balances = usePaymentTokenBalances();
   const { data: openAmount } = usePresaleOpenQuote(purchase.openQuoteAmount);
+
+  const handleBridgeDelivered = () => {
+    // El USDC ya está en Base: refrescamos saldos y volvemos a la pestaña
+    // de compra con USDC preseleccionado.
+    void queryClient.invalidateQueries();
+    purchase.setPaymentToken("USDC");
+    setMode("base");
+  };
 
   const isRunning = purchase.state.phase === "awaiting_wallet" || purchase.state.phase === "confirming";
 
@@ -41,6 +59,24 @@ export function PresalePurchaseStep({ onBack }: Props) {
     <StepCard>
       <StepTitle title={BUY_FLOW_COPY.compraTitle} subtitle={BUY_FLOW_COPY.compraSubtitle} />
 
+      <div style={css("display:flex;gap:8px;margin-bottom:20px")}>
+        <ModeTab
+          active={mode === "base"}
+          label={BUY_FLOW_COPY.bridgeTabBase}
+          onClick={() => setMode("base")}
+        />
+        <ModeTab
+          active={mode === "bridge"}
+          label={BUY_FLOW_COPY.bridgeTabOther}
+          onClick={() => setMode("bridge")}
+        />
+      </div>
+
+      {mode === "bridge" ? (
+        <CrossChainFundingStep recipient={address} onDelivered={handleBridgeDelivered} />
+      ) : (
+      <BaseChainGuard inline>
+      <div>
       <p style={css("font:600 12px var(--font-hanken);color:#8A8A94;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.04em")}>
         {BUY_FLOW_COPY.compraPayWith}
       </p>
@@ -211,6 +247,9 @@ export function PresalePurchaseStep({ onBack }: Props) {
           {isRunning ? purchase.state.currentLabel : purchase.primaryCta}
         </Hov>
       )}
+      </div>
+      </BaseChainGuard>
+      )}
 
       {onBack ? (
         <Hov
@@ -227,6 +266,24 @@ export function PresalePurchaseStep({ onBack }: Props) {
 
       <style>{`@keyframes buy-spin { to { transform: rotate(360deg); } }`}</style>
     </StepCard>
+  );
+}
+
+function ModeTab({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
+  return (
+    <Hov
+      as="button"
+      type="button"
+      onClick={onClick}
+      style={
+        active
+          ? "appearance:none;cursor:pointer;flex:1;padding:11px 12px;border-radius:12px;border:1px solid #0D0D0D;background:#0D0D0D;color:#fff;font:600 13px var(--font-hanken)"
+          : "appearance:none;cursor:pointer;flex:1;padding:11px 12px;border-radius:12px;border:1px solid #E6E6E8;background:#fff;color:#5C5C66;font:600 13px var(--font-hanken)"
+      }
+      hover={active ? undefined : "border-color:#0D0D0D"}
+    >
+      {label}
+    </Hov>
   );
 }
 
