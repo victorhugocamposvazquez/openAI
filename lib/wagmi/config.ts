@@ -34,12 +34,15 @@ const connectors = [
     : []),
 ];
 
+// RPC dedicado para Base (Alchemy/QuickNode…) — los públicos aplican rate limits.
+const baseRpcUrl = process.env.NEXT_PUBLIC_RPC_BASE?.trim() || undefined;
+
 // Base es la cadena principal (compra). El resto son orígenes del puente cross-chain.
 export const wagmiConfig = createConfig({
   chains: [base, mainnet, arbitrum, optimism, polygon, bsc],
   connectors,
   transports: {
-    [base.id]: http(),
+    [base.id]: http(baseRpcUrl),
     [mainnet.id]: http(),
     [arbitrum.id]: http(),
     [optimism.id]: http(),

@@ -67,9 +67,15 @@ function PriceChip() {
 function WalletActions() {
   const pathname = usePathname();
   const app = useApp();
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, isReconnecting } = useAccount();
   const disconnectWallet = useWalletDisconnect();
   const onComprar = pathname === "/comprar";
+
+  // Mientras wagmi restaura la sesión, hueco neutro (evita el parpadeo
+  // de "Conectar wallet" en cada recarga con sesión activa).
+  if (isReconnecting) {
+    return <div style={css("width:120px;height:38px;border-radius:999px;background:#F4F4F5")} />;
+  }
 
   // Estado real de wagmi como única fuente de verdad.
   if (isConnected && address) {

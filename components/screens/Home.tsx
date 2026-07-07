@@ -6,7 +6,7 @@ import { css } from "@/lib/css";
 import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { buildSeries } from "@/lib/series";
 import { useMarket } from "@/lib/market";
-import { useApp } from "@/lib/store";
+import { useWalletHoldings } from "@/hooks/useWalletHoldings";
 import { Chart } from "../Chart";
 import { Hov } from "../ui";
 import { ecosystem, tokenWhy, steps, hubPos, hubMeta, faqDefs, tkSegs, ecosystemDisclaimer } from "@/lib/content";
@@ -160,7 +160,7 @@ function Faq() {
 }
 
 export default function Home() {
-  const app = useApp();
+  const { openBalance, isConnected } = useWalletHoldings();
   const { price, change } = useMarket();
   const router = useRouter();
   const pos = change >= 0;
@@ -331,7 +331,7 @@ export default function Home() {
                 </div>
                 <div style={css("padding:18px;flex:1")}>
                   <div style={css("font:500 12px var(--font-mono);color:#8A8A94")}>Saldo OPEN</div>
-                  <div style={css("font:600 30px var(--font-mono);letter-spacing:-0.02em;margin:4px 0 2px")}>{app.connected ? fmtN(app.balances.OPEN, 2) : "0.00"}</div>
+                  <div style={css("font:600 30px var(--font-mono);letter-spacing:-0.02em;margin:4px 0 2px")}>{isConnected ? fmtN(openBalance, 2) : "0.00"}</div>
                   <div style={{ ...css("font:600 13px var(--font-mono)"), color: ACCENT }}>{changeStr} hoy</div>
                   <div style={css("background:#F7F7F8;border-radius:14px;padding:14px;margin-top:18px")}>
                     <div style={css("font:500 12px var(--font-mono);color:#8A8A94;margin-bottom:6px")}>Pagas con USDC</div>

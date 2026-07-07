@@ -54,13 +54,13 @@ export const hubMeta: [string, string, string][] = [
 export const faqDefs: [string, string][] = [
   [`¿Qué es ${tokenTicker} y qué hace con mi capital?`, `${marketingPitch} ${legalChecklist.tokenNatureParagraph}`],
   [`¿Cómo se invierte en ${referencedCompany}?`, `La tesorería destina el capital a comprar acciones reales de ${referencedCompany} vía SPV — antes y después de la OPI. Paralelamente opera openChat, openAPI y el resto de servicios open*; el 30% de sus comisiones recompra y quema OPEN, y el resto refuerza la acumulación de acciones.`],
-  [`¿Cómo compro ${tokenTicker}?`, "Con tarjeta (vía Transak o MoonPay), con cripto desde tu saldo, o intercambiando los tokens de tu wallet (ETH, USDC, BTC) por OPEN. Solo necesitas conectar una wallet para recibir y custodiar tus tokens."],
+  [`¿Cómo compro ${tokenTicker}?`, "Conecta tu wallet y paga con USDC, ETH, WETH o cbBTC en la red Base. También puedes traer fondos desde otras redes (Ethereum, Arbitrum, Solana, Bitcoin…) y los convertimos en USDC en tu wallet de Base automáticamente."],
   ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta: inviertes hoy on-chain en acciones reales de ${referencedCompany}. La OPI es un hito de mercado, no el final del protocolo — ${brandLegal.copy.postOpiFlywheel}`],
-  [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `${tokenTicker} tiene liquidez on-chain desde el primer día: puedes intercambiarlo por ETH, USDC u otros tokens en cualquier momento desde tu wallet.`],
+  [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `Tras el evento de generación del token (TGE), ${tokenTicker} contará con liquidez on-chain y podrás intercambiarlo por ETH, USDC u otros tokens desde tu wallet.`],
   [`¿En qué se diferencia ${tokenTicker} de comprar la acción en bolsa?`, `${tokenTicker} es el token del ${productBrand}: participas en la tesorería que acumula equity de ${referencedCompany} de forma continua, con liquidez on-chain y recompra programática financiada por openAPI y los servicios open*.`],
   [`¿Cómo se relaciona el precio de ${tokenTicker} con las acciones?`, legalChecklist.tokenNatureLegal],
-  ["¿Quién custodia mis tokens?", `Tú. El protocolo no custodia tus ${tokenTicker}: se envían a tu wallet y solo tú controlas las claves. Las compras con tarjeta se procesan en el widget del proveedor (Transak / MoonPay).`],
-  ["¿Qué comisiones tiene?", "Compra con cripto o swap: 0,3%–1%. Compra con tarjeta: 1,5% con Transak o 1,9% con MoonPay. Todas las comisiones se muestran antes de confirmar."],
+  ["¿Quién custodia mis tokens?", `Tú. El protocolo no custodia tus ${tokenTicker}: la compra se firma desde tu propia wallet y solo tú controlas las claves.`],
+  ["¿Qué comisiones tiene?", "La preventa no añade comisiones propias: pagas la comisión de red de Base (céntimos) y, si pagas con un token distinto de USDC o desde otra red, el coste de conversión del mercado, que se muestra antes de confirmar."],
   ["¿Es esto un riesgo?", `Como cualquier inversión, el valor de ${tokenTicker} puede subir o bajar. Invierte solo lo que puedas permitirte. ${affiliationNoticeSoft}`],
   [`¿Qué pasa después de la OPI?`, brandLegal.copy.postOpiFlywheel + ` ${tokenTicker} sigue reflejando la tesorería: más acciones de ${referencedCompany}, más ingresos de servicios y recompras verificables on-chain.`],
 ];
@@ -71,11 +71,6 @@ export const tkSegs: [string, number, string][] = [
   ["Recompra y quema", 20, "#8FD9C4"],
   ["Marketing", 20, "#E0B36A"],
   ["Equipo (lock-up 3a)", 5, "#5A5A60"],
-];
-
-export const provDefs: [string, string, string, string, string, string][] = [
-  ["transak", "Transak", "Tarjeta · Apple Pay · SEPA", "#1A6BF2", "T", "1.5%"],
-  ["moonpay", "MoonPay", "Tarjeta · Apple Pay · transferencia", "#7A4DFF", "M", "1.9%"],
 ];
 
 export const assetMeta: Record<string, { name: string; color: string; sym: string }> = {

@@ -15,38 +15,9 @@ export const USDC_BASE = {
   decimals: 6,
 };
 
-/** Ramp SDK embebido (vía A) — desactivado: requiere partner API key. */
-export const RAMP_SDK_ENABLED = false;
-
-/** Parámetros en URL de Ramp (vía B) — desactivado: bloqueado sin API key. */
-export const RAMP_URL_PARAMS_ENABLED = false;
-
-/** Modo de obtención de fondos — desactivado: solo wallets con USDC propio. */
-export type FundingMode = "none" | "smart_wallet" | "ramp_manual";
-export const FUNDING_MODE: FundingMode = "none";
-
-/** Importe fiat (solo si se reactiva Ramp con params). */
-export const ONRAMP_FIAT = {
-  currency: "EUR",
-  min: 20,
-  max: 5000,
-  defaultValue: "50",
-} as const;
-
-export const RAMP_CONFIG = {
-  swapAsset: "BASE_USDC",
-  variant: "auto" as const,
-  widgetTimeoutMs: 8000,
-  productionUrl: "https://app.rampnetwork.com",
-  demoUrl: "https://app.demo.rampnetwork.com",
-  hostAppName: brandLegal.productBrand,
-  selectedCountryCode: "ES",
-  hostLogoUrlFallback: "https://assets.rampnetwork.com/misc/test-logo.png",
-};
-
 export const BUY_FLOW_COPY = {
   pageTitle: "Adquirir OPEN",
-  pageSubtitle: "Conecta tu wallet y asegúrate de tener USDC en la red Base.",
+  pageSubtitle: "Paga con USDC, ETH o cbBTC en Base — o trae fondos desde otra red.",
   sinWalletTitle: "Conecta tu wallet",
   sinWalletSubtitle: "Crea una cuenta segura o conecta la wallet que ya uses.",
   connectFaceId: "Crear cuenta con Face ID",
@@ -117,6 +88,23 @@ export const BUY_FLOW_COPY = {
   compraGenericError: "No se pudo completar la operación. Inténtalo de nuevo.",
   bridgeTabBase: "Pagar en Base",
   bridgeTabOther: "Desde otra red",
+  bridgeTabReceive: "Recibir USDC",
+  receiveSubtitle:
+    "Envía USDC a tu dirección en la red Base desde otra wallet o un exchange. El saldo se detecta automáticamente.",
+  receiveCurrentBalance: "Tu saldo USDC en Base",
+  compraModeChecking: "Comprobando tu wallet…",
+  compraModeOneSignature: "Confirmarás todo con una sola firma en tu wallet.",
+  compraModeSteps: (n: number) => `Confirmarás ${n} pasos en tu wallet, uno por uno.`,
+  compraMaxCta: "MÁX",
+  compraUsdEstimate: (v: string) => `≈ ${v} USD`,
+  compraQuoteValidFor: (sec: number) => `Precio garantizado ${sec} s`,
+  compraQuoteRefreshCta: "Actualizar precio",
+  compraDoneViewPortfolio: "Ver en cartera",
+  compraDoneBuyMore: "Comprar más OPEN",
+  walletConnectedAs: "Wallet conectada",
+  walletChangeCta: "Cambiar",
+  bridgeExactAmountWarning:
+    "Envía EXACTAMENTE el importe indicado en una sola transacción. Un importe distinto puede retrasar la operación o acabar en reembolso.",
   bridgeSubtitle:
     "Envía fondos desde otra red y los convertimos en USDC en tu wallet de Base. Después compras OPEN con normalidad.",
   bridgeOriginLabel: "Red de origen",

@@ -26,6 +26,15 @@ export function WalletPickerModal({ onClose }: Props) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // Cerrar con Escape.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   const injectedWallets = mounted ? getInjectedWalletOptions(connectors) : [];
   const walletConnectConnector = findWalletConnectConnector(connectors);
   const pendingId = isPending ? getConnectorId(variables?.connector as Connector | undefined) : null;

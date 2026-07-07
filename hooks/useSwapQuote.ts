@@ -54,11 +54,15 @@ export function useSwapQuote(params: {
   }, [query.data]);
 
   const isExpired = query.data ? now >= query.data.expiresAt : false;
+  const expiresInSec = query.data
+    ? Math.max(0, Math.ceil((query.data.expiresAt - now) / 1000))
+    : 0;
 
   return {
     quote: query.data,
     isLoading: query.isLoading || query.isFetching,
     isExpired,
+    expiresInSec,
     error: query.error instanceof Error ? query.error.message : undefined,
     refetch: query.refetch,
     quoteFailed: Boolean(query.isError),

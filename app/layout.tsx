@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import Marquee from "@/components/Marquee";
 import Footer from "@/components/Footer";
 import { MobileDock } from "@/components/MobileNav";
-import { WalletModal, ProviderModal, SuccessModal, Toast } from "@/components/Modals";
+import { WalletModal, Toast } from "@/components/Modals";
 import { brandLegal } from "@/lib/brand-legal";
 
 const hanken = Hanken_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-hanken", display: "swap" });
@@ -34,8 +34,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <MobileDock />
             </div>
             <WalletModal />
-            <ProviderModal />
-            <SuccessModal />
             <Toast />
           </Web3Provider>
         </AppProvider>

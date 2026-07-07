@@ -198,6 +198,13 @@ export function CrossChainFundingStep({ recipient, onDelivered }: Props) {
 
       {depositQuote?.depositAddress && (phase === "awaiting_deposit" || phase === "bridging") ? (
         <div style={css("margin-bottom:16px;padding:16px;border:1px solid #ECECEC;border-radius:14px;background:#FAFAFA;text-align:center")}>
+          <div
+            style={css(
+              "padding:10px 12px;border-radius:10px;background:#FFF7ED;border:1px solid #FBD9A5;font:600 13px/1.45 var(--font-hanken);color:#9A5B00;margin:0 0 12px;text-align:left"
+            )}
+          >
+            {BUY_FLOW_COPY.bridgeExactAmountWarning}
+          </div>
           <p style={css("font:400 13px/1.5 var(--font-hanken);color:#5C5C66;margin:0 0 12px")}>
             {BUY_FLOW_COPY.bridgeDepositInstructions(
               amountInput.trim().replace(",", "."),

@@ -128,7 +128,7 @@ export function usePresalePurchase() {
     return parseUnits(normalized, paymentToken.decimals);
   }, [debouncedInput, paymentToken.decimals]);
 
-  const { quote, isLoading: quoteLoading, isExpired, quoteFailed, refetch: refetchQuote } = useSwapQuote({
+  const { quote, isLoading: quoteLoading, isExpired, expiresInSec, quoteFailed, refetch: refetchQuote } = useSwapQuote({
     paymentToken,
     sellAmount,
     enabled: paymentTokenId !== "USDC" && !quoteFallback && flowPhase !== "purchase_after_convert",
@@ -595,6 +595,16 @@ export function usePresalePurchase() {
     setState(INITIAL_EXEC_STATE);
   }, []);
 
+  /** Vuelve al estado inicial tras una compra completada ("Comprar más"). */
+  const reset = useCallback(() => {
+    setQuoteFallback(false);
+    completedLabelsRef.current = new Set();
+    storedMinBuyRef.current = undefined;
+    storedQuoteRef.current = undefined;
+    setFlowPhase(paymentTokenId === "USDC" ? "purchase" : "convert");
+    setState(INITIAL_EXEC_STATE);
+  }, [paymentTokenId]);
+
   const isRunning = state.phase === "awaiting_wallet" || state.phase === "confirming";
 
   const primaryCta =
@@ -614,6 +624,8 @@ export function usePresalePurchase() {
     quote,
     quoteLoading,
     isExpired,
+    expiresInSec,
+    refetchQuote,
     quoteFailed,
     quoteFallback,
     state,
@@ -626,7 +638,9 @@ export function usePresalePurchase() {
     onBase,
     startPurchase,
     retry,
+    reset,
     primaryCta,
+    sellBalance,
     canPurchase: Boolean(
       address &&
         sellAmount &&

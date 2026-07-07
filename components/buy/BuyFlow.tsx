@@ -1,79 +1,51 @@
 "use client";
 
-import { useCallback, useEffect, useReducer } from "react";
 import { useAccount } from "wagmi";
-import { formatUnits } from "viem";
 import { css } from "@/lib/css";
-import { BUY_FLOW_COPY, formatUsdcBalance, USDC_BASE } from "@/lib/onramp/constants";
-import { buyFlowReducer, INITIAL_BUY_FLOW } from "@/lib/onramp/types";
-import { useUsdcBalance } from "@/hooks/useUsdcBalance";
+import { BUY_FLOW_COPY } from "@/lib/onramp/constants";
+import { formatAddress } from "@/lib/wagmi/format-address";
+import { useWalletDisconnect } from "@/hooks/useWalletDisconnect";
 import { SinWalletStep } from "./steps/SinWalletStep";
-import { SinFondosStep } from "./steps/SinFondosStep";
-import { ListoStep } from "./steps/ListoStep";
 import { PresalePurchaseStep } from "./steps/PresalePurchaseStep";
-import { BaseChainGuard } from "./ui/BaseChainGuard";
 
 export default function BuyFlow() {
-  const [state, dispatch] = useReducer(buyFlowReducer, INITIAL_BUY_FLOW);
   const { address, isConnected } = useAccount();
-  const { data: balanceData, isSuccess } = useUsdcBalance(address);
-
-  const syncBalance = useCallback(() => {
-    if (!isConnected || !address) {
-      dispatch({ type: "WALLET_DISCONNECTED" });
-      return;
-    }
-    if (!isSuccess || balanceData === undefined) return;
-    if (state.step === "comprando") return;
-
-    const amount = Number(formatUnits(balanceData.value, USDC_BASE.decimals));
-    const balanceLabel = formatUsdcBalance(amount);
-
-    if (amount > 0) {
-      if (state.step !== "listo" || state.balanceLabel !== balanceLabel) {
-        dispatch({ type: "BALANCE_POSITIVE", balanceLabel });
-      }
-      return;
-    }
-
-    if (state.step === "listo" || state.step === "sin_wallet" || state.step === "esperando_fondos") {
-      dispatch({ type: "WALLET_CONNECTED_ZERO", fiatValue: "" });
-    }
-  }, [isConnected, address, isSuccess, balanceData, state]);
-
-  useEffect(() => {
-    syncBalance();
-  }, [syncBalance]);
-
-  const handleContinue = () => {
-    if (!address || state.step !== "listo") return;
-    dispatch({ type: "START_PURCHASE" });
-  };
+  const disconnectWallet = useWalletDisconnect();
 
   return (
     <main style={css("max-width:1200px;margin:0 auto;padding:48px 24px 120px")}>
-      <div style={css("text-align:center;margin-bottom:32px")}>
+      <div style={css("text-align:center;margin-bottom:24px")}>
         <h2 style={css("font:700 34px/1.1 var(--font-hanken);letter-spacing:-0.04em;color:#0D0D0D;margin:0 0 10px")}>
           {BUY_FLOW_COPY.pageTitle}
         </h2>
         <p style={css("font:400 15px/1.5 var(--font-hanken);color:#8A8A94;margin:0")}>{BUY_FLOW_COPY.pageSubtitle}</p>
       </div>
 
-      {state.step === "sin_wallet" && <SinWalletStep />}
-
-      <BaseChainGuard>
-        {state.step === "sin_fondos" && <SinFondosStep address={address} />}
-
-        {state.step === "esperando_fondos" && <SinFondosStep address={address} />}
-
-        {state.step === "listo" && (
-          <ListoStep balanceLabel={state.balanceLabel} onContinue={handleContinue} />
-        )}
-      </BaseChainGuard>
-
-      {/* Fuera de la guardia: la pestaña "Desde otra red" opera en la red de origen. */}
-      {state.step === "comprando" && (
-        <PresalePurchaseStep onBack={() => dispatch({ type: "EXIT_PURCHASE" })} />
+      {isConnected && address ? (
+        <>
+          <div style={css("display:flex;justify-content:center;margin-bottom:20px")}>
+            <div
+              style={css(
+                "display:inline-flex;align-items:center;gap:10px;padding:7px 8px 7px 14px;border:1px solid #ECECEC;background:#fff;border-radius:999px"
+              )}
+            >
+              <span style={css("width:7px;height:7px;border-radius:50%;background:var(--accent,#0E8C6A)")} />
+              <span style={css("font:500 13px var(--font-mono);color:#0D0D0D")}>{formatAddress(address)}</span>
+              <button
+                type="button"
+                onClick={disconnectWallet}
+                style={css(
+                  "appearance:none;cursor:pointer;border:none;background:#F4F4F5;border-radius:999px;padding:5px 10px;font:600 12px var(--font-hanken);color:#5C5C66"
+                )}
+              >
+                {BUY_FLOW_COPY.walletChangeCta}
+              </button>
+            </div>
+          </div>
+          <PresalePurchaseStep />
+        </>
+      ) : (
+        <SinWalletStep />
       )}
     </main>
   );
