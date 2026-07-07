@@ -12,9 +12,9 @@ export const RAMP_SDK_ENABLED = false;
 /** Parámetros en URL de Ramp (vía B) — desactivado: bloqueado sin API key. */
 export const RAMP_URL_PARAMS_ENABLED = false;
 
-/** Modo de obtención de fondos en sin_fondos. Default tras tests: decidir entre ambos. */
-export type FundingMode = "smart_wallet" | "ramp_manual";
-export const FUNDING_MODE: FundingMode = "smart_wallet";
+/** Modo de obtención de fondos — desactivado: solo wallets con USDC propio. */
+export type FundingMode = "none" | "smart_wallet" | "ramp_manual";
+export const FUNDING_MODE: FundingMode = "none";
 
 /** Importe fiat (solo si se reactiva Ramp con params). */
 export const ONRAMP_FIAT = {
@@ -37,72 +37,31 @@ export const RAMP_CONFIG = {
 
 export const BUY_FLOW_COPY = {
   pageTitle: "Adquirir OPEN",
-  pageSubtitle: "Primero añade fondos. Después participarás en la preventa.",
-  sinWalletTitle: "Crea tu cuenta o conecta tu wallet",
-  sinWalletSubtitle: "Necesitas una cuenta segura para recibir tus fondos y completar la compra.",
-  connectSmartWallet: "Crear cuenta Base (Face ID)",
+  pageSubtitle: "Conecta tu wallet y asegúrate de tener USDC en la red Base.",
+  sinWalletTitle: "Conecta tu wallet",
+  sinWalletSubtitle: "Usa MetaMask, Trust Wallet u otra wallet compatible con la red Base.",
+  connectWallet: "Conectar wallet",
   connectExtensionHint:
-    "Si tienes la extensión Coinbase instalada, ignórala y usa el botón de arriba. La extensión no muestra el flujo integrado para añadir fondos.",
-  wrongWalletForFunding:
-    "Estás conectado con Coinbase Wallet (extensión), no con Cuenta Base. Desconecta y pulsa «Crear cuenta Base (Face ID)».",
-  sinFondosTitle: "Añade fondos para continuar",
-  sinFondosSubtitle: "Sigue los pasos para recibir fondos en tu cuenta.",
-  sinFondosSmartSubtitle: "Tu wallet puede ayudarte a añadir fondos de forma segura.",
-  smartWalletFundsCta: "Añadir fondos con mi cuenta",
-  smartWalletPopupHint:
-    "Se abrirá una ventana pequeña de Cuenta Base para firmar. No abandonas esta página. Permite ventanas emergentes si el navegador lo pide.",
-  baseAccountPopupTitle: "Continuar con Cuenta Base",
-  baseAccountPopupMessage:
-    "Para conectar o añadir fondos, Cuenta Base necesita abrir una ventana segura. Si el navegador la bloqueó, Coinbase puede mostrar un aviso en inglés: pulsa «Try again» (equivale a Reintentar) y autoriza las ventanas emergentes para este sitio.",
-  baseAccountPopupConfirm: "Entendido, continuar",
-  baseAccountPopupCancel: "Cancelar",
-  rampManualOpenCta: "Abrir pasarela de pago",
-  rampManualBeforeOpen:
-    "Abriremos la pasarela de pago en una nueva pestaña. Completa el proceso allí y vuelve aquí.",
-  rampManualSteps: [
-    "1. Elige USDC como activo.",
-    "2. Selecciona la red Base antes de continuar.",
-    "3. Pega tu dirección de wallet en el campo de destino.",
-    "4. Completa el pago y vuelve a esta página.",
-  ],
-  rampManualAddressLabel: "Tu dirección en Base",
+    "Necesitas una extensión o app de wallet instalada. Acepta conectar en la red Base (Chain ID 8453).",
+  noWalletExtension: "No detectamos ninguna wallet. Instala MetaMask, Trust Wallet u otra compatible.",
+  sinFondosTitle: "Necesitas USDC en Base",
+  sinFondosSubtitle: "Deposita USDC en tu wallet en la red Base para continuar con la preventa.",
+  sinFondosPollingHint:
+    "Cuando recibas USDC en Base, detectaremos el saldo automáticamente. No hace falta recargar la página.",
+  walletAddressLabel: "Tu dirección en Base",
+  checkingBalance: "Comprobando saldo…",
   rampManualNetworkWarning:
-    "Importante: verifica que la red sea Base antes de confirmar. Enviar fondos a otra red puede provocar pérdidas.",
-  fiatLabel: "Importe en euros",
-  fiatHint: (min: number, max: number) => `Entre ${min} € y ${max.toLocaleString("es-ES")} €`,
-  addFundsCta: "Añadir fondos con tarjeta",
-  esperandoTitle: "Estamos esperando tu pago",
-  esperandoSubtitle: "Si ya completaste el pago, los fondos aparecerán en unos minutos. No cierres esta página.",
-  retryPaymentCta: "¿Problemas? Reintentar pago",
+    "Importante: el USDC debe estar en la red Base. Enviar fondos a otra red puede provocar pérdidas.",
   listoTitle: "¡Fondos listos!",
   listoSubtitle: (balance: string) => `Tienes ${balance} disponibles para invertir en OPEN.`,
   continueCta: "Continuar a la compra",
-  paymentCancelled: "No se inició el pago. Puedes volver a intentarlo cuando quieras.",
-  fundingProbeFailed: "No se pudo iniciar la solicitud de fondos. Inténtalo de nuevo.",
-  consentRequired: "Debes aceptar los términos antes de continuar.",
 } as const;
 
-export function validateFiatAmount(
-  raw: string
-): { ok: true; amount: number; normalized: string } | { ok: false; message: string } {
-  const trimmed = raw.trim().replace(",", ".");
-  const amount = Number(trimmed);
-
-  if (!trimmed || Number.isNaN(amount) || amount <= 0) {
-    return { ok: false, message: "Introduce un importe válido en euros." };
-  }
-  if (amount < ONRAMP_FIAT.min) {
-    return { ok: false, message: `El importe mínimo es ${ONRAMP_FIAT.min} €.` };
-  }
-  if (amount > ONRAMP_FIAT.max) {
-    return { ok: false, message: `El importe máximo es ${ONRAMP_FIAT.max.toLocaleString("es-ES")} €.` };
-  }
-
-  return { ok: true, amount, normalized: amount.toString() };
+export function formatUsdcBalance(amount: number): string {
+  return `${amount.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`;
 }
 
+/** @deprecated Usar formatUsdcBalance para saldos on-chain. */
 export function formatUserBalance(amount: number): string {
-  return (
-    amount.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"
-  );
+  return formatUsdcBalance(amount);
 }

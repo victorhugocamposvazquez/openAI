@@ -1,17 +1,12 @@
 import { http, createConfig } from "wagmi";
 import { base } from "wagmi/chains";
-import { baseAccount, coinbaseWallet } from "wagmi/connectors";
-import { brandLegal } from "@/lib/brand-legal";
+import { injected } from "wagmi/connectors";
 
 export const wagmiConfig = createConfig({
   chains: [base],
   connectors: [
-    baseAccount({
-      appName: brandLegal.productBrand,
-    }),
-    coinbaseWallet({
-      appName: brandLegal.productBrand,
-      preference: "smartWalletOnly",
+    injected({
+      shimDisconnect: true,
     }),
   ],
   transports: {
