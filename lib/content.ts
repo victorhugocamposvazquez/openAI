@@ -73,13 +73,6 @@ export const tkSegs: [string, number, string][] = [
   ["Equipo (lock-up 3a)", 5, "#5A5A60"],
 ];
 
-export const walletDefs: [string, string, string, string][] = [
-  ["MetaMask", "Conecta usando la extensión del navegador", "#E9962E", "M"],
-  ["Coinbase Wallet", "Wallet self-custody de Coinbase", "#2775CA", "C"],
-  ["WalletConnect", "Escanea con tu wallet móvil", "#3A8DFF", "W"],
-  ["Rainbow", "Una wallet divertida y sencilla", "#6D4AFF", "R"],
-];
-
 export const provDefs: [string, string, string, string, string, string][] = [
   ["transak", "Transak", "Tarjeta · Apple Pay · SEPA", "#1A6BF2", "T", "1.5%"],
   ["moonpay", "MoonPay", "Tarjeta · Apple Pay · transferencia", "#7A4DFF", "M", "1.9%"],

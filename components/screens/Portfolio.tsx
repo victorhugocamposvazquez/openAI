@@ -7,12 +7,17 @@ import { useApp, prices } from "@/lib/store";
 import { useMarket } from "@/lib/market";
 import { assetMeta } from "@/lib/content";
 import { brandLegal } from "@/lib/brand-legal";
+import { useWalletDisconnect } from "@/hooks/useWalletDisconnect";
 
 const ORDER = ["OPEN", "ETH", "BTC", "USDC"];
 
 export default function Portfolio() {
   const app = useApp();
   const router = useRouter();
+  const disconnectWallet = useWalletDisconnect();
+  // Hook antes del return condicional (rules of hooks): al desconectar,
+  // este componente pasa de conectado a no conectado en caliente.
+  const { price, change } = useMarket();
 
   if (!app.connected) {
     return (
@@ -27,7 +32,6 @@ export default function Portfolio() {
     );
   }
 
-  const { price, change } = useMarket();
   const P = prices(price);
   const pos = change >= 0;
   const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";
@@ -61,7 +65,7 @@ export default function Portfolio() {
           <div style={css("display:flex;align-items:center;gap:10px;margin-bottom:10px")}>
             <h2 style={css("font:600 26px var(--font-hanken);letter-spacing:-0.03em;margin:0")}>Mi cartera</h2>
             <span style={css("font:500 12px var(--font-mono);color:#6B6B76;background:#F4F4F5;padding:5px 10px;border-radius:999px")}>{app.address}</span>
-            <button onClick={app.disconnect} style={css("appearance:none;border:none;background:none;cursor:pointer;font:500 13px var(--font-hanken);color:#D14343")}>Desconectar</button>
+            <button onClick={disconnectWallet} style={css("appearance:none;border:none;background:none;cursor:pointer;font:500 13px var(--font-hanken);color:#D14343")}>Desconectar</button>
           </div>
           <div style={css("font:500 13px var(--font-hanken);color:#8A8A94")}>Valor total</div>
           <div style={css("display:flex;align-items:baseline;gap:12px")}><span style={css("font:600 42px var(--font-mono);letter-spacing:-0.03em")}>{fmtUSD(total)}</span><span style={{ ...css("font:600 16px var(--font-mono)"), color: changeColor }}>{changeStr}</span></div>

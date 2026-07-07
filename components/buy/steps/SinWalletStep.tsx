@@ -6,6 +6,7 @@ import { Hov } from "@/components/ui";
 import { useConnect, type Connector } from "wagmi";
 import { BUY_FLOW_COPY } from "@/lib/onramp/constants";
 import { findCoinbaseWalletConnector, getConnectorId } from "@/lib/wagmi/connectors";
+import { mapConnectError } from "@/lib/wagmi/connect-error";
 import { WalletPickerModal } from "../ui/WalletPickerModal";
 import { StepCard, StepTitle } from "../ui/CopyAddressButton";
 
@@ -57,7 +58,9 @@ export function SinWalletStep() {
           </Hov>
 
           {error ? (
-            <p style={css("font:400 13px var(--font-hanken);color:#D14343;margin:0")}>{error.message}</p>
+            <p style={css("font:400 13px var(--font-hanken);color:#D14343;margin:0")}>
+              {mapConnectError(error)}
+            </p>
           ) : null}
         </div>
       </StepCard>

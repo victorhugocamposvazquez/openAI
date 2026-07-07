@@ -1,8 +1,10 @@
 "use client";
 
 import { css } from "@/lib/css";
+import { Hov } from "@/components/ui";
 import { formatAddress } from "@/lib/wagmi/format-address";
 import { BUY_FLOW_COPY } from "@/lib/onramp/constants";
+import { useWalletDisconnect } from "@/hooks/useWalletDisconnect";
 import { CopyAddressButton, InfoBanner, StepCard, StepTitle } from "../ui/CopyAddressButton";
 
 type Props = {
@@ -10,6 +12,7 @@ type Props = {
 };
 
 export function SinFondosStep({ address }: Props) {
+  const disconnectWallet = useWalletDisconnect();
   return (
     <StepCard>
       <StepTitle title={BUY_FLOW_COPY.sinFondosTitle} subtitle={BUY_FLOW_COPY.sinFondosSubtitle} />
@@ -48,6 +51,18 @@ export function SinFondosStep({ address }: Props) {
       <p style={css("font:400 13px var(--font-hanken);color:#8A8A94;margin:0;text-align:center")}>
         {BUY_FLOW_COPY.checkingBalance}
       </p>
+
+      <div style={css("margin-top:20px")}>
+        <Hov
+          as="button"
+          type="button"
+          onClick={disconnectWallet}
+          style="appearance:none;cursor:pointer;width:100%;background:transparent;color:#5C5C66;border:1px solid #E6E6E8;border-radius:12px;padding:13px;font:600 14px var(--font-hanken)"
+          hover="border-color:#0D0D0D;color:#0D0D0D"
+        >
+          {BUY_FLOW_COPY.useAnotherWallet}
+        </Hov>
+      </div>
       <style>{`@keyframes buy-spin { to { transform: rotate(360deg); } }`}</style>
     </StepCard>
   );

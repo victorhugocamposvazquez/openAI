@@ -3,6 +3,7 @@ import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
 import { Web3Provider } from "@/components/providers/Web3Provider";
+import { WalletSync } from "@/components/providers/WalletSync";
 import Header from "@/components/Header";
 import Marquee from "@/components/Marquee";
 import Footer from "@/components/Footer";
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AppProvider>
           <Web3Provider>
+            <WalletSync />
             <div data-pad style={{ minHeight: "100vh", background: "#fff" }}>
               <Header />
               <Marquee />

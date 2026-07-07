@@ -66,7 +66,8 @@ export const BUY_FLOW_COPY = {
   switchChainRejected: "Rechazaste el cambio de red. Cámbiala manualmente a Base en tu wallet para continuar.",
   confirmInWalletApp: "Confirma en tu app de wallet",
   confirmInWalletAppHint: "Abre tu wallet, firma la transacción y vuelve aquí. El estado se actualizará solo.",
-  noWalletExtension: "No detectamos ninguna extensión. Instala MetaMask o usa el botón de QR.",
+  noWalletExtension: "No detectamos ninguna extensión de wallet. Instala MetaMask o usa WalletConnect.",
+  useAnotherWallet: "Usar otra wallet",
   sinFondosTitle: "Necesitas USDC en Base",
   sinFondosSubtitle: "Deposita USDC en tu wallet en la red Base para continuar con la preventa.",
   sinFondosPollingHint:

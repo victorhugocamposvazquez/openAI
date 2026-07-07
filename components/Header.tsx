@@ -7,6 +7,7 @@ import { css } from "@/lib/css";
 import { fmtUSD, ACCENT, NEG } from "@/lib/format";
 import { useAccount } from "wagmi";
 import { useApp } from "@/lib/store";
+import { useWalletDisconnect } from "@/hooks/useWalletDisconnect";
 import { useMarket } from "@/lib/market";
 import { formatAddress } from "@/lib/wagmi/format-address";
 import { Hov, Logo } from "./ui";
@@ -67,36 +68,42 @@ function WalletActions() {
   const pathname = usePathname();
   const app = useApp();
   const { address, isConnected } = useAccount();
+  const disconnectWallet = useWalletDisconnect();
   const onComprar = pathname === "/comprar";
 
-  if (onComprar && isConnected && address) {
+  // Estado real de wagmi como única fuente de verdad.
+  if (isConnected && address) {
     return (
-      <Link
-        href="/comprar"
-        prefetch
-        style={css("text-decoration:none;cursor:default;display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #ECECEC;background:#fff;border-radius:999px")}
-      >
-        <span style={css("width:7px;height:7px;border-radius:50%;background:" + ACCENT)} />
-        <span style={css("font:500 13px var(--font-mono);color:#0D0D0D")}>{formatAddress(address)}</span>
-      </Link>
+      <div style={css("display:flex;align-items:center;gap:8px")}>
+        <Link
+          href="/cartera"
+          prefetch
+          style={css("text-decoration:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #ECECEC;background:#fff;border-radius:999px")}
+        >
+          <span style={css("width:7px;height:7px;border-radius:50%;background:" + ACCENT)} />
+          <span style={css("font:500 13px var(--font-mono);color:#0D0D0D")}>{formatAddress(address)}</span>
+        </Link>
+        <Hov
+          as="button"
+          type="button"
+          title="Desconectar wallet"
+          onClick={disconnectWallet}
+          style="appearance:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid #ECECEC;background:#fff;border-radius:50%;color:#8A8A94"
+          hover="border-color:#D14343;color:#D14343"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <path d="M16 17l5-5-5-5" />
+            <path d="M21 12H9" />
+          </svg>
+        </Hov>
+      </div>
     );
   }
 
+  // En /comprar el propio flujo de compra gestiona la conexión.
   if (onComprar) {
     return null;
-  }
-
-  if (app.connected) {
-    return (
-      <Link
-        href="/cartera"
-        prefetch
-        style={css("text-decoration:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #ECECEC;background:#fff;border-radius:999px")}
-      >
-        <span style={css("width:7px;height:7px;border-radius:50%;background:" + ACCENT)} />
-        <span style={css("font:500 13px var(--font-mono);color:#0D0D0D")}>{app.address}</span>
-      </Link>
-    );
   }
 
   return (

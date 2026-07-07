@@ -80,7 +80,9 @@ export interface AppApi extends AppState {
   // wallet
   openWallet: () => void;
   closeWallet: () => void;
-  connect: (name: string) => void;
+  /** Espeja el estado real de wagmi en el store (lo invoca WalletSync). */
+  syncWallet: (connected: boolean, address: string | null) => void;
+  /** Limpia el estado de demo local; la desconexión on-chain la hace wagmi. */
   disconnect: () => void;
   // buy
   setBuyMethod: (k: "card" | "crypto") => void;
@@ -120,7 +122,7 @@ export const useApp = () => {
 
 const INITIAL: AppState = {
   connected: false,
-  address: "0x7A3f…9E2b",
+  address: "",
   balances: { USDC: 0, ETH: 0, BTC: 0, OPEN: 0 },
   openAvg: 0,
   txs: [],
@@ -156,6 +158,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const set = useCallback((patch: Partial<AppState>) => setS((p) => ({ ...p, ...patch })), []);
 
   // ── hydrate from localStorage ──
+  // connected/address NO se hidratan: los fija WalletSync desde wagmi
+  // (el estado real de la wallet, no un flag guardado).
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -164,8 +168,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (d && typeof d === "object") {
           setS((p) => ({
             ...p,
-            connected: !!d.connected,
-            address: d.address || p.address,
             balances: d.balances || p.balances,
             openAvg: d.openAvg || 0,
             txs: Array.isArray(d.txs) ? d.txs : [],
@@ -200,27 +202,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // ── wallet ──
   const openWallet = useCallback(() => set({ walletOpen: true }), [set]);
   const closeWallet = useCallback(() => set({ walletOpen: false }), [set]);
-  const connect = useCallback(
-    (name: string) => {
-      setS((p) => {
-        const next = {
-          ...p,
-          connected: true,
-          walletOpen: false,
-          balances: { USDC: 12500, ETH: 4.2, BTC: 0.35, OPEN: p.balances.OPEN || 0 },
-        };
-        persist(next);
-        return next;
-      });
-      toastMsg("Wallet conectada · " + name);
-    },
-    [persist, toastMsg]
-  );
+
+  // Espejo del estado real de wagmi. Nada de saldos inventados al conectar.
+  const syncWallet = useCallback((connected: boolean, address: string | null) => {
+    setS((p) => {
+      const nextAddress = connected ? (address ?? p.address) : "";
+      if (p.connected === connected && p.address === nextAddress) return p;
+      return {
+        ...p,
+        connected,
+        address: nextAddress,
+        // Al conectarse, cerramos el modal de conexión si estaba abierto.
+        walletOpen: connected ? false : p.walletOpen,
+      };
+    });
+  }, []);
+
   const disconnect = useCallback(() => {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {}
-    set({ connected: false, openAvg: 0, balances: { USDC: 0, ETH: 0, BTC: 0, OPEN: 0 }, txs: [] });
+    set({ connected: false, address: "", openAvg: 0, balances: { USDC: 0, ETH: 0, BTC: 0, OPEN: 0 }, txs: [] });
     toastMsg("Wallet desconectada");
   }, [set, toastMsg]);
 
@@ -449,7 +451,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       set,
       openWallet,
       closeWallet,
-      connect,
+      syncWallet,
       disconnect,
       setBuyMethod,
       setPay,
@@ -475,7 +477,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       downloadReceipt,
       toastMsg,
     }),
-    [s, set, openWallet, closeWallet, connect, disconnect, setBuyMethod, setPay, setPayAmount, setQuick, maxPay, setCardCur, onCardNumber, onCardExp, onCardCvc, onCardName, setProvider, closeProvider, buy, confirmProvider, setFrom, setFromAmount, flipSwap, setSlip, maxFrom, swap, closeSuccess, downloadReceipt, toastMsg]
+    [s, set, openWallet, closeWallet, syncWallet, disconnect, setBuyMethod, setPay, setPayAmount, setQuick, maxPay, setCardCur, onCardNumber, onCardExp, onCardCvc, onCardName, setProvider, closeProvider, buy, confirmProvider, setFrom, setFromAmount, flipSwap, setSlip, maxFrom, swap, closeSuccess, downloadReceipt, toastMsg]
   );
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
