@@ -1,70 +1,120 @@
 "use client";
 
+import { formatUnits } from "viem";
 import { css } from "@/lib/css";
 import { Hov } from "@/components/ui";
 import { BUY_FLOW_COPY } from "@/lib/onramp/constants";
 import { usePresalePurchase } from "@/hooks/usePresalePurchase";
+import { usePresaleOpenQuote } from "@/hooks/usePresaleReads";
+import { usePaymentTokenBalances } from "@/hooks/usePaymentTokenBalances";
+import { PAYMENT_TOKEN_LIST, type PaymentTokenId } from "@/lib/onramp/payment-tokens";
 import { InfoBanner, StepCard, StepTitle } from "../ui/CopyAddressButton";
 
 export function PresalePurchaseStep() {
-  const {
-    route,
-    setRoute,
-    amountInput,
-    setAmountInput,
-    state,
-    stepLabels,
-    supportsBatch,
-    capsLoading,
-    isWalletConnect,
-    startPurchase,
-    retry,
-    canPurchase,
-  } = usePresalePurchase();
+  const purchase = usePresalePurchase();
+  const balances = usePaymentTokenBalances();
+  const { data: openAmount } = usePresaleOpenQuote(purchase.openQuoteAmount);
 
-  const isRunning = state.phase === "awaiting_wallet" || state.phase === "confirming";
+  const isRunning = purchase.state.phase === "awaiting_wallet" || purchase.state.phase === "confirming";
+
+  const openEstimate =
+    openAmount !== undefined
+      ? `${Number(formatUnits(openAmount, 18)).toLocaleString("es-ES", { maximumFractionDigits: 4 })} OPEN`
+      : purchase.quoteLoading
+        ? "Calculando…"
+        : "—";
+
+  const showQuoteFallback = purchase.quoteFailed || purchase.quoteFallback;
 
   return (
     <StepCard>
       <StepTitle title={BUY_FLOW_COPY.compraTitle} subtitle={BUY_FLOW_COPY.compraSubtitle} />
 
-      <div style={css("display:flex;gap:8px;margin-bottom:16px")}>
-        <RouteChip active={route === "usdc"} onClick={() => setRoute("usdc")} label={BUY_FLOW_COPY.compraRouteUsdc} />
-        <RouteChip active={route === "swap"} onClick={() => setRoute("swap")} label={BUY_FLOW_COPY.compraRouteSwap} />
+      <p style={css("font:600 12px var(--font-hanken);color:#8A8A94;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.04em")}>
+        {BUY_FLOW_COPY.compraPayWith}
+      </p>
+      <div style={css("display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px")}>
+        {PAYMENT_TOKEN_LIST.map((token) => (
+          <TokenChip
+            key={token.id}
+            active={purchase.paymentTokenId === token.id}
+            label={token.symbol}
+            balance={balances[token.id].formatted}
+            onClick={() => purchase.setPaymentToken(token.id)}
+          />
+        ))}
       </div>
 
       <label style={css("display:block;font:600 13px var(--font-hanken);color:#5C5C66;margin-bottom:8px")}>
-        {BUY_FLOW_COPY.compraAmountLabel}
+        {BUY_FLOW_COPY.compraAmountLabel} ({purchase.paymentToken.symbol})
       </label>
       <input
         type="text"
         inputMode="decimal"
-        value={amountInput}
-        onChange={(e) => setAmountInput(e.target.value)}
+        value={purchase.amountInput}
+        onChange={(e) => purchase.setAmountInput(e.target.value)}
         disabled={isRunning}
         style={css(
-          "width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #E6E6E8;border-radius:12px;font:500 15px var(--font-mono);margin-bottom:16px"
+          "width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #E6E6E8;border-radius:12px;font:500 15px var(--font-mono);margin-bottom:12px"
         )}
       />
+
+      <div style={css("display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px")}>
+        <Stat label={BUY_FLOW_COPY.compraBalance} value={balances[purchase.paymentTokenId].formatted} />
+        <Stat label={BUY_FLOW_COPY.compraEstimatedOpen} value={openEstimate} />
+      </div>
+
+      {purchase.paymentTokenId !== "USDC" && !showQuoteFallback ? (
+        <p style={css("font:400 12px var(--font-hanken);color:#8A8A94;margin:0 0 16px")}>
+          {BUY_FLOW_COPY.compraQuoteRefreshing}
+          {purchase.quote?.minBuyAmount
+            ? ` · Mín. USDC: ${(Number(purchase.quote.minBuyAmount) / 1e6).toLocaleString("es-ES", { maximumFractionDigits: 2 })}`
+            : ""}
+        </p>
+      ) : null}
+
+      {purchase.isExpired && !isRunning ? (
+        <div style={css("margin-bottom:16px")}>
+          <InfoBanner message={BUY_FLOW_COPY.compraQuoteExpired} />
+        </div>
+      ) : null}
+
+      {showQuoteFallback && purchase.paymentTokenId !== "USDC" ? (
+        <div style={css("margin-bottom:16px")}>
+          <InfoBanner message={BUY_FLOW_COPY.compraQuoteFallback} />
+        </div>
+      ) : null}
+
+      {purchase.flowPhase === "purchase_after_convert" ? (
+        <div style={css("margin-bottom:16px")}>
+          <InfoBanner message={BUY_FLOW_COPY.compraConvertDone} />
+        </div>
+      ) : null}
 
       <div style={css("margin-bottom:16px")}>
         <p style={css("font:600 12px var(--font-hanken);color:#8A8A94;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.04em")}>
           Modo de ejecución
         </p>
         <p style={css("font:400 13px var(--font-hanken);color:#5C5C66;margin:0")}>
-          {capsLoading
+          {purchase.capsLoading
             ? "Consultando capacidades de la wallet…"
-            : supportsBatch
-              ? "Batching atómico detectado — una sola firma."
-              : "Sin batching — pasos secuenciales con confirmación entre cada uno."}
+            : purchase.paymentTokenId !== "USDC" && purchase.supportsBatch
+              ? "Smart Wallet — conversión y compra en una sola firma."
+              : purchase.paymentTokenId !== "USDC" && purchase.flowPhase === "convert"
+                ? "Primero convierte a USDC (2 confirmaciones), luego compra OPEN."
+                : purchase.supportsBatch
+                  ? "Batching atómico — una sola firma."
+                  : "Pasos secuenciales con confirmación entre cada uno."}
         </p>
       </div>
 
-      {stepLabels.length > 0 ? (
+      {purchase.stepLabels.length > 0 ? (
         <ol style={css("margin:0 0 16px;padding:0;list-style:none")}>
-          {stepLabels.map((label, index) => {
-            const active = state.phase !== "idle" && index === state.stepIndex;
-            const done = state.phase === "done" || (state.phase !== "idle" && index < state.stepIndex);
+          {purchase.stepLabels.map((label, index) => {
+            const active = purchase.state.phase !== "idle" && index === purchase.state.stepIndex;
+            const done =
+              purchase.state.phase === "done" ||
+              (purchase.state.phase !== "idle" && index < purchase.state.stepIndex);
             return (
               <li
                 key={label}
@@ -86,7 +136,7 @@ export function PresalePurchaseStep() {
         </ol>
       ) : null}
 
-      {state.phase === "awaiting_wallet" && isWalletConnect ? (
+      {purchase.state.phase === "awaiting_wallet" && purchase.isWalletConnect ? (
         <div style={css("margin-bottom:16px")}>
           <InfoBanner message={BUY_FLOW_COPY.confirmInWalletApp} />
           <p style={css("font:400 12px var(--font-hanken);color:#8A8A94;margin:8px 0 0")}>
@@ -95,7 +145,7 @@ export function PresalePurchaseStep() {
         </div>
       ) : null}
 
-      {state.phase === "confirming" ? (
+      {purchase.state.phase === "confirming" ? (
         <div style={css("display:flex;align-items:center;gap:10px;margin-bottom:16px")}>
           <div
             style={css(
@@ -108,19 +158,19 @@ export function PresalePurchaseStep() {
         </div>
       ) : null}
 
-      {state.phase === "done" ? (
+      {purchase.state.phase === "done" ? (
         <InfoBanner message={`${BUY_FLOW_COPY.compraDoneTitle}. ${BUY_FLOW_COPY.compraDoneSubtitle}`} />
       ) : null}
 
-      {state.error ? (
-        <p style={css("font:500 13px var(--font-hanken);color:#D14343;margin:0 0 12px")}>{state.error}</p>
+      {purchase.state.error ? (
+        <p style={css("font:500 13px var(--font-hanken);color:#D14343;margin:0 0 12px")}>{purchase.state.error}</p>
       ) : null}
 
-      {state.phase === "error" ? (
+      {purchase.state.phase === "error" ? (
         <Hov
           as="button"
           type="button"
-          onClick={retry}
+          onClick={purchase.retry}
           style="appearance:none;cursor:pointer;width:100%;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px;font:600 15px var(--font-hanken)"
           hover="background:#000"
         >
@@ -130,12 +180,12 @@ export function PresalePurchaseStep() {
         <Hov
           as="button"
           type="button"
-          disabled={!canPurchase || isRunning}
-          onClick={startPurchase}
+          disabled={!purchase.canPurchase || isRunning || (purchase.isExpired && purchase.paymentTokenId !== "USDC")}
+          onClick={purchase.startPurchase}
           style="appearance:none;cursor:pointer;width:100%;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px;font:600 15px var(--font-hanken)"
           hover="background:#000"
         >
-          {isRunning ? state.currentLabel : BUY_FLOW_COPY.compraStartCta}
+          {isRunning ? purchase.state.currentLabel : purchase.primaryCta}
         </Hov>
       )}
 
@@ -144,7 +194,17 @@ export function PresalePurchaseStep() {
   );
 }
 
-function RouteChip({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
+function TokenChip({
+  active,
+  label,
+  balance,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  balance: string;
+  onClick: () => void;
+}) {
   return (
     <Hov
       as="button"
@@ -152,12 +212,24 @@ function RouteChip({ active, label, onClick }: { active: boolean; label: string;
       onClick={onClick}
       style={
         active
-          ? "appearance:none;cursor:pointer;padding:8px 12px;border-radius:999px;border:1px solid #0D0D0D;background:#0D0D0D;color:#fff;font:600 12px var(--font-hanken)"
-          : "appearance:none;cursor:pointer;padding:8px 12px;border-radius:999px;border:1px solid #E6E6E8;background:#fff;color:#5C5C66;font:600 12px var(--font-hanken)"
+          ? "appearance:none;cursor:pointer;padding:10px 12px;border-radius:12px;border:1px solid #0D0D0D;background:#0D0D0D;color:#fff;font:600 12px var(--font-hanken);text-align:left;min-width:88px"
+          : "appearance:none;cursor:pointer;padding:10px 12px;border-radius:12px;border:1px solid #E6E6E8;background:#fff;color:#5C5C66;font:600 12px var(--font-hanken);text-align:left;min-width:88px"
       }
       hover={active ? undefined : "border-color:#0D0D0D"}
     >
-      {label}
+      <span style={css("display:block")}>{label}</span>
+      <span style={css(`display:block;font:400 11px var(--font-mono);margin-top:4px;color:${active ? "#D8D8DC" : "#8A8A94"}`)}>
+        {balance}
+      </span>
     </Hov>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={css("padding:12px 14px;border:1px solid #ECECEC;border-radius:12px;background:#FAFAFA")}>
+      <p style={css("font:600 11px var(--font-hanken);color:#8A8A94;margin:0 0 4px")}>{label}</p>
+      <p style={css("font:600 14px var(--font-mono);color:#0D0D0D;margin:0")}>{value}</p>
+    </div>
   );
 }

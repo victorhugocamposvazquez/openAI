@@ -1,18 +1,28 @@
 import { encodeFunctionData, parseAbi, type Address, type Hex } from "viem";
 import { BUY_FLOW_COPY, USDC_BASE } from "./constants";
+import type { PaymentToken } from "./payment-tokens";
+import type { SwapQuoteResponse } from "./swap-quote-types";
 
 export const ERC20_ABI = parseAbi([
   "function allowance(address owner, address spender) view returns (uint256)",
   "function approve(address spender, uint256 amount) returns (bool)",
+  "function balanceOf(address account) view returns (uint256)",
 ]);
 
-export const PRESALE_ABI = parseAbi(["function buyWithUsdc(uint256 usdcAmount) external"]);
-
-export const SWAP_ROUTER_ABI = parseAbi([
-  "function swapExactTokensForETH(uint256 amountIn, uint256 amountOutMin, address[] path, address to, uint256 deadline) external returns (uint256[] amounts)",
+export const PRESALE_ABI = parseAbi([
+  "function buy(uint256 usdcAmount) external",
+  "function quote(uint256 usdcAmount) view returns (uint256 openAmount)",
+  "function remainingCapUSDC() view returns (uint256)",
 ]);
 
-export type PurchaseRoute = "usdc" | "swap";
+export type PurchasePhase = "purchase" | "convert" | "purchase_after_convert";
+
+export type PurchaseCall = {
+  to: Address;
+  data: Hex;
+  value?: bigint;
+  label: string;
+};
 
 export function getPresaleContract(): Address | undefined {
   const addr = process.env.NEXT_PUBLIC_PRESALE_CONTRACT?.trim();
@@ -20,22 +30,8 @@ export function getPresaleContract(): Address | undefined {
   return addr as Address;
 }
 
-export function getSwapRouterContract(): Address | undefined {
-  const addr = process.env.NEXT_PUBLIC_SWAP_ROUTER_CONTRACT?.trim();
-  if (!addr || !addr.startsWith("0x")) return undefined;
-  return addr as Address;
-}
-
-export const WETH_BASE = "0x4200000000000000000000000000000000000006" as Address;
-
-export type PurchaseCall = {
-  to: Address;
-  data: Hex;
-  label: string;
-};
-
 export function buildUsdcPurchaseCalls(params: {
-  amount: bigint;
+  minBuyAmount: bigint;
   needsApprove: boolean;
 }): PurchaseCall[] {
   const presale = getPresaleContract();
@@ -49,7 +45,7 @@ export function buildUsdcPurchaseCalls(params: {
       data: encodeFunctionData({
         abi: ERC20_ABI,
         functionName: "approve",
-        args: [presale, params.amount],
+        args: [presale, params.minBuyAmount],
       }),
       label: "approve_usdc",
     });
@@ -59,8 +55,8 @@ export function buildUsdcPurchaseCalls(params: {
     to: presale,
     data: encodeFunctionData({
       abi: PRESALE_ABI,
-      functionName: "buyWithUsdc",
-      args: [params.amount],
+      functionName: "buy",
+      args: [params.minBuyAmount],
     }),
     label: "buy",
   });
@@ -68,47 +64,76 @@ export function buildUsdcPurchaseCalls(params: {
   return calls;
 }
 
-export function buildSwapPurchaseCalls(params: {
-  owner: Address;
-  amount: bigint;
-  needsApprove: boolean;
+export function build0xConvertCalls(params: {
+  sellToken: PaymentToken;
+  sellAmount: bigint;
+  needsSellApprove: boolean;
+  allowanceTarget: Address;
+  quote: SwapQuoteResponse;
 }): PurchaseCall[] {
-  const router = getSwapRouterContract();
+  const calls: PurchaseCall[] = [];
+
+  if (params.needsSellApprove && !params.sellToken.isNative) {
+    calls.push({
+      to: params.sellToken.address,
+      data: encodeFunctionData({
+        abi: ERC20_ABI,
+        functionName: "approve",
+        args: [params.allowanceTarget, params.sellAmount],
+      }),
+      label: "approve_sell",
+    });
+  }
+
+  calls.push({
+    to: params.quote.to,
+    data: params.quote.data,
+    value: BigInt(params.quote.value),
+    label: "swap_0x",
+  });
+
+  return calls;
+}
+
+/** Batch Smart Wallet: approve venta → swap 0x → approve USDC → buy(minBuyAmount). */
+export function build0xFullBatchCalls(params: {
+  sellToken: PaymentToken;
+  sellAmount: bigint;
+  needsSellApprove: boolean;
+  allowanceTarget: Address;
+  quote: SwapQuoteResponse;
+  minBuyAmount: bigint;
+  needsUsdcApprove: boolean;
+}): PurchaseCall[] {
   const presale = getPresaleContract();
-  if (!router) throw new Error("SWAP_ROUTER_MISSING");
   if (!presale) throw new Error("PRESALE_CONTRACT_MISSING");
 
-  const calls: PurchaseCall[] = [];
-  const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
+  const calls = build0xConvertCalls({
+    sellToken: params.sellToken,
+    sellAmount: params.sellAmount,
+    needsSellApprove: params.needsSellApprove,
+    allowanceTarget: params.allowanceTarget,
+    quote: params.quote,
+  });
 
-  if (params.needsApprove) {
+  if (params.needsUsdcApprove) {
     calls.push({
       to: USDC_BASE.address,
       data: encodeFunctionData({
         abi: ERC20_ABI,
         functionName: "approve",
-        args: [router, params.amount],
+        args: [presale, params.minBuyAmount],
       }),
-      label: "approve_swap",
+      label: "approve_usdc",
     });
   }
-
-  calls.push({
-    to: router,
-    data: encodeFunctionData({
-      abi: SWAP_ROUTER_ABI,
-      functionName: "swapExactTokensForETH",
-      args: [params.amount, 0n, [USDC_BASE.address, WETH_BASE], params.owner, deadline],
-    }),
-    label: "convert",
-  });
 
   calls.push({
     to: presale,
     data: encodeFunctionData({
       abi: PRESALE_ABI,
-      functionName: "buyWithUsdc",
-      args: [params.amount],
+      functionName: "buy",
+      args: [params.minBuyAmount],
     }),
     label: "buy",
   });
@@ -116,24 +141,37 @@ export function buildSwapPurchaseCalls(params: {
   return calls;
 }
 
-export function getStepLabels(route: PurchaseRoute, supportsBatch: boolean, needsApprove: boolean): string[] {
-  if (supportsBatch) return [BUY_FLOW_COPY.compraStepBatch];
+export function getStepLabels(params: {
+  paymentToken: PaymentToken;
+  supportsBatch: boolean;
+  phase: PurchasePhase;
+  needsUsdcApprove: boolean;
+  needsSellApprove: boolean;
+}): string[] {
+  if (params.supportsBatch && params.paymentToken.id !== "USDC") {
+    return [BUY_FLOW_COPY.compraStepBatch0x];
+  }
 
-  if (route === "usdc") {
+  if (params.paymentToken.id === "USDC") {
     const steps: string[] = [];
-    if (needsApprove) steps.push(BUY_FLOW_COPY.compraStepUsdcApprove);
+    if (params.needsUsdcApprove) steps.push(BUY_FLOW_COPY.compraStepUsdcApprove);
     steps.push(BUY_FLOW_COPY.compraStepUsdcBuy);
     return steps;
   }
 
+  if (params.phase === "convert") {
+    const steps: string[] = [];
+    if (params.needsSellApprove) steps.push(BUY_FLOW_COPY.compraStepConvertApprove);
+    steps.push(BUY_FLOW_COPY.compraStepConvertSwap);
+    return steps;
+  }
+
   const steps: string[] = [];
-  if (needsApprove) steps.push(BUY_FLOW_COPY.compraStepSwapApprove);
-  steps.push(BUY_FLOW_COPY.compraStepSwapConvert);
-  steps.push(BUY_FLOW_COPY.compraStepSwapBuy);
+  if (params.needsUsdcApprove) steps.push(BUY_FLOW_COPY.compraStepUsdcApprove);
+  steps.push(BUY_FLOW_COPY.compraStepUsdcBuy);
   return steps;
 }
 
-export function getAllowanceSpender(route: PurchaseRoute): Address | undefined {
-  if (route === "usdc") return getPresaleContract();
-  return getSwapRouterContract();
+export function getAllowanceSpenderUsdc(): Address | undefined {
+  return getPresaleContract();
 }
