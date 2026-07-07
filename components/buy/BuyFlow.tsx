@@ -5,12 +5,13 @@ import { useAccount } from "wagmi";
 import { formatUnits } from "viem";
 import { css } from "@/lib/css";
 import { BUY_FLOW_COPY, formatUsdcBalance, USDC_BASE } from "@/lib/onramp/constants";
-import { continueToPresale } from "@/lib/onramp/presale";
 import { buyFlowReducer, INITIAL_BUY_FLOW } from "@/lib/onramp/types";
 import { useUsdcBalance } from "@/hooks/useUsdcBalance";
 import { SinWalletStep } from "./steps/SinWalletStep";
 import { SinFondosStep } from "./steps/SinFondosStep";
 import { ListoStep } from "./steps/ListoStep";
+import { PresalePurchaseStep } from "./steps/PresalePurchaseStep";
+import { BaseChainGuard } from "./ui/BaseChainGuard";
 
 export default function BuyFlow() {
   const [state, dispatch] = useReducer(buyFlowReducer, INITIAL_BUY_FLOW);
@@ -23,6 +24,7 @@ export default function BuyFlow() {
       return;
     }
     if (!isSuccess || balanceData === undefined) return;
+    if (state.step === "comprando") return;
 
     const amount = Number(formatUnits(balanceData.value, USDC_BASE.decimals));
     const balanceLabel = formatUsdcBalance(amount);
@@ -45,7 +47,7 @@ export default function BuyFlow() {
 
   const handleContinue = () => {
     if (!address || state.step !== "listo") return;
-    continueToPresale({ address, balanceLabel: state.balanceLabel });
+    dispatch({ type: "START_PURCHASE" });
   };
 
   return (
@@ -59,13 +61,17 @@ export default function BuyFlow() {
 
       {state.step === "sin_wallet" && <SinWalletStep />}
 
-      {state.step === "sin_fondos" && <SinFondosStep address={address} />}
+      <BaseChainGuard>
+        {state.step === "sin_fondos" && <SinFondosStep address={address} />}
 
-      {state.step === "esperando_fondos" && <SinFondosStep address={address} />}
+        {state.step === "esperando_fondos" && <SinFondosStep address={address} />}
 
-      {state.step === "listo" && (
-        <ListoStep balanceLabel={state.balanceLabel} onContinue={handleContinue} />
-      )}
+        {state.step === "listo" && (
+          <ListoStep balanceLabel={state.balanceLabel} onContinue={handleContinue} />
+        )}
+
+        {state.step === "comprando" && <PresalePurchaseStep />}
+      </BaseChainGuard>
     </main>
   );
 }

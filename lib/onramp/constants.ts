@@ -1,4 +1,13 @@
 import { brandLegal } from "@/lib/brand-legal";
+import { legalConfig } from "@/lib/legal.config";
+
+/** Metadata WalletConnect / Reown (wagmi walletConnect connector). */
+export const WALLET_CONNECT_METADATA = {
+  name: brandLegal.productBrand,
+  description: "Adquiere OPEN en la red Base con tu wallet.",
+  url: legalConfig.siteUrl,
+  icons: [`${legalConfig.siteUrl}/favicon.ico`],
+} as const;
 
 /** USDC en Base (solo uso interno; no mostrar al usuario). */
 export const USDC_BASE = {
@@ -39,11 +48,25 @@ export const BUY_FLOW_COPY = {
   pageTitle: "Adquirir OPEN",
   pageSubtitle: "Conecta tu wallet y asegúrate de tener USDC en la red Base.",
   sinWalletTitle: "Conecta tu wallet",
-  sinWalletSubtitle: "Usa MetaMask, Trust Wallet u otra wallet compatible con la red Base.",
+  sinWalletSubtitle: "Crea una cuenta segura o conecta la wallet que ya uses.",
+  connectFaceId: "Crear cuenta con Face ID",
+  connectExistingWallet: "Ya tengo wallet",
+  walletModalTitle: "Elige tu wallet",
+  walletModalSubtitle: "MetaMask, Trust Wallet u otra compatible con Base.",
+  connectInjected: "MetaMask / extensión",
+  connectWalletConnect: "WalletConnect",
   connectWallet: "Conectar wallet",
-  connectExtensionHint:
-    "Necesitas una extensión o app de wallet instalada. Acepta conectar en la red Base (Chain ID 8453).",
-  noWalletExtension: "No detectamos ninguna wallet. Instala MetaMask, Trust Wallet u otra compatible.",
+  connectDesktopHint:
+    "Crea una cuenta con Face ID o conecta una wallet existente. La red debe ser Base (Chain ID 8453).",
+  walletConnectEnvHint:
+    "Para WalletConnect en móvil, añade NEXT_PUBLIC_WC_PROJECT_ID (gratis en cloud.reown.com).",
+  switchChainTitle: "Cambia tu wallet a la red Base",
+  switchChainSubtitle: "Esta operación solo funciona en Base (Chain ID 8453).",
+  switchChainCta: "Cambiar a Base",
+  switchChainRejected: "Rechazaste el cambio de red. Cámbiala manualmente a Base en tu wallet para continuar.",
+  confirmInWalletApp: "Confirma en tu app de wallet",
+  confirmInWalletAppHint: "Abre tu wallet, firma la transacción y vuelve aquí. El estado se actualizará solo.",
+  noWalletExtension: "No detectamos ninguna extensión. Instala MetaMask o usa el botón de QR.",
   sinFondosTitle: "Necesitas USDC en Base",
   sinFondosSubtitle: "Deposita USDC en tu wallet en la red Base para continuar con la preventa.",
   sinFondosPollingHint:
@@ -55,6 +78,24 @@ export const BUY_FLOW_COPY = {
   listoTitle: "¡Fondos listos!",
   listoSubtitle: (balance: string) => `Tienes ${balance} disponibles para invertir en OPEN.`,
   continueCta: "Continuar a la compra",
+  compraTitle: "Comprar OPEN",
+  compraSubtitle: "Autoriza y confirma la compra con USDC en Base.",
+  compraRouteUsdc: "Pagar con USDC",
+  compraRouteSwap: "Convertir y comprar",
+  compraAmountLabel: "Importe en USDC",
+  compraStartCta: "Iniciar compra",
+  compraRetryCta: "Reintentar paso pendiente",
+  compraDoneTitle: "Compra enviada",
+  compraDoneSubtitle: "Tu transacción se ha enviado correctamente.",
+  compraContractMissing: "Contrato de preventa no configurado (NEXT_PUBLIC_PRESALE_CONTRACT).",
+  compraStepUsdcApprove: "Paso 1/2 — Autorizar USDC",
+  compraStepUsdcBuy: "Paso 2/2 — Comprar OPEN",
+  compraStepSwapApprove: "Paso 1/3 — Autorizar conversión",
+  compraStepSwapConvert: "Paso 2/3 — Convertir a ETH",
+  compraStepSwapBuy: "Paso 3/3 — Comprar OPEN",
+  compraStepBatch: "Firmar compra (una sola firma)",
+  compraWaitingConfirm: "Esperando confirmación on-chain…",
+  compraUserRejected: "Rechazaste la transacción. Puedes reintentar el paso pendiente.",
 } as const;
 
 export function formatUsdcBalance(amount: number): string {
