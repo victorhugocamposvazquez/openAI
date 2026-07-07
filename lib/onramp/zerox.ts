@@ -7,6 +7,13 @@ const BASE_CHAIN_ID = 8453;
 const QUOTE_TTL_MS = 30_000;
 const SLIPPAGE_BPS = 100;
 
+/**
+ * AllowanceHolder de 0x v2 (dirección canónica multichain).
+ * 0x solo devuelve issues.allowance.spender cuando falta allowance,
+ * así que necesitamos este fallback para ETH nativo o allowance ya concedida.
+ */
+export const ALLOWANCE_HOLDER_BASE = "0x0000000000001fF3684f28c67538d4D072C22734" as Address;
+
 type ZeroXQuote = {
   buyAmount?: string;
   minBuyAmount?: string;
@@ -73,7 +80,7 @@ export async function fetchZeroXSwapQuote(params: {
     sellAmount: body.sellAmount ?? params.sellAmount,
     sellToken: (body.sellToken ?? params.sellToken) as Address,
     buyToken: USDC_BASE.address,
-    allowanceTarget: body.issues?.allowance?.spender as Address | undefined,
+    allowanceTarget: (body.issues?.allowance?.spender as Address | undefined) ?? ALLOWANCE_HOLDER_BASE,
     expiresAt: Date.now() + QUOTE_TTL_MS,
     liquidityAvailable: Boolean(body.liquidityAvailable),
   };

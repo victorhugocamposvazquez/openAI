@@ -3,17 +3,18 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   useAccount,
-  useChainId,
+  useBalance,
   useConfig,
   useReadContract,
   useSendCalls,
   useWriteContract,
 } from "wagmi";
-import { sendTransaction, waitForTransactionReceipt } from "@wagmi/core";
+import { sendTransaction, waitForCallsStatus, waitForTransactionReceipt } from "@wagmi/core";
 import { base } from "wagmi/chains";
-import { parseUnits, UserRejectedRequestError } from "viem";
+import { parseUnits, UserRejectedRequestError, type Address } from "viem";
 import { BUY_FLOW_COPY, USDC_BASE } from "@/lib/onramp/constants";
 import { useAtomicBatchSupport } from "@/hooks/useAtomicBatchSupport";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useSwapQuote } from "@/hooks/useSwapQuote";
 import { usePresaleRemainingCap } from "@/hooks/usePresaleReads";
 import { isWalletConnectConnector } from "@/lib/wagmi/connectors";
@@ -28,11 +29,7 @@ import {
   type PurchaseCall,
   type PurchasePhase,
 } from "@/lib/onramp/presale-contract";
-import {
-  getPaymentToken,
-  type PaymentToken,
-  type PaymentTokenId,
-} from "@/lib/onramp/payment-tokens";
+import { getPaymentToken, type PaymentTokenId } from "@/lib/onramp/payment-tokens";
 import type { SwapQuoteResponse } from "@/lib/onramp/swap-quote-types";
 
 export type PurchaseExecutionPhase = "idle" | "awaiting_wallet" | "confirming" | "done" | "error";
@@ -48,6 +45,13 @@ export type PurchaseExecutionState = {
   awaitingWalletApp: boolean;
 };
 
+/** Contexto de ejecución congelado al iniciar — evita usar estado React caducado. */
+type ExecContext = {
+  minBuy: bigint;
+  sellAmt?: bigint;
+  allowanceTarget?: Address;
+};
+
 function isUserRejection(error: unknown): boolean {
   if (error instanceof UserRejectedRequestError) return true;
   if (error instanceof Error) {
@@ -58,21 +62,46 @@ function isUserRejection(error: unknown): boolean {
 }
 
 function mapContractError(error: unknown): string {
-  if (error instanceof Error) {
-    if (error.message === "PRESALE_CONTRACT_MISSING") return BUY_FLOW_COPY.compraContractMissing;
-    if (error.message === "QUOTE_EXPIRED") return BUY_FLOW_COPY.compraQuoteExpired;
-    if (error.message === "CAP_EXCEEDED") return BUY_FLOW_COPY.compraCapExceeded;
-    if (error.message === "QUOTE_FAILED") return BUY_FLOW_COPY.compraQuoteFallback;
-    if (isUserRejection(error)) return BUY_FLOW_COPY.compraUserRejected;
-    return error.message;
+  if (!(error instanceof Error)) return BUY_FLOW_COPY.compraGenericError;
+
+  const msg = error.message;
+  if (msg === "PRESALE_CONTRACT_MISSING") return BUY_FLOW_COPY.compraContractMissing;
+  if (msg === "QUOTE_EXPIRED") return BUY_FLOW_COPY.compraQuoteExpired;
+  if (msg === "CAP_EXCEEDED") return BUY_FLOW_COPY.compraCapExceeded;
+  if (msg === "QUOTE_FAILED") return BUY_FLOW_COPY.compraQuoteFallback;
+  if (msg === "WRONG_NETWORK") return BUY_FLOW_COPY.compraWrongNetwork;
+  if (msg === "INSUFFICIENT_USDC") return BUY_FLOW_COPY.compraInsufficientUsdc;
+  if (msg === "BATCH_FAILED") return BUY_FLOW_COPY.compraBatchFailed;
+  if (msg.startsWith("INSUFFICIENT_SELL:")) {
+    return BUY_FLOW_COPY.compraInsufficientSell(msg.split(":")[1] ?? "el token");
   }
-  return "Error desconocido";
+  if (isUserRejection(error)) return BUY_FLOW_COPY.compraUserRejected;
+
+  const t = msg.toLowerCase();
+  if (t.includes("insufficient funds")) return BUY_FLOW_COPY.compraGasInsufficient;
+  if (t.includes("exceeds balance") || t.includes("insufficient balance") || t.includes("transfer amount exceeds")) {
+    return BUY_FLOW_COPY.compraInsufficientUsdc;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    console.error("[compra] error sin mapear:", error);
+  }
+  return BUY_FLOW_COPY.compraGenericError;
 }
+
+const INITIAL_EXEC_STATE: PurchaseExecutionState = {
+  phase: "idle",
+  stepIndex: 0,
+  stepLabels: [],
+  currentLabel: "",
+  awaitingWalletApp: false,
+};
 
 export function usePresalePurchase() {
   const config = useConfig();
-  const { address, connector } = useAccount();
-  const chainId = useChainId();
+  // chainId de useAccount() refleja la red REAL de la wallet (useChainId devuelve la de la config).
+  const { address, connector, chainId: walletChainId } = useAccount();
+  const onBase = walletChainId === base.id;
   const { supportsBatch, isLoading: capsLoading } = useAtomicBatchSupport();
   const { sendCallsAsync } = useSendCalls();
   const { writeContractAsync } = useWriteContract();
@@ -81,13 +110,7 @@ export function usePresalePurchase() {
   const [amountInput, setAmountInput] = useState("10");
   const [flowPhase, setFlowPhase] = useState<PurchasePhase>("purchase");
   const [quoteFallback, setQuoteFallback] = useState(false);
-  const [state, setState] = useState<PurchaseExecutionState>({
-    phase: "idle",
-    stepIndex: 0,
-    stepLabels: [],
-    currentLabel: "",
-    awaitingWalletApp: false,
-  });
+  const [state, setState] = useState<PurchaseExecutionState>(INITIAL_EXEC_STATE);
 
   const paymentToken = getPaymentToken(paymentTokenId);
   const completedLabelsRef = useRef<Set<string>>(new Set());
@@ -95,34 +118,53 @@ export function usePresalePurchase() {
   const storedQuoteRef = useRef<SwapQuoteResponse | undefined>(undefined);
   const isWalletConnect = isWalletConnectConnector(connector?.id);
 
+  // Debounce: una cotización por importe estable, no por tecla.
+  const debouncedInput = useDebouncedValue(amountInput, 500);
+
   const sellAmount = useMemo(() => {
-    const normalized = amountInput.trim().replace(",", ".");
+    const normalized = debouncedInput.trim().replace(",", ".");
     const n = Number(normalized);
     if (!normalized || Number.isNaN(n) || n <= 0) return undefined;
     return parseUnits(normalized, paymentToken.decimals);
-  }, [amountInput, paymentToken.decimals]);
+  }, [debouncedInput, paymentToken.decimals]);
 
   const { quote, isLoading: quoteLoading, isExpired, quoteFailed, refetch: refetchQuote } = useSwapQuote({
     paymentToken,
     sellAmount,
-    enabled: paymentTokenId !== "USDC" && !quoteFallback,
+    enabled: paymentTokenId !== "USDC" && !quoteFallback && flowPhase !== "purchase_after_convert",
   });
 
   const { data: remainingCap } = usePresaleRemainingCap();
-
-  const minBuyAmount = useMemo(() => {
-    if (paymentTokenId === "USDC") return sellAmount;
-    if (flowPhase === "purchase_after_convert" && storedMinBuyRef.current) {
-      return storedMinBuyRef.current;
-    }
-    if (!quote?.minBuyAmount) return undefined;
-    return BigInt(quote.minBuyAmount);
-  }, [paymentTokenId, sellAmount, quote?.minBuyAmount, flowPhase]);
-
-  const openQuoteAmount = minBuyAmount;
-
   const allowanceTarget = quote?.allowanceTarget;
 
+  // ── Balances ──
+  const { data: nativeBalance } = useBalance({
+    address,
+    chainId: base.id,
+    query: { enabled: Boolean(address && paymentToken.isNative) },
+  });
+
+  const { data: erc20SellBalance } = useReadContract({
+    address: paymentToken.isNative ? undefined : paymentToken.address,
+    abi: ERC20_ABI,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+    chainId: base.id,
+    query: { enabled: Boolean(address && !paymentToken.isNative) },
+  });
+
+  const sellBalance = paymentToken.isNative ? nativeBalance?.value : erc20SellBalance;
+
+  const { data: usdcBalance } = useReadContract({
+    address: USDC_BASE.address,
+    abi: ERC20_ABI,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+    chainId: base.id,
+    query: { enabled: Boolean(address) },
+  });
+
+  // ── Allowances ──
   const { data: usdcAllowance, refetch: refetchUsdcAllowance } = useReadContract({
     address: USDC_BASE.address,
     abi: ERC20_ABI,
@@ -137,14 +179,23 @@ export function usePresalePurchase() {
     abi: ERC20_ABI,
     functionName: "allowance",
     args:
-      address && allowanceTarget && !paymentToken.isNative
-        ? [address, allowanceTarget]
-        : undefined,
+      address && allowanceTarget && !paymentToken.isNative ? [address, allowanceTarget] : undefined,
     chainId: base.id,
     query: {
       enabled: Boolean(address && allowanceTarget && !paymentToken.isNative && paymentTokenId !== "USDC"),
     },
   });
+
+  const minBuyAmount = useMemo(() => {
+    if (paymentTokenId === "USDC") return sellAmount;
+    if (flowPhase === "purchase_after_convert" && storedMinBuyRef.current) {
+      return storedMinBuyRef.current;
+    }
+    if (!quote?.minBuyAmount) return undefined;
+    return BigInt(quote.minBuyAmount);
+  }, [paymentTokenId, sellAmount, quote?.minBuyAmount, flowPhase]);
+
+  const openQuoteAmount = minBuyAmount;
 
   const needsUsdcApprove = useMemo(() => {
     if (!minBuyAmount || usdcAllowance === undefined) return true;
@@ -158,156 +209,112 @@ export function usePresalePurchase() {
   }, [allowanceTarget, paymentToken.isNative, paymentTokenId, sellAllowance, sellAmount]);
 
   const effectiveFlowPhase: PurchasePhase =
-    paymentTokenId === "USDC"
-      ? "purchase"
-      : supportsBatch
-        ? "purchase"
-        : flowPhase;
+    paymentTokenId === "USDC" ? "purchase" : supportsBatch ? "purchase" : flowPhase;
 
   const stepLabels = useMemo(
     () =>
       getStepLabels({
         paymentToken,
-        supportsBatch: supportsBatch && paymentTokenId !== "USDC",
+        supportsBatch,
         phase: effectiveFlowPhase,
         needsUsdcApprove,
         needsSellApprove,
       }),
-    [effectiveFlowPhase, needsSellApprove, needsUsdcApprove, paymentToken, paymentTokenId, supportsBatch]
+    [effectiveFlowPhase, needsSellApprove, needsUsdcApprove, paymentToken, supportsBatch]
   );
+
+  // ── Validaciones ──
+  const validateNetwork = useCallback(() => {
+    if (!onBase) throw new Error("WRONG_NETWORK");
+  }, [onBase]);
 
   const validateCap = useCallback(
     (amount: bigint) => {
-      if (remainingCap === undefined) return;
-      if (amount > remainingCap) {
-        throw new Error("CAP_EXCEEDED");
-      }
+      if (remainingCap !== undefined && amount > remainingCap) throw new Error("CAP_EXCEEDED");
     },
     [remainingCap]
   );
 
-  const validateQuoteFresh = useCallback(() => {
-    const q = storedQuoteRef.current ?? quote;
-    if (paymentTokenId !== "USDC" && supportsBatch) {
-      if (!q) throw new Error("QUOTE_FAILED");
-      if (Date.now() >= q.expiresAt) throw new Error("QUOTE_EXPIRED");
-    }
-  }, [paymentTokenId, quote, supportsBatch]);
+  const validateQuoteFresh = useCallback((q: SwapQuoteResponse | undefined): SwapQuoteResponse => {
+    if (!q) throw new Error("QUOTE_FAILED");
+    if (Date.now() >= q.expiresAt) throw new Error("QUOTE_EXPIRED");
+    return q;
+  }, []);
 
-  const buildCallsForCurrentPhase = useCallback(
-    (freshUsdcApprove: boolean, freshSellApprove: boolean): PurchaseCall[] => {
-      if (!address || !sellAmount || !minBuyAmount) throw new Error("WALLET_OR_AMOUNT_MISSING");
-
-      if (paymentTokenId === "USDC") {
-        return buildUsdcPurchaseCalls({ minBuyAmount, needsApprove: freshUsdcApprove });
+  const validateSellBalance = useCallback(
+    (amt: bigint) => {
+      if (sellBalance !== undefined && amt > sellBalance) {
+        throw new Error(`INSUFFICIENT_SELL:${paymentToken.symbol}`);
       }
-
-      const q = storedQuoteRef.current ?? quote;
-      if (!q?.allowanceTarget) throw new Error("QUOTE_FAILED");
-
-      if (supportsBatch) {
-        return build0xFullBatchCalls({
-          sellToken: paymentToken,
-          sellAmount,
-          needsSellApprove: freshSellApprove,
-          allowanceTarget: q.allowanceTarget,
-          quote: q,
-          minBuyAmount,
-          needsUsdcApprove: freshUsdcApprove,
-        });
-      }
-
-      if (effectiveFlowPhase === "convert") {
-        return build0xConvertCalls({
-          sellToken: paymentToken,
-          sellAmount,
-          needsSellApprove: freshSellApprove,
-          allowanceTarget: q.allowanceTarget,
-          quote: q,
-        });
-      }
-
-      return buildUsdcPurchaseCalls({ minBuyAmount, needsApprove: freshUsdcApprove });
     },
-    [
-      address,
-      effectiveFlowPhase,
-      minBuyAmount,
-      paymentToken,
-      paymentTokenId,
-      quote,
-      sellAmount,
-      supportsBatch,
-    ]
+    [paymentToken.symbol, sellBalance]
   );
 
+  const validateUsdcBalance = useCallback(
+    (amt: bigint) => {
+      if (usdcBalance !== undefined && amt > usdcBalance) throw new Error("INSUFFICIENT_USDC");
+    },
+    [usdcBalance]
+  );
+
+  // ── Ejecución ──
   const executeCall = useCallback(
-    async (call: PurchaseCall) => {
-      if (!address || !minBuyAmount) throw new Error("WALLET_OR_AMOUNT_MISSING");
+    async (call: PurchaseCall, ctx: ExecContext) => {
+      if (!address) throw new Error("WALLET_OR_AMOUNT_MISSING");
       const presale = getPresaleContract();
       if (!presale) throw new Error("PRESALE_CONTRACT_MISSING");
 
-      if (call.label === "approve_usdc") {
-        return writeContractAsync({
-          address: USDC_BASE.address,
-          abi: ERC20_ABI,
-          functionName: "approve",
-          args: [presale, minBuyAmount],
-          chainId: base.id,
-        });
+      switch (call.label) {
+        case "approve_usdc":
+          return writeContractAsync({
+            address: USDC_BASE.address,
+            abi: ERC20_ABI,
+            functionName: "approve",
+            args: [presale, ctx.minBuy],
+            chainId: base.id,
+          });
+        case "approve_sell":
+          if (!ctx.allowanceTarget || !ctx.sellAmt) throw new Error("QUOTE_FAILED");
+          return writeContractAsync({
+            address: paymentToken.address,
+            abi: ERC20_ABI,
+            functionName: "approve",
+            args: [ctx.allowanceTarget, ctx.sellAmt],
+            chainId: base.id,
+          });
+        case "swap_0x":
+          return sendTransaction(config, {
+            account: address,
+            to: call.to,
+            data: call.data,
+            value: call.value,
+            chainId: base.id,
+          });
+        case "buy":
+          return writeContractAsync({
+            address: presale,
+            abi: PRESALE_ABI,
+            functionName: "buy",
+            args: [ctx.minBuy],
+            chainId: base.id,
+          });
+        default:
+          throw new Error(`Paso desconocido: ${call.label}`);
       }
-
-      if (call.label === "approve_sell" && allowanceTarget && sellAmount) {
-        return writeContractAsync({
-          address: paymentToken.address,
-          abi: ERC20_ABI,
-          functionName: "approve",
-          args: [allowanceTarget, sellAmount],
-          chainId: base.id,
-        });
-      }
-
-      if (call.label === "swap_0x") {
-        return sendTransaction(config, {
-          account: address,
-          to: call.to,
-          data: call.data,
-          value: call.value,
-          chainId: base.id,
-        });
-      }
-
-      if (call.label === "buy") {
-        return writeContractAsync({
-          address: presale,
-          abi: PRESALE_ABI,
-          functionName: "buy",
-          args: [minBuyAmount],
-          chainId: base.id,
-        });
-      }
-
-      throw new Error(`Paso desconocido: ${call.label}`);
     },
-    [address, allowanceTarget, config, minBuyAmount, paymentToken.address, sellAmount, writeContractAsync]
-  );
-
-  const runSequentialStep = useCallback(
-    async (call: PurchaseCall) => {
-      const hash = await executeCall(call);
-      setState((s) => ({ ...s, phase: "confirming", txHash: hash, awaitingWalletApp: false }));
-      await waitForTransactionReceipt(config, { hash, chainId: base.id });
-      completedLabelsRef.current.add(call.label);
-    },
-    [config, executeCall]
+    [address, config, paymentToken.address, writeContractAsync]
   );
 
   const executeSequential = useCallback(
-    async (calls: PurchaseCall[], labels: string[]) => {
-      const pending = calls.filter((c) => !completedLabelsRef.current.has(c.label));
+    async (calls: PurchaseCall[], labels: string[], ctx: ExecContext) => {
+      let lastHash: `0x${string}` | undefined;
 
-      for (let i = 0; i < pending.length; i++) {
-        const call = pending[i]!;
+      // Iteramos sobre TODAS las calls para que stepIndex coincida con labels,
+      // saltando las ya completadas (reintentos).
+      for (let i = 0; i < calls.length; i++) {
+        const call = calls[i]!;
+        if (completedLabelsRef.current.has(call.label)) continue;
+
         setState({
           phase: "awaiting_wallet",
           stepIndex: i,
@@ -315,19 +322,26 @@ export function usePresalePurchase() {
           currentLabel: labels[i] ?? call.label,
           awaitingWalletApp: isWalletConnect,
         });
-        await runSequentialStep(call);
+
+        const hash = await executeCall(call, ctx);
+        lastHash = hash;
+        setState((s) => ({ ...s, phase: "confirming", txHash: hash, awaitingWalletApp: false }));
+        await waitForTransactionReceipt(config, { hash, chainId: base.id });
+        completedLabelsRef.current.add(call.label);
       }
+
+      return lastHash;
     },
-    [isWalletConnect, runSequentialStep]
+    [config, executeCall, isWalletConnect]
   );
 
   const executeBatch = useCallback(
-    async (calls: PurchaseCall[]) => {
+    async (calls: PurchaseCall[], batchLabel: string) => {
       setState({
         phase: "awaiting_wallet",
         stepIndex: 0,
-        stepLabels: [BUY_FLOW_COPY.compraStepBatch0x],
-        currentLabel: BUY_FLOW_COPY.compraStepBatch0x,
+        stepLabels: [batchLabel],
+        currentLabel: batchLabel,
         awaitingWalletApp: isWalletConnect,
       });
 
@@ -341,206 +355,245 @@ export function usePresalePurchase() {
       });
 
       setState((s) => ({ ...s, phase: "confirming", batchId: result.id, awaitingWalletApp: false }));
-      return result.id;
+
+      const status = await waitForCallsStatus(config, { id: result.id });
+      if (status.status !== "success") throw new Error("BATCH_FAILED");
+
+      const receiptHash = status.receipts?.at(-1)?.transactionHash;
+      calls.forEach((c) => completedLabelsRef.current.add(c.label));
+      return receiptHash;
     },
-    [isWalletConnect, sendCallsAsync]
+    [config, isWalletConnect, sendCallsAsync]
   );
 
-  const resetProgress = useCallback(() => {
-    completedLabelsRef.current = new Set();
-    storedMinBuyRef.current = undefined;
-    storedQuoteRef.current = undefined;
-    setFlowPhase("purchase");
-  }, []);
+  // ── Fase A (EOA): convertir a USDC ──
+  const startConvert = useCallback(
+    async (freshQuote?: SwapQuoteResponse) => {
+      if (!address || !sellAmount || paymentTokenId === "USDC") return;
 
-  const startConvert = useCallback(async () => {
-    if (!address || !sellAmount || paymentTokenId === "USDC") return;
-    if (chainId !== base.id) return;
-    if (!quote?.allowanceTarget) {
-      setQuoteFallback(true);
-      setState((s) => ({ ...s, phase: "error", error: BUY_FLOW_COPY.compraQuoteFallback }));
-      return;
-    }
+      try {
+        validateNetwork();
+        const q = validateQuoteFresh(freshQuote ?? quote);
+        if (!q.allowanceTarget) throw new Error("QUOTE_FAILED");
 
-    storedQuoteRef.current = quote;
-    storedMinBuyRef.current = BigInt(quote.minBuyAmount);
+        validateCap(BigInt(q.minBuyAmount));
+        validateSellBalance(sellAmount);
 
-    try {
-      validateQuoteFresh();
-      const { data: freshSell } = await refetchSellAllowance();
-      const freshSellApprove =
-        !paymentToken.isNative && sellAmount && freshSell !== undefined
-          ? freshSell < sellAmount
-          : needsSellApprove;
+        storedQuoteRef.current = q;
+        storedMinBuyRef.current = BigInt(q.minBuyAmount);
 
-      const calls = build0xConvertCalls({
-        sellToken: paymentToken,
-        sellAmount,
-        needsSellApprove: freshSellApprove,
-        allowanceTarget: quote.allowanceTarget,
-        quote,
-      });
+        const { data: freshSell } = await refetchSellAllowance();
+        const freshSellApprove = paymentToken.isNative
+          ? false
+          : freshSell !== undefined
+            ? freshSell < sellAmount
+            : needsSellApprove;
 
-      const labels = getStepLabels({
-        paymentToken,
-        supportsBatch: false,
-        phase: "convert",
-        needsUsdcApprove: false,
-        needsSellApprove: freshSellApprove,
-      });
+        const calls = build0xConvertCalls({
+          sellToken: paymentToken,
+          sellAmount,
+          needsSellApprove: freshSellApprove,
+          allowanceTarget: q.allowanceTarget,
+          quote: q,
+        });
 
-      await executeSequential(calls, labels);
-      setFlowPhase("purchase_after_convert");
-      completedLabelsRef.current = new Set();
-      setState({
-        phase: "idle",
-        stepIndex: 0,
-        stepLabels: getStepLabels({
+        const labels = getStepLabels({
           paymentToken,
           supportsBatch: false,
-          phase: "purchase_after_convert",
-          needsUsdcApprove,
-          needsSellApprove: false,
-        }),
-        currentLabel: "",
-        awaitingWalletApp: false,
-      });
-    } catch (error) {
-      setState((s) => ({ ...s, phase: "error", error: mapContractError(error), awaitingWalletApp: false }));
-    }
-  }, [
-    address,
-    chainId,
-    executeSequential,
-    needsSellApprove,
-    needsUsdcApprove,
-    paymentToken,
-    paymentTokenId,
-    quote,
-    refetchSellAllowance,
-    sellAmount,
-    validateQuoteFresh,
-  ]);
+          phase: "convert",
+          needsUsdcApprove: false,
+          needsSellApprove: freshSellApprove,
+        });
 
-  const startPurchase = useCallback(async () => {
-    if (!address || !sellAmount || !minBuyAmount) return;
-    if (chainId !== base.id) return;
-    if (!getPresaleContract()) {
-      setState((s) => ({ ...s, phase: "error", error: BUY_FLOW_COPY.compraContractMissing }));
-      return;
-    }
+        await executeSequential(calls, labels, {
+          minBuy: BigInt(q.minBuyAmount),
+          sellAmt: sellAmount,
+          allowanceTarget: q.allowanceTarget,
+        });
 
-    if (paymentTokenId !== "USDC" && !supportsBatch && effectiveFlowPhase === "convert") {
-      await startConvert();
-      return;
-    }
-
-    try {
-      if (paymentTokenId !== "USDC") {
-        storedQuoteRef.current = quote;
-        validateQuoteFresh();
+        setFlowPhase("purchase_after_convert");
+        completedLabelsRef.current = new Set();
+        setState(INITIAL_EXEC_STATE);
+      } catch (error) {
+        if (error instanceof Error && (error.message === "QUOTE_FAILED" || error.message.includes("liquidez"))) {
+          setQuoteFallback(true);
+        }
+        setState((s) => ({ ...s, phase: "error", error: mapContractError(error), awaitingWalletApp: false }));
       }
-      validateCap(minBuyAmount);
+    },
+    [
+      address,
+      executeSequential,
+      needsSellApprove,
+      paymentToken,
+      paymentTokenId,
+      quote,
+      refetchSellAllowance,
+      sellAmount,
+      validateCap,
+      validateNetwork,
+      validateQuoteFresh,
+      validateSellBalance,
+    ]
+  );
 
-      const { data: freshUsdc } = await refetchUsdcAllowance();
-      const freshUsdcApprove =
-        freshUsdc !== undefined && minBuyAmount ? freshUsdc < minBuyAmount : needsUsdcApprove;
-
-      const { data: freshSell } = await refetchSellAllowance();
-      const freshSellApprove =
-        paymentTokenId !== "USDC" &&
-        !paymentToken.isNative &&
-        sellAmount &&
-        freshSell !== undefined &&
-        allowanceTarget
-          ? freshSell < sellAmount
-          : needsSellApprove;
-
-      completedLabelsRef.current = new Set(
-        [...completedLabelsRef.current].filter((label) => {
-          if (label.startsWith("approve_usdc") && !freshUsdcApprove) return false;
-          if (label.startsWith("approve_sell") && !freshSellApprove) return false;
-          return true;
-        })
-      );
-
-      const calls = buildCallsForCurrentPhase(freshUsdcApprove, freshSellApprove);
-      const labels = getStepLabels({
-        paymentToken,
-        supportsBatch: supportsBatch && paymentTokenId !== "USDC",
-        phase: effectiveFlowPhase,
-        needsUsdcApprove: freshUsdcApprove,
-        needsSellApprove: freshSellApprove,
-      });
-
-      const useBatch = supportsBatch && paymentTokenId !== "USDC" && calls.length > 1;
-
-      if (useBatch) {
-        const batchId = await executeBatch(calls);
-        const { waitForCallsStatus } = await import("@wagmi/core");
-        await waitForCallsStatus(config, { id: batchId });
-        calls.forEach((c) => completedLabelsRef.current.add(c.label));
-      } else {
-        await executeSequential(calls, labels);
+  // ── Compra principal ──
+  const startPurchase = useCallback(
+    async (freshQuote?: SwapQuoteResponse) => {
+      if (!address || !sellAmount) return;
+      if (!getPresaleContract()) {
+        setState((s) => ({ ...s, phase: "error", error: BUY_FLOW_COPY.compraContractMissing }));
+        return;
       }
 
-      setState({
-        phase: "done",
-        stepIndex: labels.length - 1,
-        stepLabels: labels,
-        currentLabel: BUY_FLOW_COPY.compraDoneTitle,
-        awaitingWalletApp: false,
-      });
-    } catch (error) {
-      setState((s) => ({ ...s, phase: "error", error: mapContractError(error), awaitingWalletApp: false }));
-    }
-  }, [
-    address,
-    allowanceTarget,
-    buildCallsForCurrentPhase,
-    chainId,
-    config,
-    effectiveFlowPhase,
-    executeBatch,
-    executeSequential,
-    minBuyAmount,
-    needsSellApprove,
-    needsUsdcApprove,
-    paymentToken,
-    paymentTokenId,
-    quote,
-    refetchSellAllowance,
-    refetchUsdcAllowance,
-    sellAmount,
-    startConvert,
-    supportsBatch,
-    validateCap,
-    validateQuoteFresh,
-  ]);
+      // EOA con token distinto de USDC: primero la fase de conversión.
+      if (paymentTokenId !== "USDC" && !supportsBatch && effectiveFlowPhase === "convert") {
+        await startConvert(freshQuote);
+        return;
+      }
+
+      try {
+        validateNetwork();
+
+        const usesQuote = paymentTokenId !== "USDC" && effectiveFlowPhase !== "purchase_after_convert";
+        let q: SwapQuoteResponse | undefined;
+        let localMinBuy: bigint;
+
+        if (paymentTokenId === "USDC") {
+          localMinBuy = sellAmount;
+        } else if (effectiveFlowPhase === "purchase_after_convert") {
+          if (!storedMinBuyRef.current) throw new Error("QUOTE_FAILED");
+          localMinBuy = storedMinBuyRef.current;
+        } else {
+          q = validateQuoteFresh(freshQuote ?? quote);
+          storedQuoteRef.current = q;
+          localMinBuy = BigInt(q.minBuyAmount);
+        }
+
+        validateCap(localMinBuy);
+
+        if (usesQuote) {
+          validateSellBalance(sellAmount);
+        } else {
+          validateUsdcBalance(localMinBuy);
+        }
+
+        const { data: freshUsdc } = await refetchUsdcAllowance();
+        const freshUsdcApprove = freshUsdc !== undefined ? freshUsdc < localMinBuy : needsUsdcApprove;
+
+        let freshSellApprove = false;
+        if (usesQuote && !paymentToken.isNative) {
+          const { data: freshSell } = await refetchSellAllowance();
+          freshSellApprove = freshSell !== undefined ? freshSell < sellAmount : needsSellApprove;
+        }
+
+        completedLabelsRef.current = new Set(
+          [...completedLabelsRef.current].filter((label) => {
+            if (label === "approve_usdc" && !freshUsdcApprove) return false;
+            if (label === "approve_sell" && !freshSellApprove) return false;
+            return true;
+          })
+        );
+
+        let calls: PurchaseCall[];
+        if (usesQuote && q) {
+          if (!q.allowanceTarget) throw new Error("QUOTE_FAILED");
+          calls = build0xFullBatchCalls({
+            sellToken: paymentToken,
+            sellAmount,
+            needsSellApprove: freshSellApprove,
+            allowanceTarget: q.allowanceTarget,
+            quote: q,
+            minBuyAmount: localMinBuy,
+            needsUsdcApprove: freshUsdcApprove,
+          });
+        } else {
+          calls = buildUsdcPurchaseCalls({ minBuyAmount: localMinBuy, needsApprove: freshUsdcApprove });
+        }
+
+        const ctx: ExecContext = {
+          minBuy: localMinBuy,
+          sellAmt: sellAmount,
+          allowanceTarget: q?.allowanceTarget,
+        };
+
+        const useBatch = supportsBatch && calls.length > 1;
+        const labels = useBatch
+          ? [paymentTokenId === "USDC" ? BUY_FLOW_COPY.compraStepBatch : BUY_FLOW_COPY.compraStepBatch0x]
+          : getStepLabels({
+              paymentToken,
+              supportsBatch: false,
+              phase: effectiveFlowPhase,
+              needsUsdcApprove: freshUsdcApprove,
+              needsSellApprove: freshSellApprove,
+            });
+
+        let finalHash: `0x${string}` | undefined;
+        if (useBatch) {
+          finalHash = await executeBatch(calls, labels[0]!);
+        } else {
+          finalHash = await executeSequential(calls, labels, ctx);
+        }
+
+        setState({
+          phase: "done",
+          stepIndex: labels.length - 1,
+          stepLabels: labels,
+          currentLabel: BUY_FLOW_COPY.compraDoneTitle,
+          txHash: finalHash,
+          awaitingWalletApp: false,
+        });
+      } catch (error) {
+        setState((s) => ({ ...s, phase: "error", error: mapContractError(error), awaitingWalletApp: false }));
+      }
+    },
+    [
+      address,
+      effectiveFlowPhase,
+      executeBatch,
+      executeSequential,
+      needsSellApprove,
+      needsUsdcApprove,
+      paymentToken,
+      paymentTokenId,
+      quote,
+      refetchSellAllowance,
+      refetchUsdcAllowance,
+      sellAmount,
+      startConvert,
+      supportsBatch,
+      validateCap,
+      validateNetwork,
+      validateQuoteFresh,
+      validateSellBalance,
+      validateUsdcBalance,
+    ]
+  );
 
   const retry = useCallback(async () => {
-    await Promise.all([refetchUsdcAllowance(), refetchSellAllowance(), refetchQuote()]);
     setState((s) => ({ ...s, phase: "idle", error: undefined }));
-    if (effectiveFlowPhase === "convert") {
-      await startConvert();
-    } else {
-      await startPurchase();
+
+    // Refetch de la quote y uso del resultado directamente — el estado React
+    // del render actual quedaría caducado dentro de este mismo tick.
+    let freshQuote: SwapQuoteResponse | undefined;
+    if (paymentTokenId !== "USDC" && effectiveFlowPhase !== "purchase_after_convert" && !quoteFallback) {
+      const r = await refetchQuote();
+      freshQuote = r.data;
     }
-  }, [effectiveFlowPhase, refetchQuote, refetchSellAllowance, refetchUsdcAllowance, startConvert, startPurchase]);
+
+    await startPurchase(freshQuote);
+  }, [effectiveFlowPhase, paymentTokenId, quoteFallback, refetchQuote, startPurchase]);
 
   const setPaymentToken = useCallback((id: PaymentTokenId) => {
     setPaymentTokenId(id);
     setQuoteFallback(false);
+    completedLabelsRef.current = new Set();
+    storedMinBuyRef.current = undefined;
+    storedQuoteRef.current = undefined;
+    // Orden importante: la fase se fija DESPUÉS de limpiar (antes un reset la pisaba).
     setFlowPhase(id === "USDC" ? "purchase" : "convert");
-    resetProgress();
-    setState({
-      phase: "idle",
-      stepIndex: 0,
-      stepLabels: [],
-      currentLabel: "",
-      awaitingWalletApp: false,
-    });
-  }, [resetProgress]);
+    setState(INITIAL_EXEC_STATE);
+  }, []);
 
   const isRunning = state.phase === "awaiting_wallet" || state.phase === "confirming";
 
@@ -570,17 +623,21 @@ export function usePresalePurchase() {
     supportsBatch,
     capsLoading,
     isWalletConnect,
+    onBase,
     startPurchase,
     retry,
     primaryCta,
     canPurchase: Boolean(
       address &&
         sellAmount &&
-        minBuyAmount &&
-        chainId === base.id &&
+        onBase &&
         !capsLoading &&
         !isRunning &&
-        (paymentTokenId === "USDC" || (quote && !quoteFailed && !quoteFallback) || effectiveFlowPhase === "purchase_after_convert")
+        (paymentTokenId === "USDC"
+          ? minBuyAmount
+          : effectiveFlowPhase === "purchase_after_convert"
+            ? storedMinBuyRef.current
+            : quote && !quoteFailed && !quoteFallback && !isExpired)
     ),
   };
 }

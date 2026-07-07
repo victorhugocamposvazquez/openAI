@@ -70,7 +70,9 @@ export default function BuyFlow() {
           <ListoStep balanceLabel={state.balanceLabel} onContinue={handleContinue} />
         )}
 
-        {state.step === "comprando" && <PresalePurchaseStep />}
+        {state.step === "comprando" && (
+          <PresalePurchaseStep onBack={() => dispatch({ type: "EXIT_PURCHASE" })} />
+        )}
       </BaseChainGuard>
     </main>
   );

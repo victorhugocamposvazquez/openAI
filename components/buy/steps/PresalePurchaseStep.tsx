@@ -3,14 +3,18 @@
 import { formatUnits } from "viem";
 import { css } from "@/lib/css";
 import { Hov } from "@/components/ui";
-import { BUY_FLOW_COPY } from "@/lib/onramp/constants";
+import { BUY_FLOW_COPY, OPEN_TOKEN_DECIMALS } from "@/lib/onramp/constants";
 import { usePresalePurchase } from "@/hooks/usePresalePurchase";
 import { usePresaleOpenQuote } from "@/hooks/usePresaleReads";
 import { usePaymentTokenBalances } from "@/hooks/usePaymentTokenBalances";
-import { PAYMENT_TOKEN_LIST, type PaymentTokenId } from "@/lib/onramp/payment-tokens";
+import { PAYMENT_TOKEN_LIST } from "@/lib/onramp/payment-tokens";
 import { InfoBanner, StepCard, StepTitle } from "../ui/CopyAddressButton";
 
-export function PresalePurchaseStep() {
+type Props = {
+  onBack?: () => void;
+};
+
+export function PresalePurchaseStep({ onBack }: Props) {
   const purchase = usePresalePurchase();
   const balances = usePaymentTokenBalances();
   const { data: openAmount } = usePresaleOpenQuote(purchase.openQuoteAmount);
@@ -19,12 +23,19 @@ export function PresalePurchaseStep() {
 
   const openEstimate =
     openAmount !== undefined
-      ? `${Number(formatUnits(openAmount, 18)).toLocaleString("es-ES", { maximumFractionDigits: 4 })} OPEN`
+      ? `${Number(formatUnits(openAmount, OPEN_TOKEN_DECIMALS)).toLocaleString("es-ES", { maximumFractionDigits: 4 })} OPEN`
       : purchase.quoteLoading
         ? "Calculando…"
         : "—";
 
   const showQuoteFallback = purchase.quoteFailed || purchase.quoteFallback;
+
+  // Durante la ejecución usamos las etiquetas reales (con allowances frescas);
+  // en reposo, la estimación previa.
+  const stepperLabels =
+    purchase.state.phase !== "idle" && purchase.state.stepLabels.length > 0
+      ? purchase.state.stepLabels
+      : purchase.stepLabels;
 
   return (
     <StepCard>
@@ -108,9 +119,9 @@ export function PresalePurchaseStep() {
         </p>
       </div>
 
-      {purchase.stepLabels.length > 0 ? (
+      {stepperLabels.length > 0 ? (
         <ol style={css("margin:0 0 16px;padding:0;list-style:none")}>
-          {purchase.stepLabels.map((label, index) => {
+          {stepperLabels.map((label, index) => {
             const active = purchase.state.phase !== "idle" && index === purchase.state.stepIndex;
             const done =
               purchase.state.phase === "done" ||
@@ -159,7 +170,19 @@ export function PresalePurchaseStep() {
       ) : null}
 
       {purchase.state.phase === "done" ? (
-        <InfoBanner message={`${BUY_FLOW_COPY.compraDoneTitle}. ${BUY_FLOW_COPY.compraDoneSubtitle}`} />
+        <div style={css("margin-bottom:16px")}>
+          <InfoBanner message={`${BUY_FLOW_COPY.compraDoneTitle}. ${BUY_FLOW_COPY.compraDoneSubtitle}`} />
+          {purchase.state.txHash ? (
+            <a
+              href={`https://basescan.org/tx/${purchase.state.txHash}`}
+              target="_blank"
+              rel="noreferrer"
+              style={css("display:inline-block;margin-top:10px;font:600 13px var(--font-hanken);color:#0D0D0D;text-decoration:underline")}
+            >
+              {BUY_FLOW_COPY.compraViewTx}
+            </a>
+          ) : null}
+        </div>
       ) : null}
 
       {purchase.state.error ? (
@@ -181,13 +204,26 @@ export function PresalePurchaseStep() {
           as="button"
           type="button"
           disabled={!purchase.canPurchase || isRunning || (purchase.isExpired && purchase.paymentTokenId !== "USDC")}
-          onClick={purchase.startPurchase}
+          onClick={() => purchase.startPurchase()}
           style="appearance:none;cursor:pointer;width:100%;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px;font:600 15px var(--font-hanken)"
           hover="background:#000"
         >
           {isRunning ? purchase.state.currentLabel : purchase.primaryCta}
         </Hov>
       )}
+
+      {onBack ? (
+        <Hov
+          as="button"
+          type="button"
+          disabled={isRunning}
+          onClick={onBack}
+          style="appearance:none;cursor:pointer;width:100%;margin-top:10px;background:transparent;color:#5C5C66;border:1px solid #E6E6E8;border-radius:12px;padding:13px;font:600 14px var(--font-hanken)"
+          hover="border-color:#0D0D0D;color:#0D0D0D"
+        >
+          {BUY_FLOW_COPY.compraBackCta}
+        </Hov>
+      ) : null}
 
       <style>{`@keyframes buy-spin { to { transform: rotate(360deg); } }`}</style>
     </StepCard>

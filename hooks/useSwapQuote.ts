@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
-import { base } from "wagmi/chains";
 import type { PaymentToken } from "@/lib/onramp/payment-tokens";
 import type { SwapQuoteError, SwapQuoteResponse } from "@/lib/onramp/swap-quote-types";
 
@@ -45,7 +45,15 @@ export function useSwapQuote(params: {
     retry: 1,
   });
 
-  const isExpired = query.data ? Date.now() >= query.data.expiresAt : false;
+  // Tick para que el aviso de caducidad aparezca sin esperar a otro render.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!query.data) return;
+    const t = setInterval(() => setNow(Date.now()), 1_000);
+    return () => clearInterval(t);
+  }, [query.data]);
+
+  const isExpired = query.data ? now >= query.data.expiresAt : false;
 
   return {
     quote: query.data,

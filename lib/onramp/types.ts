@@ -18,6 +18,7 @@ export type BuyFlowAction =
   | { type: "WALLET_CONNECTED_ZERO"; fiatValue: string }
   | { type: "BALANCE_POSITIVE"; balanceLabel: string }
   | { type: "START_PURCHASE" }
+  | { type: "EXIT_PURCHASE" }
   | { type: "START_WAITING"; fiatValue: string; rampVia: RampVia }
   | { type: "PAYMENT_CANCELLED"; message: string }
   | { type: "UPDATE_FIAT"; fiatValue: string }
@@ -38,6 +39,9 @@ export function buyFlowReducer(state: BuyFlowState, action: BuyFlowAction): BuyF
       return { step: "listo", balanceLabel: action.balanceLabel };
     case "START_PURCHASE":
       if (state.step === "listo") return { step: "comprando", balanceLabel: state.balanceLabel };
+      return state;
+    case "EXIT_PURCHASE":
+      if (state.step === "comprando") return { step: "listo", balanceLabel: state.balanceLabel };
       return state;
     case "START_WAITING":
       return { step: "esperando_fondos", fiatValue: action.fiatValue, rampVia: action.rampVia };

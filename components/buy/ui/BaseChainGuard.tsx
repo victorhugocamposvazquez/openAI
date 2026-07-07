@@ -3,7 +3,7 @@
 import { css } from "@/lib/css";
 import { Hov } from "@/components/ui";
 import { BUY_FLOW_COPY } from "@/lib/onramp/constants";
-import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { base } from "wagmi/chains";
 import { StepCard, StepTitle } from "./CopyAddressButton";
 
@@ -12,8 +12,9 @@ type Props = {
 };
 
 export function BaseChainGuard({ children }: Props) {
-  const { isConnected } = useAccount();
-  const chainId = useChainId();
+  // chainId de useAccount() es la red real de la wallet; useChainId() devolvería
+  // siempre la de la config (solo Base) y la guardia nunca saltaría.
+  const { isConnected, chainId } = useAccount();
   const { switchChain, isPending, error } = useSwitchChain();
 
   if (!isConnected) return <>{children}</>;

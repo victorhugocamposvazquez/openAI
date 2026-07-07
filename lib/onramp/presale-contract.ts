@@ -148,8 +148,10 @@ export function getStepLabels(params: {
   needsUsdcApprove: boolean;
   needsSellApprove: boolean;
 }): string[] {
-  if (params.supportsBatch && params.paymentToken.id !== "USDC") {
-    return [BUY_FLOW_COPY.compraStepBatch0x];
+  if (params.supportsBatch) {
+    if (params.paymentToken.id !== "USDC") return [BUY_FLOW_COPY.compraStepBatch0x];
+    // USDC con batch: una firma si hay approve + buy; con una sola call no aporta nada.
+    if (params.needsUsdcApprove) return [BUY_FLOW_COPY.compraStepBatch];
   }
 
   if (params.paymentToken.id === "USDC") {

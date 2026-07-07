@@ -106,7 +106,18 @@ export const BUY_FLOW_COPY = {
   compraStepBatch: "Firmar compra (una sola firma)",
   compraWaitingConfirm: "Esperando confirmación on-chain…",
   compraUserRejected: "Rechazaste la transacción. Puedes reintentar el paso pendiente.",
+  compraBackCta: "Volver",
+  compraViewTx: "Ver transacción en Basescan",
+  compraInsufficientSell: (symbol: string) => `No tienes suficiente ${symbol} para este importe.`,
+  compraInsufficientUsdc: "No tienes suficiente USDC para este importe.",
+  compraWrongNetwork: "Cambia tu wallet a la red Base para continuar.",
+  compraGasInsufficient: "No tienes ETH suficiente para pagar la comisión de red.",
+  compraBatchFailed: "La operación no se completó en la red. Vuelve a intentarlo.",
+  compraGenericError: "No se pudo completar la operación. Inténtalo de nuevo.",
 } as const;
+
+/** Decimales del token OPEN (ajustable si el contrato usa otro valor). */
+export const OPEN_TOKEN_DECIMALS = Number(process.env.NEXT_PUBLIC_OPEN_DECIMALS ?? "18");
 
 export function formatUsdcBalance(amount: number): string {
   return `${amount.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`;

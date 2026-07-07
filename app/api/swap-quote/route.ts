@@ -1,7 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { isAddress } from "viem";
 import { fetchZeroXSwapQuote } from "@/lib/onramp/zerox";
+import { CBBTC_BASE, NATIVE_ETH_ADDRESS, WETH_BASE } from "@/lib/onramp/payment-tokens";
 import type { SwapQuoteError } from "@/lib/onramp/swap-quote-types";
+
+/** Solo los tokens de pago soportados — evita usar la API key como proxy abierto. */
+const ALLOWED_SELL_TOKENS = new Set(
+  [NATIVE_ETH_ADDRESS, WETH_BASE, CBBTC_BASE].map((a) => a.toLowerCase())
+);
 
 export async function GET(req: NextRequest) {
   const sellToken = req.nextUrl.searchParams.get("sellToken");
@@ -10,6 +16,9 @@ export async function GET(req: NextRequest) {
 
   if (!sellToken || !isAddress(sellToken)) {
     return NextResponse.json({ error: "Token de venta no válido." } satisfies SwapQuoteError, { status: 400 });
+  }
+  if (!ALLOWED_SELL_TOKENS.has(sellToken.toLowerCase())) {
+    return NextResponse.json({ error: "Token de pago no admitido." } satisfies SwapQuoteError, { status: 400 });
   }
   if (!sellAmount || !/^\d+$/.test(sellAmount) || sellAmount === "0") {
     return NextResponse.json({ error: "Importe de venta no válido." } satisfies SwapQuoteError, { status: 400 });
