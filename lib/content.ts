@@ -54,9 +54,10 @@ export const hubMeta: [string, string, string][] = [
 export const faqDefs: [string, string][] = [
   [`¿Qué es ${tokenTicker} y qué hace con mi capital?`, `${marketingPitch} ${legalChecklist.tokenNatureParagraph}`],
   [`¿Cómo se invierte en ${referencedCompany}?`, `La tesorería destina el capital a comprar acciones reales de ${referencedCompany} vía SPV — antes y después de la OPI. Paralelamente opera openChat, openAPI y el resto de servicios open*; el 30% de sus comisiones recompra y quema OPEN, y el resto refuerza la acumulación de acciones.`],
-  [`¿Cómo compro ${tokenTicker}?`, "Conecta tu wallet y paga con USDC, ETH, WETH o cbBTC en la red Base. También puedes traer fondos desde otras redes (Ethereum, Arbitrum, Solana, Bitcoin…) y los convertimos en USDC en tu wallet de Base automáticamente."],
+  [`¿Cómo compro ${tokenTicker}?`, "Conecta tu wallet y paga con USDC, ETH, WETH o cbBTC en la red Base. También puedes traer fondos desde otras redes (Ethereum, Arbitrum, Solana, Bitcoin…) y los convertimos en USDC en tu wallet de Base automáticamente. Los tokens comprados en preventa se reciben en el momento del lanzamiento (TGE) mediante claim, no inmediatamente tras la compra."],
+  ["¿Cuándo recibo mis tokens de la preventa?", "En el momento del lanzamiento (TGE), mediante claim desde tu propia wallet — no inmediatamente tras la compra. La preventa es pública y abierta, sin límite por wallet, con precio de 0,0005 USDC por OPEN y un cap máximo de 1.045.000 USDC fijado en el contrato; los fondos se custodian en una Safe multisig."],
   ["¿Tengo que esperar a la salida a bolsa para invertir?", `No. La preventa está abierta: inviertes hoy on-chain en acciones reales de ${referencedCompany}. La OPI es un hito de mercado, no el final del protocolo — ${brandLegal.copy.postOpiFlywheel}`],
-  [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `Tras el evento de generación del token (TGE), ${tokenTicker} contará con liquidez on-chain y podrás intercambiarlo por ETH, USDC u otros tokens desde tu wallet.`],
+  [`¿Cómo y cuándo puedo vender mis ${tokenTicker}?`, `En el TGE recibes tus ${tokenTicker} mediante claim y, desde ese momento, el token cuenta con liquidez on-chain (40% del suministro en el pool, con LP bloqueado): podrás intercambiarlo por ETH, USDC u otros tokens desde tu wallet.`],
   [`¿En qué se diferencia ${tokenTicker} de comprar la acción en bolsa?`, `${tokenTicker} es el token del ${productBrand}: participas en la tesorería que acumula equity de ${referencedCompany} de forma continua, con liquidez on-chain y recompra programática financiada por openAPI y los servicios open*.`],
   [`¿Cómo se relaciona el precio de ${tokenTicker} con las acciones?`, legalChecklist.tokenNatureLegal],
   ["¿Quién custodia mis tokens?", `Tú. El protocolo no custodia tus ${tokenTicker}: la compra se firma desde tu propia wallet y solo tú controlas las claves.`],
@@ -65,12 +66,14 @@ export const faqDefs: [string, string][] = [
   [`¿Qué pasa después de la OPI?`, brandLegal.copy.postOpiFlywheel + ` ${tokenTicker} sigue reflejando la tesorería: más acciones de ${referencedCompany}, más ingresos de servicios y recompras verificables on-chain.`],
 ];
 
+/** Distribución del suministro (21.000.000.000 OPEN, suma 100%). */
 export const tkSegs: [string, number, string][] = [
-  ["Preventa pública", 30, "var(--accent,#0E8C6A)"],
-  ["Liquidez on-chain", 25, "#D8D8DC"],
-  ["Recompra y quema", 20, "#8FD9C4"],
-  ["Marketing", 20, "#E0B36A"],
-  ["Equipo (lock-up 3a)", 5, "#5A5A60"],
+  ["Preventa pública", 9.95, "var(--accent,#0E8C6A)"],
+  ["Liquidez on-chain", 40, "#D8D8DC"],
+  ["Tesorería / Ecosistema", 20, "#8FD9C4"],
+  ["Marketing", 15, "#E0B36A"],
+  ["Equipo (bloqueado 3 años)", 5, "#5A5A60"],
+  ["Rondas futuras (bloqueado)", 10.05, "#6478F0"],
 ];
 
 export const assetMeta: Record<string, { name: string; color: string; sym: string }> = {

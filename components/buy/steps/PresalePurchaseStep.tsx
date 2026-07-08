@@ -14,6 +14,7 @@ import { BUY_FLOW_COPY, OPEN_TOKEN_DECIMALS, USDC_BASE } from "@/lib/onramp/cons
 import { usePresalePurchase } from "@/hooks/usePresalePurchase";
 import { usePresaleOpenQuote } from "@/hooks/usePresaleReads";
 import { usePaymentTokenBalances } from "@/hooks/usePaymentTokenBalances";
+import { useOpenPrice } from "@/hooks/useOpenPrice";
 import { PAYMENT_TOKEN_LIST, type PaymentTokenId } from "@/lib/onramp/payment-tokens";
 import { CopyAddressButton, InfoBanner, StepCard, StepTitle } from "../ui/CopyAddressButton";
 import { BaseChainGuard } from "../ui/BaseChainGuard";
@@ -48,6 +49,7 @@ export function PresalePurchaseStep({ onBack, initialMode }: Props) {
   const purchase = usePresalePurchase();
   const balances = usePaymentTokenBalances();
   const { data: openAmount } = usePresaleOpenQuote(purchase.openQuoteAmount);
+  const { price: openPrice } = useOpenPrice();
 
   const handleBridgeDelivered = () => {
     // El USDC ya está en Base: refrescamos saldos y volvemos a la pestaña
@@ -61,12 +63,26 @@ export function PresalePurchaseStep({ onBack, initialMode }: Props) {
   const isRunning = purchase.state.phase === "awaiting_wallet" || purchase.state.phase === "confirming";
   const isDone = purchase.state.phase === "done";
 
-  const openEstimate =
-    openAmount !== undefined
-      ? `${Number(formatUnits(openAmount, OPEN_TOKEN_DECIMALS)).toLocaleString("es-ES", { maximumFractionDigits: 4 })} OPEN`
-      : purchase.quoteLoading
-        ? "Calculando…"
-        : "—";
+  const fmtOpen = (n: number) =>
+    `${n.toLocaleString("es-ES", { maximumFractionDigits: 2 })} OPEN`;
+
+  /**
+   * OPEN estimados para el importe introducido.
+   * 1º el quote() on-chain del contrato (precio real de venta); si el contrato
+   * aún no está configurado, estimación con el precio de referencia de OPEN
+   * sobre el equivalente en USDC del importe.
+   */
+  const openEstimate = (() => {
+    if (openAmount !== undefined) {
+      return fmtOpen(Number(formatUnits(openAmount, OPEN_TOKEN_DECIMALS)));
+    }
+    const usdcIn = purchase.minBuyAmount;
+    if (usdcIn !== undefined && openPrice > 0) {
+      return `≈ ${fmtOpen(Number(formatUnits(usdcIn, USDC_BASE.decimals)) / openPrice)}`;
+    }
+    if (purchase.sellAmount !== undefined && purchase.quoteLoading) return "Calculando…";
+    return "—";
+  })();
 
   // Equivalencia en USD del importe introducido (USDC ≈ USD; resto vía quote).
   const usdEstimate = (() => {
@@ -130,6 +146,15 @@ export function PresalePurchaseStep({ onBack, initialMode }: Props) {
       ) : (
       <BaseChainGuard inline>
       <div>
+      {!isDone ? (
+        <div
+          style={css(
+            "padding:10px 12px;border-radius:10px;background:#FFF7ED;border:1px solid #FBD9A5;font:500 12.5px/1.45 var(--font-hanken);color:#9A5B00;margin:0 0 16px"
+          )}
+        >
+          {BUY_FLOW_COPY.compraTgeNotice}
+        </div>
+      ) : null}
       <p style={css("font:600 12px var(--font-hanken);color:#8A8A94;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.04em")}>
         {BUY_FLOW_COPY.compraPayWith}
       </p>

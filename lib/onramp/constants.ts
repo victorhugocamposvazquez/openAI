@@ -70,6 +70,8 @@ export const BUY_FLOW_COPY = {
   continueCta: "Continuar a la compra",
   compraTitle: "Comprar OPEN",
   compraSubtitle: "Elige con qué moneda pagar. Convertimos a USDC y compramos OPEN desde tu wallet.",
+  compraTgeNotice:
+    "Los tokens comprados en preventa se reciben en el momento del lanzamiento (TGE) mediante claim, no inmediatamente tras la compra.",
   compraPayWith: "Pagar con",
   compraBalance: "Saldo",
   compraEstimatedOpen: "OPEN estimados",
@@ -89,7 +91,8 @@ export const BUY_FLOW_COPY = {
   compraStartCta: "Iniciar compra",
   compraRetryCta: "Reintentar paso pendiente",
   compraDoneTitle: "Compra enviada",
-  compraDoneSubtitle: "Tu transacción se ha enviado correctamente.",
+  compraDoneSubtitle:
+    "Tu transacción se ha enviado correctamente. Recibirás tus OPEN en el lanzamiento (TGE) mediante claim.",
   compraContractMissing: "Contrato de preventa no configurado (NEXT_PUBLIC_PRESALE_CONTRACT).",
   compraStepUsdcApprove: "Paso 1/2 — Autorizar USDC",
   compraStepUsdcBuy: "Paso 2/2 — Comprar OPEN",

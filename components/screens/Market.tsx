@@ -10,7 +10,8 @@ import { brandLegal } from "@/lib/brand-legal";
 import { Chart } from "../Chart";
 
 const series = buildSeries();
-const SUPPLY = 850000000;
+/** Suministro total fijo: 21.000.000.000 OPEN (sin función mint). */
+const SUPPLY = 21_000_000_000;
 const TFS = ["1D", "1W", "1M", "1Y", "ALL"];
 
 export default function Market() {
@@ -25,11 +26,11 @@ export default function Market() {
   const cmax = Math.max(...arr);
   const stats = [
     { label: "Cap. de mercado", value: fmtUSD(cap) },
-    { label: "Volumen 24h", value: "$182.4M" },
-    { label: "Suministro circulante", value: "850M OPEN" },
-    { label: "Suministro total", value: "5,000M OPEN" },
+    { label: "Precio de preventa", value: "0,0005 USDC" },
+    { label: "Suministro total", value: "21.000M OPEN" },
+    { label: "Cap de la preventa", value: "1.045.000 USDC" },
     { label: "Máximo histórico", value: fmtUSD(cmax) },
-    { label: "Recaudado en preventa", value: "$214M" },
+    { label: "Preventa", value: "Pública y abierta" },
   ];
 
   return (

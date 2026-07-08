@@ -4,6 +4,8 @@ export function fmtUSD(n: number): string {
   if (n >= 1e9) return "$" + (n / 1e9).toFixed(2) + "B";
   if (n >= 1e6) return "$" + (n / 1e6).toFixed(1) + "M";
   if (n >= 1000) return "$" + n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+  // Precios sub-céntimo (p. ej. OPEN a 0,0005 USD): cifras significativas.
+  if (n > 0 && n < 0.01) return "$" + n.toLocaleString("en-US", { maximumSignificantDigits: 3 });
   return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 

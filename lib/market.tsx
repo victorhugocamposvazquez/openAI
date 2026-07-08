@@ -11,8 +11,9 @@ export type MarketState = {
   activity: ActivityRow[];
 };
 
-const START_PRICE = 4.2;
-const BASE_REF = 4.068;
+// Precio de referencia = precio de preventa: 0,0005 USDC por OPEN.
+const START_PRICE = 0.0005;
+const BASE_REF = 0.000484;
 
 // El valor inicial debe ser DETERMINISTA e idéntico en servidor y cliente:
 // un valor distinto (p. ej. Date.now()) rompe la hidratación de React y
@@ -81,8 +82,8 @@ export function startMarketTicker() {
   setInterval(() => {
     const d = (Math.random() - 0.46) * 0.011;
     let np = market.price * (1 + d);
-    np = Math.max(3.7, Math.min(4.85, np));
-    np = +np.toFixed(3);
+    np = Math.max(START_PRICE * 0.88, Math.min(START_PRICE * 1.155, np));
+    np = +np.toFixed(7);
     market = { ...market, price: np, change: +((np / BASE_REF - 1) * 100).toFixed(2) };
     emit();
   }, 2000);

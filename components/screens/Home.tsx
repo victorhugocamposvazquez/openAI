@@ -15,7 +15,6 @@ import { brandLegal } from "@/lib/brand-legal";
 import { LegalMicro } from "../LegalMicro";
 
 const series = buildSeries();
-const SUPPLY = 850000000;
 
 function Countdown() {
   const { now } = useMarket();
@@ -85,7 +84,7 @@ function Donut() {
   const C = 2 * Math.PI * 80;
   let acc = 0;
   const segs = tkSegs.map(([label, pct, color]) => {
-    const seg = { label, pct: pct + "%", color, dash: ((C * pct) / 100).toFixed(2) + " " + C.toFixed(2), offset: ((-C * acc) / 100).toFixed(2) };
+    const seg = { label, pct: pct.toLocaleString("es-ES") + "%", color, dash: ((C * pct) / 100).toFixed(2) + " " + C.toFixed(2), offset: ((-C * acc) / 100).toFixed(2) };
     acc += pct as number;
     return seg;
   });
@@ -101,7 +100,7 @@ function Donut() {
               ))}
             </svg>
             <div style={css("position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center")}>
-              <span style={css("font:600 24px var(--font-mono);color:#fff;letter-spacing:-0.02em")}>5,000M</span>
+              <span style={css("font:600 24px var(--font-mono);color:#fff;letter-spacing:-0.02em")}>21.000M</span>
               <span style={css("font:500 11px var(--font-mono);color:#8A8A94;text-transform:uppercase;letter-spacing:0.06em")}>OPEN total</span>
             </div>
           </div>
@@ -109,7 +108,7 @@ function Donut() {
         <div>
           <div style={{ ...css("font:600 13px var(--font-mono);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px"), color: ACCENT }}>Tokenomics</div>
           <h2 style={css("font:600 34px var(--font-hanken);letter-spacing:-0.035em;margin:0 0 14px;color:#fff")}>Un suministro pensado para revalorizarse.</h2>
-          <p style={css("font:400 16px/1.55 var(--font-hanken);color:#B8B8BD;margin:0 0 22px;max-width:460px")}>Suministro fijo de 5.000M OPEN. El equipo queda bloqueado 3 años y una parte del suministro se destina a la recompra continua financiada por el uso del ecosistema.</p>
+          <p style={css("font:400 16px/1.55 var(--font-hanken);color:#B8B8BD;margin:0 0 22px;max-width:460px")}>Suministro fijo de 21.000.000.000 OPEN, sin función mint. El equipo queda bloqueado 3 años (cliff de 1 año + liberación lineal 2 años) y la tesorería financia recompras y quema con el uso del ecosistema. Los OPEN de preventa se reciben en el TGE mediante claim.</p>
           <div style={css("display:flex;flex-direction:column;gap:10px;margin-bottom:22px")}>
             {segs.map((d, i) => (
               <div key={i} style={css("display:flex;align-items:center;gap:12px")}>
@@ -167,12 +166,11 @@ export default function Home() {
   const pos = change >= 0;
   const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";
   const changeColor = pos ? ACCENT : "#D14343";
-  const cap = price * SUPPLY;
   const heroStats = [
-    { value: fmtUSD(price), label: "Precio OPEN" },
-    { value: fmtUSD(cap), label: "Cap. de mercado" },
-    { value: "$214M", label: "Recaudado en preventa" },
-    { value: "48,920", label: "Holders" },
+    { value: "0,0005 USDC", label: "Precio de preventa" },
+    { value: "1.045.000 USDC", label: "Cap de la preventa" },
+    { value: "21.000M", label: "Suministro total OPEN" },
+    { value: "40%", label: "A liquidez (LP bloqueado)" },
   ];
   const hubNodes = hubMeta.map((m, i) => ({ name: m[0], real: m[1], tag: m[2], pos: hubPos[i] }));
 

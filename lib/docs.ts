@@ -28,7 +28,7 @@ export const docMap: Record<string, Doc> = {
       "Especificación del token OPEN: tesorería respaldada por acciones de OpenAI, Inc., capa operativa open* y mecanismo de recompra.",
     hasStats: true,
     stats: [
-      { value: "5,000M", label: "Suministro total" },
+      { value: "21.000M", label: "Suministro total" },
       { value: "30%", label: "Comisiones a recompra" },
       { value: "ERC-20", label: "Estándar del token" },
       { value: "2027", label: "OPI prevista" },
@@ -36,7 +36,7 @@ export const docMap: Record<string, Doc> = {
     sections: [
       { h: "Resumen ejecutivo", p: [treasuryMechanism.summary, `El diseño persigue tres objetivos: acumular y seguir acumulando equity real de ${brandLegal.referencedCompany} (antes, durante y después de su OPI), monetizar de forma permanente el ecosistema de productos del ${brandLegal.productBrand}, y mantener liquidez on-chain del token OPEN sin custodia centralizada sobre los tokens del inversor.`, brandLegal.copy.postOpiFlywheel, treasuryMechanism.legalBoundaryMarketing + " Este documento tiene carácter informativo y no constituye asesoramiento financiero."] },
       { h: "1. Contexto y motivación", p: ["Las empresas privadas de alto crecimiento concentran gran parte de su revalorización en las fases previas a su salida a bolsa, un periodo al que el inversor minorista rara vez tiene acceso. Cuando la compañía finalmente cotiza, buena parte de la apreciación ya se ha producido y queda reservada a inversores institucionales y rondas privadas.", `OPEN propone un flywheel on-chain: el capital de los suscriptores financia la compra de acciones reales de ${brandLegal.referencedCompany} y la operación de productos open* que generan ingresos recurrentes. Esos flujos se consolidan en un NAV compuesto que orienta el valor de mercado del token.`] },
-      { h: "2. El token OPEN", p: ["OPEN es un token fungible conforme al estándar ERC-20, desplegado sobre una red EVM con costes de transacción reducidos. El suministro total es fijo en 5.000 millones de unidades; el contrato no incluye función de acuñación adicional, por lo que la oferta solo puede mantenerse o decrecer.", brandLegal.legalChecklist.tokenNatureParagraph, treasuryMechanism.legalBoundaryMarketing] },
+      { h: "2. El token OPEN", p: ["OPEN (OPENPROTOCOL) es un token fungible conforme al estándar ERC-20, desplegado en la red Base. El suministro total es fijo e inmutable en 21.000.000.000 de unidades; el contrato no tiene función mint, por lo que la oferta solo puede mantenerse o decrecer.", brandLegal.legalChecklist.tokenNatureParagraph, treasuryMechanism.legalBoundaryMarketing] },
       {
         h: "3. Mecanismo de tesorería — capital → acciones reales",
         p: [
@@ -56,8 +56,8 @@ export const docMap: Record<string, Doc> = {
       },
       { h: "5. Vínculo con la valoración de OpenAI, Inc.", p: [`El NAV equity del SPV se marca a mercado con valoraciones de rondas privadas antes de la OPI y con cotización oficial tras la salida a bolsa. El oráculo agrega NAV equity + reservas operativas para publicar el NAV compuesto de referencia.`, "Tras la OPI, la tesorería no liquida su posición: sigue acumulando acciones en mercado público y privado mientras openAPI y los servicios open* generan ingresos que alimentan recompras de OPEN y nuevas compras de equity.", "El anclaje no es una paridad rígida: el mercado on-chain determina el precio en cada momento, pero el NAV compuesto proporciona la señal fundamental que guía el arbitraje y mantiene la correlación entre el token y los activos subyacentes."] },
       { h: "6. Acumulación de valor (value accrual)", p: [treasuryMechanism.phases[4].technical, `Política de split: ${treasuryMechanism.allocationPolicy.buybackRate}`, "Este mecanismo convierte el uso del ecosistema y la revalorización del equity en presión estructural sobre OPEN, con independencia de la actividad especulativa del mercado."] },
-      { h: "7. Distribución del suministro", p: ["El suministro de 5.000 millones de OPEN se distribuye así: 30% a la preventa pública, 25% a liquidez on-chain, 20% al fondo de recompra y quema, 20% a marketing y crecimiento, y 5% al equipo.", "La asignación del equipo queda bloqueada durante 36 meses con liberación lineal a partir del mes 12. La reserva de marketing se libera por tramos ligados a hitos públicos de adopción, evitando presiones de venta repentinas sobre el mercado."] },
-      { h: "8. Liquidez y mercado", p: ["El 25% del suministro destinado a liquidez se despliega en pools on-chain que garantizan que cualquier inversor pueda comprar o vender OPEN en todo momento. Los compradores de preventa no están sujetos a periodos de bloqueo.", "La profundidad de los pools y los parámetros de las comisiones se calibran para minimizar el slippage en operaciones de tamaño habitual y para sostener un mercado ordenado durante los eventos de recompra."] },
+      { h: "7. Distribución del suministro", p: ["El suministro de 21.000.000.000 OPEN se distribuye así: 9,95% a la preventa pública (2.089.500.000 OPEN, se reciben en el TGE mediante claim), 40% a liquidez on-chain (8.400.000.000 OPEN, destinada al pool de liquidez en el TGE con LP bloqueado), 20% a tesorería y ecosistema (4.200.000.000 OPEN, recompras y quema y desarrollo del ecosistema), 15% a marketing (3.150.000.000 OPEN, disponible desde el TGE), 5% al equipo (1.050.000.000 OPEN) y 10,05% a rondas futuras (2.110.500.000 OPEN, bloqueado).", "La asignación del equipo queda bloqueada 3 años: cliff de 1 año y liberación lineal durante los 2 años siguientes, verificable on-chain."] },
+      { h: "8. Liquidez y mercado", p: ["El 40% del suministro destinado a liquidez se despliega en el pool on-chain en el TGE, con el LP bloqueado, garantizando que cualquier inversor pueda comprar o vender OPEN en todo momento. Los compradores de preventa reciben sus OPEN en el TGE mediante claim y no están sujetos a bloqueo posterior.", "La profundidad de los pools y los parámetros de las comisiones se calibran para minimizar el slippage en operaciones de tamaño habitual y para sostener un mercado ordenado durante los eventos de recompra."] },
       {
         h: "9. Arquitectura técnica",
         p: [
@@ -77,20 +77,64 @@ export const docMap: Record<string, Doc> = {
   tokenomics: {
     eyebrow: "Tokenomics",
     title: "Tokenomics de OPEN",
-    meta: "Suministro fijo · 5.000M OPEN",
-    subtitle: "Distribución del suministro, calendarios de bloqueo y el mecanismo de recompra que sostiene el valor del token.",
+    meta: "Suministro fijo · 21.000.000.000 OPEN",
+    subtitle:
+      "Distribución del suministro, calendarios de bloqueo y condiciones de la preventa. Los tokens comprados en preventa se reciben en el momento del lanzamiento (TGE), no inmediatamente tras la compra.",
     hasStats: true,
     stats: [
-      { value: "5,000M", label: "Suministro total" },
-      { value: "30%", label: "Preventa pública" },
-      { value: "20%", label: "Recompra y quema" },
-      { value: "5%", label: "Equipo (lock-up 3a)" },
+      { value: "21.000M", label: "Suministro total" },
+      { value: "9,95%", label: "Preventa pública" },
+      { value: "40%", label: "Liquidez on-chain" },
+      { value: "5%", label: "Equipo (bloqueado 3 años)" },
     ],
     sections: [
-      { h: "Distribución del suministro", p: ["Preventa pública: 30%. Liquidez on-chain: 25%. Recompra y quema: 20%. Marketing: 20%. Equipo: 5% (bloqueado 3 años). El suministro total es fijo: no se acuñarán nuevos OPEN."] },
-      { h: "Calendario de bloqueo", p: ["La asignación del equipo queda bloqueada durante 36 meses con liberación lineal a partir del mes 12. La reserva de marketing se libera por tramos ligados a hitos públicos de adopción."] },
-      { h: "Recompra y quema", p: ["El 30% de las comisiones del ecosistema financia recompras periódicas de OPEN, que se retiran de circulación de forma permanente y verificable. Este mecanismo es el principal motor de contracción de la oferta."] },
-      { h: "Liquidez", p: ["El 25% destinado a liquidez se despliega en pools on-chain para garantizar que cualquier inversor pueda comprar o vender OPEN en todo momento, sin periodos de bloqueo para los compradores de preventa."] },
+      {
+        h: "El token",
+        p: [
+          "Nombre: OPENPROTOCOL. Símbolo: OPEN. Red: Base.",
+          "Suministro total: 21.000.000.000 OPEN, fijo e inmutable. El contrato no tiene función mint: la oferta solo puede mantenerse o decrecer.",
+        ],
+      },
+      {
+        h: "Distribución del suministro",
+        p: [
+          "· Preventa pública — 9,95% — 2.089.500.000 OPEN — Se reciben en el lanzamiento (TGE) mediante claim.",
+          "· Liquidez on-chain — 40% — 8.400.000.000 OPEN — Destinada al pool de liquidez en el TGE, con LP bloqueado.",
+          "· Tesorería / Ecosistema — 20% — 4.200.000.000 OPEN — Recompras y quema, desarrollo del ecosistema.",
+          "· Marketing — 15% — 3.150.000.000 OPEN — Disponible desde el TGE.",
+          "· Equipo — 5% — 1.050.000.000 OPEN — Bloqueado 3 años: cliff de 1 año + liberación lineal 2 años, verificable on-chain.",
+          "· Rondas futuras — 10,05% — 2.110.500.000 OPEN — Bloqueado.",
+        ],
+      },
+      {
+        h: "Preventa",
+        p: [
+          "Aviso importante: los tokens comprados en preventa se reciben en el momento del lanzamiento (TGE), no inmediatamente tras la compra.",
+          "Precio: 0,0005 USDC por OPEN.",
+          "Cap máximo: 1.045.000 USDC. El límite está fijado en el contrato; las compras se rechazan automáticamente al alcanzarlo.",
+          "La preventa es pública y abierta, sin límite por wallet. Los fondos se custodian en una Safe multisig.",
+        ],
+      },
+      {
+        h: "Calendario de bloqueo",
+        p: [
+          "Equipo: bloqueado 3 años en total — cliff de 1 año y liberación lineal durante los 2 años siguientes, verificable on-chain.",
+          "Rondas futuras: bloqueado.",
+          "Liquidez: el LP del pool on-chain queda bloqueado desde el TGE.",
+        ],
+      },
+      {
+        h: "Recompra y quema",
+        p: [
+          "La tesorería del protocolo (20% del suministro) financia recompras y quema de OPEN junto con el desarrollo del ecosistema. Además, el 30% de las comisiones del ecosistema financia recompras periódicas que se retiran de circulación de forma permanente y verificable.",
+        ],
+      },
+      {
+        h: "Liquidez",
+        p: [
+          "El 40% del suministro se destina al pool de liquidez on-chain en el TGE, con el LP bloqueado, para garantizar que cualquier inversor pueda comprar o vender OPEN en todo momento.",
+        ],
+      },
     ],
   },
   docs: {
