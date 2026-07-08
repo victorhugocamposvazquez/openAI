@@ -1,16 +1,25 @@
 "use client";
 
 import { useAccount } from "wagmi";
+import { useSearchParams } from "next/navigation";
 import { css } from "@/lib/css";
 import { BUY_FLOW_COPY } from "@/lib/onramp/constants";
 import { formatAddress } from "@/lib/wagmi/format-address";
 import { useWalletDisconnect } from "@/hooks/useWalletDisconnect";
 import { SinWalletStep } from "./steps/SinWalletStep";
-import { PresalePurchaseStep } from "./steps/PresalePurchaseStep";
+import { PresalePurchaseStep, type FundingMode } from "./steps/PresalePurchaseStep";
+
+/** ?modo=recibir | ?modo=puente abren la pestaña correspondiente. */
+const MODE_PARAM: Record<string, FundingMode> = {
+  recibir: "receive",
+  puente: "bridge",
+};
 
 export default function BuyFlow() {
   const { address, isConnected } = useAccount();
   const disconnectWallet = useWalletDisconnect();
+  const searchParams = useSearchParams();
+  const initialMode = MODE_PARAM[searchParams.get("modo") ?? ""];
 
   return (
     <main style={css("max-width:1200px;margin:0 auto;padding:48px 24px 120px")}>
@@ -42,7 +51,7 @@ export default function BuyFlow() {
               </button>
             </div>
           </div>
-          <PresalePurchaseStep />
+          <PresalePurchaseStep initialMode={initialMode} />
         </>
       ) : (
         <SinWalletStep />

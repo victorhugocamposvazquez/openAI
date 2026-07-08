@@ -19,11 +19,13 @@ import { CopyAddressButton, InfoBanner, StepCard, StepTitle } from "../ui/CopyAd
 import { BaseChainGuard } from "../ui/BaseChainGuard";
 import { CrossChainFundingStep } from "./CrossChainFundingStep";
 
+export type FundingMode = "base" | "bridge" | "receive";
+
 type Props = {
   onBack?: () => void;
+  /** Pestaña inicial (p. ej. "receive" al llegar desde "Depositar" en cartera). */
+  initialMode?: FundingMode;
 };
-
-type FundingMode = "base" | "bridge" | "receive";
 
 /** Importes rápidos por token (los estables en unidades ~USD). */
 const QUICK_AMOUNTS: Record<PaymentTokenId, number[]> = {
@@ -36,12 +38,12 @@ const QUICK_AMOUNTS: Record<PaymentTokenId, number[]> = {
 /** Margen de gas al usar MÁX con ETH nativo. */
 const NATIVE_GAS_MARGIN = parseUnits("0.0015", 18);
 
-export function PresalePurchaseStep({ onBack }: Props) {
+export function PresalePurchaseStep({ onBack, initialMode }: Props) {
   const { address } = useAccount();
   const router = useRouter();
   const app = useApp();
   const queryClient = useQueryClient();
-  const [mode, setMode] = useState<FundingMode>("base");
+  const [mode, setMode] = useState<FundingMode>(initialMode ?? "base");
   const [legalAccepted, setLegalAccepted] = useState(false);
   const purchase = usePresalePurchase();
   const balances = usePaymentTokenBalances();
@@ -207,21 +209,11 @@ export function PresalePurchaseStep({ onBack }: Props) {
       {usesQuote && purchase.quote && !isRunning && !isDone ? (
         <div style={css("display:flex;align-items:center;gap:10px;margin:0 0 16px")}>
           <span style={css("font:400 12px var(--font-mono);color:#8A8A94")}>
+            {/* Al caducar se renueva sola (useSwapQuote); aquí solo se informa. */}
             {purchase.isExpired
               ? BUY_FLOW_COPY.compraQuoteExpired
               : BUY_FLOW_COPY.compraQuoteValidFor(purchase.expiresInSec)}
           </span>
-          {purchase.isExpired ? (
-            <button
-              type="button"
-              onClick={() => void purchase.refetchQuote()}
-              style={css(
-                "appearance:none;cursor:pointer;border:none;background:none;font:600 12px var(--font-hanken);color:#0D0D0D;text-decoration:underline;padding:0"
-              )}
-            >
-              {BUY_FLOW_COPY.compraQuoteRefreshCta}
-            </button>
-          ) : null}
         </div>
       ) : null}
 

@@ -58,6 +58,13 @@ export function useSwapQuote(params: {
     ? Math.max(0, Math.ceil((query.data.expiresAt - now) / 1000))
     : 0;
 
+  // Cotización caducada → se renueva sola, sin pedirle un clic al usuario.
+  const { refetch, isFetching } = query;
+  useEffect(() => {
+    if (!enabled || !isExpired || isFetching) return;
+    void refetch();
+  }, [enabled, isExpired, isFetching, refetch]);
+
   return {
     quote: query.data,
     isLoading: query.isLoading || query.isFetching,
