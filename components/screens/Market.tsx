@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { css } from "@/lib/css";
 import { fmtUSD, ACCENT } from "@/lib/format";
 import { buildSeries } from "@/lib/series";
-import { useMarket } from "@/lib/market";
+import { useOpenPrice } from "@/hooks/useOpenPrice";
 import { brandLegal } from "@/lib/brand-legal";
 import { Chart } from "../Chart";
 
@@ -14,7 +14,7 @@ const SUPPLY = 850000000;
 const TFS = ["1D", "1W", "1M", "1Y", "ALL"];
 
 export default function Market() {
-  const { price, change } = useMarket();
+  const { price, change } = useOpenPrice();
   const router = useRouter();
   const [tf, setTf] = useState("1M");
   const pos = change >= 0;

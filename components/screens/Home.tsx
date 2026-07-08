@@ -7,6 +7,7 @@ import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { buildSeries } from "@/lib/series";
 import { useMarket } from "@/lib/market";
 import { useWalletHoldings } from "@/hooks/useWalletHoldings";
+import { useOpenPrice } from "@/hooks/useOpenPrice";
 import { Chart } from "../Chart";
 import { Hov } from "../ui";
 import { ecosystem, tokenWhy, steps, hubPos, hubMeta, faqDefs, tkSegs, ecosystemDisclaimer } from "@/lib/content";
@@ -161,7 +162,7 @@ function Faq() {
 
 export default function Home() {
   const { openBalance, isConnected } = useWalletHoldings();
-  const { price, change } = useMarket();
+  const { price, change } = useOpenPrice();
   const router = useRouter();
   const pos = change >= 0;
   const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";

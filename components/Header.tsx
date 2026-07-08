@@ -8,7 +8,7 @@ import { fmtUSD, ACCENT, NEG } from "@/lib/format";
 import { useAccount } from "wagmi";
 import { useApp } from "@/lib/store";
 import { useWalletDisconnect } from "@/hooks/useWalletDisconnect";
-import { useMarket } from "@/lib/market";
+import { useOpenPrice } from "@/hooks/useOpenPrice";
 import { formatAddress } from "@/lib/wagmi/format-address";
 import { Hov, Logo } from "./ui";
 import { brandLegal } from "@/lib/brand-legal";
@@ -49,7 +49,7 @@ const NavLinks = memo(function NavLinks() {
 });
 
 function PriceChip() {
-  const { price, change } = useMarket();
+  const { price, change } = useOpenPrice();
   const pos = change >= 0;
   const changeStr = (pos ? "+" : "") + change.toFixed(2) + "%";
   const changeColor = pos ? ACCENT : NEG;

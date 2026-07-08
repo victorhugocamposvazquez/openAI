@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import type { ReactElement } from "react";
 import { css } from "@/lib/css";
 import { fmtUSD, ACCENT } from "@/lib/format";
-import { useMarket } from "@/lib/market";
+import { useOpenPrice } from "@/hooks/useOpenPrice";
 import { brandLegal } from "@/lib/brand-legal";
 
 const NAV: { href: string; label: string; icon: (active: boolean) => ReactElement }[] = [
@@ -61,7 +61,7 @@ const NAV: { href: string; label: string; icon: (active: boolean) => ReactElemen
 ];
 
 function MobileCtaPrice() {
-  const { price } = useMarket();
+  const { price } = useOpenPrice();
   return (
     <span style={{ ...css("font:600 13px var(--font-mono)"), color: ACCENT }}>{fmtUSD(price)}</span>
   );

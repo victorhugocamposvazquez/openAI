@@ -2,19 +2,21 @@
 
 import { useRouter } from "next/navigation";
 import { css } from "@/lib/css";
-import { fmtUSD, fmtN, ACCENT, PRICES_USD } from "@/lib/format";
+import { fmtUSD, fmtN, ACCENT } from "@/lib/format";
 import { useApp } from "@/lib/store";
-import { useMarket } from "@/lib/market";
 import { assetMeta } from "@/lib/content";
 import { formatAddress } from "@/lib/wagmi/format-address";
 import { useWalletHoldings } from "@/hooks/useWalletHoldings";
 import { useWalletDisconnect } from "@/hooks/useWalletDisconnect";
+import { useLivePrices } from "@/hooks/useLivePrices";
+import { useOpenPrice } from "@/hooks/useOpenPrice";
 
 export default function Portfolio() {
   const app = useApp();
   const router = useRouter();
   const disconnectWallet = useWalletDisconnect();
-  const { price } = useMarket();
+  const { price: openPrice } = useOpenPrice();
+  const live = useLivePrices();
   const { address, isConnected, holdings, isLoading } = useWalletHoldings();
 
   if (!isConnected || !address) {
@@ -30,8 +32,8 @@ export default function Portfolio() {
     );
   }
 
-  // Precios de referencia para valorar en USD (OPEN desde el ticker de mercado).
-  const priceOf = (ticker: string) => (ticker === "OPEN" ? price : PRICES_USD[ticker] ?? 0);
+  // Precios de mercado reales; OPEN desde el contrato de preventa.
+  const priceOf = (ticker: string) => (ticker === "OPEN" ? openPrice : live.priceOf(ticker));
 
   const total = holdings.reduce((acc, h) => acc + h.amount * priceOf(h.ticker), 0);
 
