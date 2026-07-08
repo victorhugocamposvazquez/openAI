@@ -77,7 +77,7 @@ export const BUY_FLOW_COPY = {
   compraEstimatedOpen: "OPEN estimados",
   compraQuoteRefreshing: "Cotización se actualiza cada 30 s",
   compraQuoteExpired: "Actualizando el precio…",
-  compraQuoteFallback: "Paga con USDC o añade fondos con tarjeta.",
+  compraQuoteFallback: "No pudimos cotizar la conversión ahora mismo. Paga con USDC o inténtalo de nuevo en unos minutos.",
   compraCapExceeded: "El importe supera el cupo restante de la preventa. Reduce la cantidad.",
   compraConvertCta: "Convertir a fondos de compra",
   compraConvertDone: "Conversión completada. Ahora puedes comprar OPEN con tus USDC.",

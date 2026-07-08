@@ -147,7 +147,7 @@ export const docMap: Record<string, Doc> = {
       { h: "Primeros pasos", p: ["Para operar necesitas una wallet compatible: MetaMask, Coinbase Wallet, WalletConnect o Rainbow. Conecta la wallet a la red EVM del protocolo y asegúrate de disponer de saldo para las comisiones de red.", "Desde el front-end, la conexión se realiza con un proveedor estándar (EIP-1193). Una vez conectada la wallet, puedes leer saldos, solicitar firmas y enviar transacciones a los contratos del protocolo."] },
       { h: "Autenticación", p: ["Las lecturas de la API de mercado son públicas y no requieren autenticación. Las operaciones que afectan a fondos se autorizan siempre con la firma de la wallet del usuario; el protocolo nunca solicita claves privadas ni frases de recuperación.", "Para integraciones de servidor (por ejemplo, paneles internos), se emiten claves de API de solo lectura con límites de uso configurables."] },
       { h: "Contratos del protocolo", p: ["El sistema se compone de tres contratos: el token OPEN (ERC-20), el módulo de recompra y quema, y el módulo de gobernanza.", "El token implementa la interfaz ERC-20 estándar: balanceOf, transfer, approve, allowance y transferFrom, además de los eventos Transfer y Approval. Las direcciones de los tres contratos y sus ABIs están verificadas y publicadas en el explorador de bloques.", "Recomendamos fijar la versión del ABI en tu integración y validar la dirección del contrato contra la lista oficial para evitar suplantaciones."] },
-      { h: "Comprar e intercambiar", p: ["Las compras con cripto y los intercambios se ejecutan contra los pools de liquidez del protocolo. El flujo típico es: approve del token de origen (si aplica), simulación de la operación para estimar el importe recibido y el slippage, y envío de la transacción de swap.", "Las compras con tarjeta se delegan en los proveedores de on-ramp Transak y MoonPay mediante sus SDK. El widget del proveedor recoge los datos de pago y, al completarse, acredita los OPEN en la wallet del usuario."] },
+      { h: "Comprar e intercambiar", p: ["Las compras se ejecutan on-chain desde la wallet del usuario. El flujo típico es: approve del token de origen (si aplica), simulación de la operación para estimar el importe recibido y el slippage, y envío de la transacción.", "La preventa acepta USDC, ETH, WETH y cbBTC en la red Base: los tokens distintos de USDC se convierten vía agregador (0x) en la misma operación. También se admiten fondos desde otras redes (Ethereum, Arbitrum, Solana, Bitcoin…), que se puentean automáticamente a USDC en Base antes de la compra."] },
       { h: "API de mercado", p: ["Expone endpoints REST y WebSocket para precio en tiempo real, histórico de cotización por rango (1D, 1S, 1M, 1A, todo), oferta circulante, suministro total, volumen y capitalización.", "Los datos se sirven con marcas de tiempo y se actualizan en streaming a través de WebSocket para construir gráficos y tickers en vivo sin sondeo constante."] },
       { h: "API de cartera", p: ["Permite consultar, a partir de una dirección pública, los saldos por activo, el valor total, el coste medio de adquisición y el rendimiento (P&L) de la posición en OPEN.", "El historial de operaciones devuelve compras, ventas e intercambios con su tipo, importes, precio de ejecución, comisión y marca temporal."] },
       { h: "Webhooks y eventos", p: ["Puedes suscribirte a eventos on-chain —compra, venta, intercambio y recompra/quema— para reaccionar a la actividad en tu propia aplicación.", "Cada evento incluye la dirección implicada (enmascarada cuando procede), los importes y el hash de la transacción, de modo que puedas enlazar al explorador de bloques para su verificación."] },
@@ -175,7 +175,7 @@ export const docMap: Record<string, Doc> = {
     subtitle: "¿Necesitas ayuda con una compra, un intercambio o tu wallet? Aquí tienes las vías de contacto y las dudas más frecuentes.",
     sections: [
       { h: "Contacto", p: ["Escríbenos a soporte@openai.demo o a través del chat de la aplicación. El equipo responde en menos de 24 horas en días laborables."] },
-      { h: "Problemas con un pago", p: ["Las compras con tarjeta se procesan en Transak o MoonPay. Si un pago queda pendiente, consulta primero el panel del proveedor; desde ahí podrás ver el estado y solicitar asistencia."] },
+      { h: "Problemas con una compra", p: ["Todas las compras son transacciones on-chain firmadas desde tu wallet: puedes comprobar su estado en Basescan con el hash de la transacción. Si un puente desde otra red queda pendiente, la pantalla de compra muestra el estado en tiempo real; los envíos con importe distinto al indicado pueden retrasarse o reembolsarse automáticamente a la dirección de origen."] },
       { h: "Recuperar el acceso", p: [`El protocolo no custodia tus claves: si pierdes el acceso a tu wallet, deberás recuperarla con tu frase de recuperación. Nunca compartas tu frase semilla con nadie, tampoco con el soporte.`] },
       { h: "Estado del servicio", p: ["Publicamos incidencias y mantenimiento programado en la página de estado. La liquidez on-chain permite operar incluso durante el mantenimiento de la interfaz."] },
     ],
@@ -212,11 +212,11 @@ export const docMap: Record<string, Doc> = {
         ],
       },
       {
-        h: "4. Pagos con tarjeta (on-ramp)",
+        h: "4. Pagos y conversiones on-chain",
         p: [
-          "Los pagos con tarjeta, Apple Pay, SEPA u otros métodos fiat se procesan exclusivamente a través de proveedores terceros regulados (Transak, MoonPay u otros que indiquemos).",
-          "Al pagar con tarjeta, abandonas temporalmente nuestro sitio o se abre el widget del proveedor. Ese proveedor es responsable del procesamiento del pago, KYC/AML y cumplimiento PCI. Nosotros no recibimos ni almacenamos números de tarjeta, CVC ni datos bancarios completos.",
-          "Las comisiones del proveedor y del protocolo se muestran antes de confirmar. Los reembolsos y disputas de tarjeta se rigen por la política del proveedor de pago.",
+          "Todas las compras se pagan con criptoactivos (USDC, ETH, WETH o cbBTC en la red Base) y se firman desde la wallet del usuario. La interfaz no acepta pagos con tarjeta ni otros métodos fiat.",
+          "Si pagas con un token distinto de USDC, la conversión se ejecuta on-chain a través de un agregador de liquidez (0x) en la misma operación. Si traes fondos desde otra red, el puente lo ejecuta la infraestructura de Relay y el USDC se entrega en tu propia wallet de Base.",
+          "Los costes de conversión y las comisiones de red se muestran antes de confirmar. Las transacciones on-chain son irreversibles una vez confirmadas.",
         ],
       },
       {
@@ -268,14 +268,14 @@ export const docMap: Record<string, Doc> = {
         p: [
           "Dirección pública de wallet, historial de operaciones en la plataforma, preferencias de idioma y datos técnicos (IP, dispositivo, logs de errores).",
           "Si te registras o conectas wallet, podemos asociar tu dirección a tu cuenta.",
-          "Los datos de tarjeta, identidad (KYC) y documentos los recogen y tratan Transak, MoonPay u otros proveedores de on-ramp conforme a sus propias políticas. Nosotros no almacenamos PAN, CVC ni copias de DNI salvo que la ley lo exija en un procedimiento concreto.",
+          "No recogemos datos de tarjeta ni realizamos verificación de identidad (KYC): todos los pagos son criptoactivos firmados desde tu propia wallet.",
         ],
       },
       {
-        h: "3. Proveedores de pago (Transak / MoonPay)",
+        h: "3. Infraestructura de terceros",
         p: [
-          "Al pagar con tarjeta, compartimos con el proveedor los datos mínimos necesarios: importe, moneda, dirección de wallet de destino, identificador de pedido y URL de retorno.",
-          "Consulta la política de privacidad de Transak (transak.com) y MoonPay (moonpay.com) para saber cómo tratan tus datos personales.",
+          "Para cotizar conversiones y puentes compartimos con los proveedores de infraestructura (agregador 0x, Relay, nodos RPC) los datos mínimos necesarios: importes, tokens y dirección pública de wallet de destino.",
+          "Estos proveedores no reciben datos personales identificativos por nuestra parte; consulta sus políticas de privacidad para conocer el tratamiento de los datos técnicos.",
         ],
       },
       {
@@ -315,10 +315,10 @@ export const docMap: Record<string, Doc> = {
         ],
       },
       {
-        h: "Pagos con tarjeta",
+        h: "Conversiones y puentes",
         p: [
-          "Los pagos fiat los procesa un tercero (Transak/MoonPay). Pueden aplicarse comisiones, límites diarios, rechazos bancarios o retrasos por verificación de identidad.",
-          "Los contracargos y disputas se gestionan con el emisor de la tarjeta y el proveedor de on-ramp, no directamente con nosotros.",
+          "Si pagas con un token distinto de USDC o traes fondos desde otra red, la conversión y el puente dependen de infraestructura de terceros (agregador 0x, Relay) y de las condiciones del mercado: el precio cotizado tiene validez limitada y puede variar.",
+          "Los envíos cross-chain con importe distinto al indicado pueden retrasarse o acabar reembolsados a la dirección de origen. Las comisiones de red de la cadena de origen no son reembolsables.",
         ],
       },
       {
@@ -360,7 +360,7 @@ export const docMap: Record<string, Doc> = {
     eyebrow: "Legal",
     title: "Guía de cumplimiento y copy",
     meta: `Última actualización: ${lastUpdated}`,
-    subtitle: "Textos obligatorios, zonas de disclaimer y checklist pre-lanzamiento para el equipo y partners (on-ramps, exchanges).",
+    subtitle: "Textos obligatorios, zonas de disclaimer y checklist pre-lanzamiento para el equipo y partners (exchanges, integraciones).",
     sections: [
       {
         h: "Principio rector",
@@ -395,7 +395,7 @@ export const docMap: Record<string, Doc> = {
         h: "Consentimiento en flujos de operación",
         p: [
           "Checkbox UI (compra / swap): «He leído y acepto los Términos, la Política de privacidad y la Información de riesgos.»",
-          `Referencia extendida (docs legales, no UI): tarjeta — ${brandLegal.legalChecklist.consent.card}; cripto — ${brandLegal.legalChecklist.consent.crypto}; swap — ${brandLegal.legalChecklist.consent.swap}`,
+          `Referencia extendida (docs legales, no UI): cripto — ${brandLegal.legalChecklist.consent.crypto}; swap — ${brandLegal.legalChecklist.consent.swap}`,
         ],
       },
       {
@@ -450,7 +450,7 @@ export const docMap: Record<string, Doc> = {
         h: "Contacto y cumplimiento",
         p: [
           `Consultas legales: ${contactLegal}. Términos completos: /docs/terms. Riesgos: /docs/risks.`,
-          "Si eres un proveedor de on-ramp, exchange o regulador y necesitas confirmación escrita de no afiliación, contacta por el canal legal designado.",
+          "Si eres un exchange, integrador o regulador y necesitas confirmación escrita de no afiliación, contacta por el canal legal designado.",
         ],
       },
     ],

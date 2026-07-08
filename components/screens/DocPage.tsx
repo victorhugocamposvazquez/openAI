@@ -48,7 +48,7 @@ export default function DocPage({ doc }: { doc: Doc }) {
         <div style={css("display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:12px")}>
           <div>
             <div style={css("font:600 18px var(--font-hanken);letter-spacing:-0.02em;margin-bottom:4px")}>¿Listo para obtener OPEN?</div>
-            <div style={css("font:400 14px var(--font-hanken);color:#6B6B76")}>Compra con tarjeta o cripto, o intercámbialo desde tu wallet.</div>
+            <div style={css("font:400 14px var(--font-hanken);color:#6B6B76")}>Compra con USDC, ETH o cbBTC en Base, o trae fondos desde otra red.</div>
           </div>
           <div style={css("display:flex;gap:10px")}>
             <button onClick={() => router.push("/comprar")} style={css("appearance:none;cursor:pointer;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:13px 22px;font:600 15px var(--font-hanken)")}>{brandLegal.suggestedCta}</button>

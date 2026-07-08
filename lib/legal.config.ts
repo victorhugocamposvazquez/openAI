@@ -1,11 +1,7 @@
 /**
- * Paso 1 — Legal y cumplimiento (entidad descentralizada).
- * Rellena estos datos antes de solicitar cuenta en Transak/MoonPay.
+ * Legal y cumplimiento (entidad descentralizada).
  * Un abogado debe revisar términos, privacidad y riesgos antes de producción.
- *
- * Nota: Transak/MoonPay suelen exigir un contacto legal y a veces una entidad
- * puente (foundation, DAO LLC, asociación) para el alta de comercio, aunque
- * el protocolo sea descentralizado. Consulta con asesoría legal especializada en Web3.
+ * Consulta con asesoría legal especializada en Web3.
  */
 export const legalConfig = {
   entityType: "decentralized" as const,

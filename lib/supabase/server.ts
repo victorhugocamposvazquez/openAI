@@ -5,8 +5,8 @@
  * 1) npm i @supabase/supabase-js @supabase/ssr
  * 2) set the env vars (see .env.example)
  *
- * Use the service-role key ONLY in trusted server contexts (e.g. the on-ramp
- * webhook handler that credits OPEN after a Transak/MoonPay payment).
+ * Use the service-role key ONLY in trusted server contexts
+ * (route handlers, webhooks, cron jobs).
  */
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";

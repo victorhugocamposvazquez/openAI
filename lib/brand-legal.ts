@@ -29,7 +29,7 @@ export const treasuryMechanism = {
       id: "subscription",
       title: "1. Suscripción — entrada de capital",
       technical:
-        "El inversor adquiere OPEN en preventa primaria o en pools on-chain (USDC/ETH/fiat vía on-ramp). El contrato de tesorería (TreasuryRouter) registra la operación on-chain y enruta el colateral a la wallet multisig de tesorería del protocolo.",
+        "El inversor adquiere OPEN en preventa primaria o en pools on-chain, pagando con USDC, ETH, WETH o cbBTC en Base, o con fondos puenteados desde otras redes. El contrato de tesorería (TreasuryRouter) registra la operación on-chain y enruta el colateral a la wallet multisig de tesorería del protocolo.",
       outputs: ["OPEN acreditado en wallet del inversor", "Stablecoins/ETH en Treasury Multisig"],
     },
     {
@@ -200,8 +200,6 @@ export const brandLegal = {
       footer: "footerDisclaimer",
     },
     consent: {
-      card:
-        "Acepto términos, privacidad e información de riesgos. El pago con tarjeta lo procesa Transak/MoonPay. OPEN canaliza inversión en acciones reales vía el protocolo.",
       crypto:
         "Acepto términos, privacidad e información de riesgos. OPEN invierte vía la tesorería del protocolo; las operaciones on-chain son irreversibles.",
       swap:
