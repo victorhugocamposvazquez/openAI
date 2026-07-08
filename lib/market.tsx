@@ -14,10 +14,15 @@ export type MarketState = {
 const START_PRICE = 4.2;
 const BASE_REF = 4.068;
 
+// El valor inicial debe ser DETERMINISTA e idéntico en servidor y cliente:
+// un valor distinto (p. ej. Date.now()) rompe la hidratación de React y
+// deja la navegación sin responder. El ticker pone la hora real tras montar.
+const INITIAL_NOW = new Date("2026-06-29T00:00:00Z").getTime();
+
 let market: MarketState = {
   price: START_PRICE,
   change: 3.24,
-  now: typeof window !== "undefined" ? Date.now() : new Date("2026-06-29T00:00:00Z").getTime(),
+  now: INITIAL_NOW,
   activity: [
     { id: "a1", addr: "0x7c…4f", action: "compró", amt: "1,250", ts: 8000 },
     { id: "a2", addr: "0x3a…e1", action: "intercambió", amt: "740", ts: 23000 },
@@ -64,7 +69,9 @@ function genActivity(): ActivityRow {
 export function startMarketTicker() {
   if (started || typeof window === "undefined") return;
   started = true;
+  // Ya hidratado: a partir de aquí sí podemos usar la hora real.
   market = { ...market, now: Date.now() };
+  emit();
 
   setInterval(() => {
     market = { ...market, now: Date.now() };

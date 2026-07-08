@@ -124,8 +124,14 @@ export function usePresalePurchase() {
   const sellAmount = useMemo(() => {
     const normalized = debouncedInput.trim().replace(",", ".");
     const n = Number(normalized);
-    if (!normalized || Number.isNaN(n) || n <= 0) return undefined;
-    return parseUnits(normalized, paymentToken.decimals);
+    if (!normalized || !Number.isFinite(n) || n <= 0) return undefined;
+    try {
+      // parseUnits lanza con notación no decimal ("1e3", hex…): nunca debe
+      // tumbar el render.
+      return parseUnits(normalized, paymentToken.decimals);
+    } catch {
+      return undefined;
+    }
   }, [debouncedInput, paymentToken.decimals]);
 
   const { quote, isLoading: quoteLoading, isExpired, expiresInSec, quoteFailed, refetch: refetchQuote } = useSwapQuote({
