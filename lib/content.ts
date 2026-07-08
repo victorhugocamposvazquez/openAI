@@ -28,7 +28,7 @@ export const tokenWhy = [
 ];
 
 export const steps = [
-  { n: "1", title: "Conecta tu wallet", desc: "MetaMask, Coinbase Wallet o WalletConnect en un toque." },
+  { n: "1", title: "Conecta tu wallet", desc: "MetaMask, Coinbase, Trust o la wallet de tu móvil en un toque." },
   { n: "2", title: "Compra OPEN", desc: "Con tarjeta o cripto. Tu capital entra en la tesorería del protocolo." },
   { n: "3", title: "Sigue tu inversión", desc: "Valor, asignación y movimientos en tiempo real." },
 ];
