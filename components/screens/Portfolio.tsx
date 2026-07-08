@@ -61,7 +61,17 @@ export default function Portfolio() {
         <div>
           <div style={css("display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap")}>
             <h2 style={css("font:600 26px var(--font-hanken);letter-spacing:-0.03em;margin:0")}>Mi cartera</h2>
-            <span title={address} style={css("font:500 12px var(--font-mono);color:#6B6B76;background:#F4F4F5;padding:5px 10px;border-radius:999px")}>{formatAddress(address)}</span>
+            <button
+              type="button"
+              title="Copiar dirección"
+              onClick={() => {
+                void navigator.clipboard?.writeText(address).then(() => app.toastMsg("Dirección copiada"));
+              }}
+              style={css("appearance:none;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;font:500 12px var(--font-mono);color:#6B6B76;background:#F4F4F5;padding:5px 10px;border-radius:999px")}
+            >
+              {formatAddress(address)}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+            </button>
             <button onClick={disconnectWallet} style={css("appearance:none;border:none;background:none;cursor:pointer;font:500 13px var(--font-hanken);color:#D14343")}>Desconectar</button>
           </div>
           <div style={css("font:500 13px var(--font-hanken);color:#8A8A94")}>Valor total en Base</div>

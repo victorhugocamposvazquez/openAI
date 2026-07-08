@@ -79,6 +79,23 @@ export function PresalePurchaseStep({ onBack }: Props) {
   const showQuoteFallback = purchase.quoteFailed || purchase.quoteFallback;
   const usesQuote = purchase.paymentTokenId !== "USDC" && !showQuoteFallback;
 
+  // Aviso en vivo si el importe tecleado supera el saldo disponible.
+  const insufficientBalance =
+    purchase.sellAmount !== undefined &&
+    purchase.sellBalance !== undefined &&
+    purchase.sellAmount > purchase.sellBalance;
+
+  // Por qué el botón principal está deshabilitado, en texto claro y accionable.
+  const disabledHint = (() => {
+    if (isRunning || isDone || purchase.state.phase === "error") return null;
+    if (purchase.sellAmount === undefined) return BUY_FLOW_COPY.compraHintNoAmount;
+    if (insufficientBalance) return BUY_FLOW_COPY.compraInsufficientSell(purchase.paymentToken.symbol);
+    if (purchase.paymentTokenId !== "USDC" && purchase.quoteLoading && !purchase.quote)
+      return BUY_FLOW_COPY.compraHintQuoteLoading;
+    if (!legalAccepted) return BUY_FLOW_COPY.compraHintLegal;
+    return null;
+  })();
+
   const handleMax = () => {
     const raw = purchase.sellBalance;
     if (raw === undefined) return;
@@ -144,14 +161,21 @@ export function PresalePurchaseStep({ onBack }: Props) {
       <input
         type="text"
         inputMode="decimal"
+        autoComplete="off"
+        placeholder="0,00"
+        aria-label={`${BUY_FLOW_COPY.compraAmountLabel} en ${purchase.paymentToken.symbol}`}
         value={purchase.amountInput}
         onChange={(e) => purchase.setAmountInput(e.target.value)}
         disabled={isRunning}
         style={css(
-          "width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #E6E6E8;border-radius:12px;font:500 15px var(--font-mono);margin-bottom:8px"
+          `width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid ${insufficientBalance ? "#E5A0A0" : "#E6E6E8"};border-radius:12px;font:500 15px var(--font-mono);margin-bottom:8px`
         )}
       />
-      {usdEstimate ? (
+      {insufficientBalance ? (
+        <p style={css("font:500 12px var(--font-hanken);color:#D14343;margin:0 0 10px")}>
+          {BUY_FLOW_COPY.compraInsufficientSell(purchase.paymentToken.symbol)}
+        </p>
+      ) : usdEstimate ? (
         <p style={css("font:400 12px var(--font-mono);color:#8A8A94;margin:0 0 10px")}>
           {BUY_FLOW_COPY.compraUsdEstimate(usdEstimate)}
         </p>
@@ -342,16 +366,23 @@ export function PresalePurchaseStep({ onBack }: Props) {
           {BUY_FLOW_COPY.compraRetryCta}
         </Hov>
       ) : !isDone ? (
-        <Hov
-          as="button"
-          type="button"
-          disabled={!legalAccepted || !purchase.canPurchase || isRunning || (purchase.isExpired && purchase.paymentTokenId !== "USDC")}
-          onClick={() => purchase.startPurchase()}
-          style="appearance:none;cursor:pointer;width:100%;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px;font:600 15px var(--font-hanken)"
-          hover="background:#000"
-        >
-          {isRunning ? purchase.state.currentLabel : purchase.primaryCta}
-        </Hov>
+        <>
+          <Hov
+            as="button"
+            type="button"
+            disabled={!legalAccepted || !purchase.canPurchase || isRunning || insufficientBalance || (purchase.isExpired && purchase.paymentTokenId !== "USDC")}
+            onClick={() => purchase.startPurchase()}
+            style="appearance:none;cursor:pointer;width:100%;background:#0D0D0D;color:#fff;border:none;border-radius:12px;padding:15px;font:600 15px var(--font-hanken)"
+            hover="background:#000"
+          >
+            {isRunning ? purchase.state.currentLabel : purchase.primaryCta}
+          </Hov>
+          {disabledHint ? (
+            <p style={css("font:400 12px/1.5 var(--font-hanken);color:#8A8A94;margin:10px 0 0;text-align:center")}>
+              {disabledHint}
+            </p>
+          ) : null}
+        </>
       ) : null}
       </div>
       </BaseChainGuard>

@@ -13,35 +13,47 @@ import { formatAddress } from "@/lib/wagmi/format-address";
 import { Hov, Logo } from "./ui";
 import { brandLegal } from "@/lib/brand-legal";
 
-const NAV: [string, string][] = [
-  ["/", "Inicio"],
-  ["/mercado", "Mercado"],
-  ["/comprar", "Adquirir"],
-  ["/swap", "Swap"],
-  ["/cartera", "Cartera"],
+const NAV: { href: string; label: string; badge?: string }[] = [
+  { href: "/", label: "Inicio" },
+  { href: "/mercado", label: "Mercado" },
+  { href: "/comprar", label: "Adquirir" },
+  // El swap llega tras el TGE: el badge evita que parezca una función rota.
+  { href: "/swap", label: "Swap", badge: "Pronto" },
+  { href: "/cartera", label: "Cartera" },
 ];
 
 const NavLinks = memo(function NavLinks() {
   const pathname = usePathname();
   return (
     <nav data-nav style={css("display:flex;gap:2px")}>
-      {NAV.map(([href, label]) => {
+      {NAV.map(({ href, label, badge }) => {
         const active = pathname === href;
         return (
-          <Link
+          <Hov
             key={href}
+            as={Link}
             href={href}
             prefetch
-            style={css(
-              "text-decoration:none;background:" +
-                (active ? "#F2F2F3" : "transparent") +
-                ";color:" +
-                (active ? "#0D0D0D" : "#6B6B76") +
-                ";font:500 14px/1 var(--font-hanken);padding:9px 14px;border-radius:10px;letter-spacing:-0.01em"
-            )}
+            style={
+              "text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:" +
+              (active ? "#F2F2F3" : "transparent") +
+              ";color:" +
+              (active ? "#0D0D0D" : "#6B6B76") +
+              ";font:500 14px/1 var(--font-hanken);padding:9px 14px;border-radius:10px;letter-spacing:-0.01em"
+            }
+            hover={active ? undefined : "background:#F7F7F8;color:#0D0D0D"}
           >
             {label}
-          </Link>
+            {badge ? (
+              <span
+                style={css(
+                  "font:600 9px var(--font-hanken);letter-spacing:0.05em;text-transform:uppercase;color:#8A8A94;background:#F2F2F3;padding:2px 6px;border-radius:999px"
+                )}
+              >
+                {badge}
+              </span>
+            ) : null}
+          </Hov>
         );
       })}
     </nav>
@@ -55,12 +67,20 @@ function PriceChip() {
   const changeColor = pos ? ACCENT : NEG;
 
   return (
-    <div data-pricechip style={css("display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid #ECECEC;border-radius:999px")}>
+    <Hov
+      as={Link}
+      href="/mercado"
+      prefetch
+      title="Ver mercado de OPEN"
+      data-pricechip
+      style="text-decoration:none;display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid #ECECEC;border-radius:999px"
+      hover="border-color:#0D0D0D"
+    >
       <span style={css("width:6px;height:6px;border-radius:50%;background:" + ACCENT)} />
       <span style={css("font:500 12px var(--font-mono);color:#8A8A94")}>OPEN</span>
       <span style={css("font:600 13px var(--font-mono);color:#0D0D0D")}>{fmtUSD(price)}</span>
       <span style={{ ...css("font:600 12px var(--font-mono)"), color: changeColor }}>{changeStr}</span>
-    </div>
+    </Hov>
   );
 }
 
