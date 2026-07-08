@@ -28,14 +28,14 @@ export const legalConfig = {
   operatorAddress:
     "Sin domicilio social único. Comunicaciones a través de los canales públicos del protocolo.",
 
-  contactLegal: "legal@tudominio.com",
-  contactPrivacy: "privacidad@tudominio.com",
-  contactSupport: "soporte@tudominio.com",
+  contactLegal: "legal@openaiprotocol.com",
+  contactPrivacy: "privacidad@openaiprotocol.com",
+  contactSupport: "soporte@openaiprotocol.com",
   /** Foro o canal público de gobernanza (Discord, forum, Snapshot…). */
   governanceUrl: "[COMPLETAR: https://snapshot.org/#/… o similar]",
 
   lastUpdated: "29 de junio de 2026",
-  siteUrl: "https://openai-six-ruddy.vercel.app",
+  siteUrl: "https://openaiprotocol.com",
   termsUrl: "/docs/terms",
   privacyUrl: "/docs/privacy",
   risksUrl: "/docs/risks",

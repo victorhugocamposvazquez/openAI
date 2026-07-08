@@ -24,6 +24,23 @@ export function isWalletConnectConnector(connectorId?: string) {
   return connectorId === WALLET_CONNECT_CONNECTOR_ID;
 }
 
+/**
+ * Elimina pairings de WalletConnect que quedaron a medias en localStorage
+ * (intentos abandonados o fallidos). Reintentar sobre esos restos produce
+ * sesiones que la wallet aprueba pero que nunca llegan a asentarse en la
+ * dapp. Solo debe llamarse ANTES de iniciar una conexión nueva, nunca con
+ * una sesión WalletConnect activa.
+ */
+export function clearStaleWalletConnectPairings() {
+  if (typeof window === "undefined") return;
+  try {
+    const stale = Object.keys(localStorage).filter((k) => k.startsWith("wc@2:"));
+    for (const k of stale) localStorage.removeItem(k);
+  } catch {
+    // localStorage puede no estar disponible (modo privado estricto); no pasa nada.
+  }
+}
+
 /** rdns de la extensión de Coinbase — duplicaría el conector coinbaseWalletSDK. */
 const COINBASE_EXTENSION_RDNS = "com.coinbase.wallet";
 

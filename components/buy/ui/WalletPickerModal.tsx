@@ -6,9 +6,11 @@ import { Hov } from "@/components/ui";
 import { BUY_FLOW_COPY } from "@/lib/onramp/constants";
 import { hasWalletConnect } from "@/lib/wagmi/config";
 import {
+  clearStaleWalletConnectPairings,
   findWalletConnectConnector,
   getConnectorId,
   getInjectedWalletOptions,
+  isWalletConnectConnector,
 } from "@/lib/wagmi/connectors";
 import { mapConnectError } from "@/lib/wagmi/connect-error";
 import { isMobileDevice } from "@/lib/wagmi/device";
@@ -41,9 +43,15 @@ export function WalletPickerModal({ onClose }: Props) {
 
   const connectWith = (connector: Connector) => {
     if (isPending) return;
+    const isWc = isWalletConnectConnector(connector.id);
+    // Un intento WalletConnect fallido deja pairings a medias que rompen el siguiente.
+    if (isWc && error) clearStaleWalletConnectPairings();
     reset();
     connect(
-      { connector, chainId: CHAIN_ID },
+      // Con WalletConnect NO forzamos la red: si la wallet móvil no tiene Base
+      // añadida, la sesión se aprueba en la wallet pero la conexión falla al
+      // volver. El BaseChainGuard pide el cambio a Base después, con su UI.
+      isWc ? { connector } : { connector, chainId: CHAIN_ID },
       {
         onSuccess: () => onClose(),
       }

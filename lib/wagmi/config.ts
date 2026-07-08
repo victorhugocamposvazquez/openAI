@@ -24,6 +24,11 @@ const connectors = [
           showQrModal: true,
           qrModalOptions: {
             themeMode: "light",
+            themeVariables: {
+              // El modal QR usa z-index 89 por defecto y quedaba TAPADO por
+              // nuestros modales (z-index 100/1000). Siempre por encima.
+              "--wcm-z-index": "3000",
+            },
             explorerRecommendedWalletIds: [
               "c57ca95a475eee778fec9758359a8f2c",
               "4622a2b2d6af1c9843938950e85218a3",
