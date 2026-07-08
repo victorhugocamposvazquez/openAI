@@ -79,7 +79,7 @@ export const docMap: Record<string, Doc> = {
     title: "Tokenomics de OPEN",
     meta: "Suministro fijo · 21.000.000.000 OPEN",
     subtitle:
-      "Distribución del suministro, calendarios de bloqueo y condiciones de la preventa. Los tokens comprados en preventa se reciben en el momento del lanzamiento (TGE), no inmediatamente tras la compra.",
+      "Distribución del suministro, calendarios de bloqueo y condiciones de la preventa. Los tokens comprados en preventa se reciben en el momento del lanzamiento (TGE) mediante claim.",
     hasStats: true,
     stats: [
       { value: "21.000M", label: "Suministro total" },
@@ -109,7 +109,7 @@ export const docMap: Record<string, Doc> = {
       {
         h: "Preventa",
         p: [
-          "Aviso importante: los tokens comprados en preventa se reciben en el momento del lanzamiento (TGE), no inmediatamente tras la compra.",
+          "Aviso importante: los tokens comprados en preventa se reciben en el momento del lanzamiento (TGE) mediante claim.",
           "Precio: 0,0005 USDC por OPEN.",
           "Cap máximo: 1.045.000 USDC. El límite está fijado en el contrato; las compras se rechazan automáticamente al alcanzarlo.",
           "La preventa es pública y abierta, sin límite por wallet. Los fondos se custodian en una Safe multisig.",

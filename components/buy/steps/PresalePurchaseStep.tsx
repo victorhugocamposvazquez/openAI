@@ -211,19 +211,27 @@ export function PresalePurchaseStep({ onBack, initialMode }: Props) {
       )}
 
       <div style={css("display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px")}>
-        {QUICK_AMOUNTS[purchase.paymentTokenId].map((v) => (
-          <Hov
-            key={v}
-            as="button"
-            type="button"
-            disabled={isRunning}
-            onClick={() => purchase.setAmountInput(String(v))}
-            style="appearance:none;cursor:pointer;background:#fff;border:1px solid #E6E6E8;border-radius:999px;padding:7px 12px;font:500 12px var(--font-mono);color:#5C5C66"
-            hover="border-color:#0D0D0D;color:#0D0D0D"
-          >
-            {v.toLocaleString("es-ES")}
-          </Hov>
-        ))}
+        {QUICK_AMOUNTS[purchase.paymentTokenId].map((v) => {
+          // Seleccionado si el importe actual coincide (acepta coma o punto).
+          const selected = Number(purchase.amountInput.trim().replace(",", ".")) === v;
+          return (
+            <Hov
+              key={v}
+              as="button"
+              type="button"
+              disabled={isRunning}
+              onClick={() => purchase.setAmountInput(String(v))}
+              style={
+                selected
+                  ? "appearance:none;cursor:pointer;background:#0D0D0D;border:1px solid #0D0D0D;border-radius:999px;padding:7px 12px;font:600 12px var(--font-mono);color:#fff"
+                  : "appearance:none;cursor:pointer;background:#fff;border:1px solid #E6E6E8;border-radius:999px;padding:7px 12px;font:500 12px var(--font-mono);color:#5C5C66"
+              }
+              hover={selected ? undefined : "border-color:#0D0D0D;color:#0D0D0D"}
+            >
+              {v.toLocaleString("es-ES")}
+            </Hov>
+          );
+        })}
       </div>
 
       <div style={css("display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px")}>
